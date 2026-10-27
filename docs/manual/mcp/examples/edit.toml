@@ -1,0 +1,65 @@
+# Examples of the edit actions (daw-core's api/actions/edit.rs). Each runs on a fresh copy
+# of the example project; how to write them: docs/manual/README.md, "Writing the MCP manual".
+
+[[example]]
+action = "detect_transients"
+title = "Find the plucks in Guitar L's clip"
+notes = '''
+Positions are timeline samples where each attack starts, with a `strength` from 0 to 1. `sensitivity` (default 0.5; higher finds softer attacks) and `min_gap_ms` (default 50) tune it. The example asks for fewer, firmer hits (a lower sensitivity and a longer gap); the pluck on the clip's very first sample isn't reported, and the strengths change if the detector is tuned, so they show as `"*"`.
+'''
+input = '{"clip": 7, "sensitivity": 0.2, "min_gap_ms": 100}'
+result = '''
+{
+  "clip": 7,
+  "count": 3,
+  "transients": [
+    {"position": 23977, "strength": "*"},
+    {"position": 47977, "strength": "*"},
+    {"position": 71977, "strength": "*"}
+  ]
+}
+'''
+
+[[example]]
+action = "split_clip_at"
+title = "Cut a clip at each beat"
+notes = '''
+In one go, e.g. at every transient. The answer lists all the pieces in time order, the original clip first, and any positions that were not inside the clip.
+'''
+input = '{"clip": 7, "positions": [24000, 48000, 72000]}'
+result = '{"clips": [7, 21, 22, 23], "skipped": []}'
+
+[[example]]
+action = "quantize_positions"
+title = "Where would these land on the eighth-note grid?"
+notes = '''
+Changes nothing: it only answers. `division` is bar, beat, 1/4 to 1/32 or a triplet like 1/8t; `rounding` is nearest (default), previous or next.
+'''
+input = '{"division": "1/8", "positions": [11000, 37000]}'
+result = '''
+{
+  "positions": [
+    {"position": 11000, "quantized": 12000},
+    {"position": 37000, "quantized": 36000}
+  ]
+}
+'''
+
+[[example]]
+action = "quantize_clips"
+title = "Line the slices up with the beat"
+notes = '''
+The setup cut Guitar L's clip a little after each beat, as if it were played late: the pieces are clips 7, 21, 22 and 23. Each starts on the grid afterwards, gaps are filled and neighbours crossfaded. Set the project tempo to the performance's tempo first (`set_tempo`), or the hits are pulled to the wrong beats.
+'''
+setup = [
+    { action = "split_clip_at", input = '{"clip": 7, "positions": [24500, 48300, 71800]}' },
+]
+input = '{"clips": [7, 21, 22, 23], "division": "beat"}'
+result = '''
+[
+  {"clip": 7, "from": 0, "to": 0},
+  {"clip": 21, "from": 24500, "to": 24000},
+  {"clip": 22, "from": 48300, "to": 48000},
+  {"clip": 23, "from": 71800, "to": 72000}
+]
+'''

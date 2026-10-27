@@ -1,0 +1,12 @@
+[package]
+name = "mcp-link"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+license.workspace = true
+description = "Connects Claude Code and Claude Desktop to Oxide's MCP server: their configuration, and the stdio bridge Desktop runs (oxide-mcp.exe)"
+
+# Kept light on purpose: the bridge (`daw-app`'s `oxide-mcp` binary) links only this and serde_json.
+[dependencies]
+serde_json.workspace = true
+serde.workspace = true

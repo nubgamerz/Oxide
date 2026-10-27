@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: How do I...?
+    url: https://github.com/nubgamerz/Oxide/discussions
+    about: Questions and ideas go to Discussions. In the app, Help > Manual (or F1) opens the searchable manual.
+  - name: The manual's sources
+    url: https://github.com/nubgamerz/Oxide/tree/master/docs/manual
+    about: The manual as Markdown, the same pages Help > Manual shows.

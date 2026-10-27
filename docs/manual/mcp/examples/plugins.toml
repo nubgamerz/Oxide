@@ -1,0 +1,224 @@
+# Examples of the plug-in actions (daw-core's api/actions/plugins.rs). Each runs on a fresh
+# copy of the example project; how to write them: docs/manual/README.md, "Writing the MCP
+# manual".
+
+[[example]]
+action = "add_insert"
+title = "Put the Parametric EQ on the vocal"
+notes = "A built-in effect by its path, `native:<id>` (list_plugins lists them all); a name or a unique part of one works too. Effects go last in the chain unless `position` says otherwise."
+input = '''
+{"track": 5, "plugin": "native:parametric-eq"}
+'''
+result = '{"insert": 21, "latency": 0, "name": "Parametric EQ"}'
+
+[[example]]
+action = "list_plugins"
+title = "The built-in effects"
+notes = '''
+Built-in effects have the vendor "Built in" and a path `native:<id>`; installed VST3 plug-ins follow with their own paths. `filter` matches name or vendor, case-insensitively.
+'''
+input = '{"filter": "Built in"}'
+result = '''
+[
+  {"name": "Amplify", "path": "native:amplify", "vendor": "Built in"},
+  {"name": "Channel Mixer", "path": "native:channel-mixer", "vendor": "Built in"},
+  "..."
+]
+'''
+
+[[example]]
+action = "rescan_plugins"
+title = "Look for newly installed plug-ins"
+notes = '''
+Call it after installing a plug-in while Oxide runs.
+'''
+shown_only = "it counts this machine's VST3 plug-ins"
+result = '''
+{"installed": 41}
+'''
+
+[[example]]
+action = "remove_insert"
+title = "Remove the Room Reverb from the bus"
+input = '{"insert": 18}'
+result = '{"done": true}'
+
+[[example]]
+action = "set_insert"
+title = "Bypass Guitar L's compressor"
+notes = '''
+A bypassed plug-in passes audio through unchanged but keeps its latency, so timing stays aligned.
+'''
+input = '{"insert": 17, "bypass": true}'
+result = '{"bypass": true, "insert": 17, "name": "Compressor"}'
+
+[[example]]
+action = "move_insert"
+title = "Move the compressor to Guitar R"
+notes = '''
+Moved to another track it is the same instance with its settings; with `direction` or `position` it moves within its own chain.
+'''
+input = '{"insert": 17, "track": 3}'
+result = '{"done": true}'
+
+[[example]]
+action = "copy_insert"
+title = "Copy the compressor onto Guitar R"
+notes = '''
+A new instance with the same settings (and bypass). The answer is its id.
+'''
+input = '{"insert": 17, "track": 3}'
+result = '{"insert": 21}'
+
+[[example]]
+action = "copy_plugin"
+title = "Put the compressor on the plug-in clipboard"
+notes = '''
+The plug-in clipboard is separate from the clip clipboard; `paste_plugin` makes new instances from it, as often as wanted.
+'''
+input = '{"insert": 17}'
+result = '{"bypass": false, "name": "Compressor", "path": "native:compressor"}'
+
+[[example]]
+action = "paste_plugin"
+title = "Paste the copied compressor onto the vocal"
+setup = [
+    { action = "copy_plugin", input = '{"insert": 17}' },
+]
+input = '{"track": 5}'
+result = '{"insert": 21}'
+
+[[example]]
+action = "set_inserts_bypassed"
+title = "Bypass everything on Guitar L"
+notes = '''
+The answer counts how many plug-ins changed. Without `track` it acts on the master's chain; with `editor` true, on the Waveform view's rack.
+'''
+input = '{"track": 2, "bypass": true}'
+result = '{"changed": 1}'
+
+[[example]]
+action = "set_plugin_editor"
+title = "Open a plug-in's editor window"
+notes = '''
+The editor is a separate native window, and opening it briefly silences that track; `open` false closes it.
+'''
+input = '{"insert": 17, "open": true}'
+result = '{"open": true}'
+
+[[example]]
+action = "list_plugin_parameters"
+title = "Read the compressor's parameters"
+notes = '''
+Each parameter's id, name, normalized value (0 to 1), the value as the plug-in shows it, unit, default and step count (0 continuous, 1 on/off). `filter`, `offset` and `limit` page through plug-ins with thousands.
+'''
+input = '{"insert": 17, "limit": 4}'
+result = '''
+{
+  "parameters": [
+    {
+      "automatable": true,
+      "default": 0.5,
+      "display": "0.0 dB",
+      "id": 0,
+      "name": "Output Gain",
+      "read_only": false,
+      "steps": 0,
+      "unit": "dB",
+      "value": 0.5
+    },
+    {
+      "automatable": true,
+      "default": 1.0,
+      "display": "0.0 dB",
+      "id": 1,
+      "name": "Threshold",
+      "read_only": false,
+      "steps": 0,
+      "unit": "dB",
+      "value": 1.0
+    },
+    "..."
+  ],
+  "total": 6
+}
+'''
+
+[[example]]
+action = "set_plugin_parameter"
+title = "Set the compressor's threshold"
+notes = '''
+`parameter` is an id or a name (exact, or a unique part). `value` is normalized, 0 to 1; the answer says how the plug-in shows it, so the mapping can be checked. A parameter change leaves nothing for `undo` to take back.
+'''
+input = '{"insert": 17, "parameter": "Threshold", "value": 0.5}'
+result = '{"display": "-30.0 dB", "id": 1, "name": "Threshold", "value": 0.5}'
+
+[[example]]
+action = "set_impulse_file"
+title = "Load an impulse into a Convolution Reverb"
+notes = '''
+The setup's `add_insert` is the first new object, so its id is 21. The file is copied into `Imported` (this one is already there, so it is used in place) and saved with the effect by its project-relative path.
+'''
+setup = [
+    { action = "add_insert", input = '{"track": 6, "plugin": "native:convolution-reverb"}' },
+]
+input = '{"insert": 21, "path": "<project>/Imported/vocal.wav"}'
+result = '''
+{
+  "effect": "Convolution Reverb",
+  "error": null,
+  "file": "Imported/vocal.wav",
+  "file_channels": 1,
+  "file_rate": 48000,
+  "file_seconds": 2.0,
+  "insert": 21,
+  "preparing": false,
+  "seconds": 2.0
+}
+'''
+
+[[example]]
+action = "get_impulse_file"
+title = "Read the impulse"
+setup = [
+    { action = "add_insert", input = '{"track": 6, "plugin": "native:convolution-reverb"}' },
+    { action = "set_impulse_file", input = '{"insert": 21, "path": "<project>/Imported/vocal.wav"}' },
+]
+input = '{"insert": 21}'
+result = '''
+{
+  "effect": "Convolution Reverb",
+  "error": null,
+  "file": "Imported/vocal.wav",
+  "file_channels": 1,
+  "file_rate": 48000,
+  "file_seconds": 2.0,
+  "insert": 21,
+  "preparing": false,
+  "seconds": 2.0
+}
+'''
+
+[[example]]
+action = "list_plugin_outputs"
+title = "Outputs of a built-in effect"
+notes = '''
+A multi-out plug-in (a drum sampler, say) lists a `bus` per output; built-in effects have none.
+'''
+input = '{"insert": 17}'
+result = '{"outputs": []}'
+
+[[example]]
+action = "create_multi_out_rack"
+title = "A plug-in with no extra outputs"
+notes = '''
+Only a plug-in with extra outputs can have its outputs routed to tracks of their own.
+'''
+input = '{"insert": 17}'
+error = 'Compressor has no outputs besides its main one'
+
+[[example]]
+action = "remove_multi_out_rack"
+title = "Remove a multi-out rack that isn't there"
+input = '{"insert": 17}'
+error = 'insert 17 has no tracks on its outputs'

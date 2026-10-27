@@ -1,0 +1,4703 @@
+{
+  "effects": [
+    {
+      "category": "Dynamics",
+      "curve": false,
+      "file": null,
+      "id": "amplify",
+      "latency": 0,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Amplify",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.00 dB",
+          "link": "Link Sliders",
+          "max": "+48.00 dB",
+          "min": "-96.00 dB",
+          "name": "Left Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.00 dB",
+          "link": "Link Sliders",
+          "max": "+48.00 dB",
+          "min": "-96.00 dB",
+          "name": "Right Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "On",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Link Sliders",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "Dynamics",
+      "curve": false,
+      "file": null,
+      "id": "channel-mixer",
+      "latency": 0,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Channel Mixer",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "100.0 %",
+          "link": null,
+          "max": "100.0 %",
+          "min": "-100.0 %",
+          "name": "Left from Left",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 %",
+          "link": null,
+          "max": "100.0 %",
+          "min": "-100.0 %",
+          "name": "Left from Right",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 %",
+          "link": null,
+          "max": "100.0 %",
+          "min": "-100.0 %",
+          "name": "Right from Left",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "100.0 %",
+          "link": null,
+          "max": "100.0 %",
+          "min": "-100.0 %",
+          "name": "Right from Right",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "EQ",
+      "curve": true,
+      "file": null,
+      "id": "parametric-eq",
+      "latency": 0,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Parametric EQ",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+48.0 dB",
+          "min": "-96.0 dB",
+          "name": "Master Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "On",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Constant Q",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "High-Pass Enable",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "20.0 Hz",
+          "link": null,
+          "max": "22.05 kHz",
+          "min": "20.0 Hz",
+          "name": "High-Pass Frequency",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "6 dB/oct",
+            "12 dB/oct",
+            "18 dB/oct",
+            "24 dB/oct",
+            "30 dB/oct",
+            "36 dB/oct",
+            "42 dB/oct",
+            "48 dB/oct"
+          ],
+          "default": "24 dB/oct",
+          "link": null,
+          "max": "48 dB/oct",
+          "min": "6 dB/oct",
+          "name": "High-Pass Slope",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Low-Pass Enable",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "20.00 kHz",
+          "link": null,
+          "max": "22.05 kHz",
+          "min": "20.0 Hz",
+          "name": "Low-Pass Frequency",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "6 dB/oct",
+            "12 dB/oct",
+            "18 dB/oct",
+            "24 dB/oct",
+            "30 dB/oct",
+            "36 dB/oct",
+            "42 dB/oct",
+            "48 dB/oct"
+          ],
+          "default": "24 dB/oct",
+          "link": null,
+          "max": "48 dB/oct",
+          "min": "6 dB/oct",
+          "name": "Low-Pass Slope",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "On",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Low Shelf Enable",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "40.0 Hz",
+          "link": null,
+          "max": "22.05 kHz",
+          "min": "20.0 Hz",
+          "name": "Low Shelf Frequency",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+48.0 dB",
+          "min": "-48.0 dB",
+          "name": "Low Shelf Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Low Shelf Second Order",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "On",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "High Shelf Enable",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "18.00 kHz",
+          "link": null,
+          "max": "22.05 kHz",
+          "min": "20.0 Hz",
+          "name": "High Shelf Frequency",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+48.0 dB",
+          "min": "-48.0 dB",
+          "name": "High Shelf Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "High Shelf Second Order",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "On",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Band 1 Enable",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "50.0 Hz",
+          "link": null,
+          "max": "22.05 kHz",
+          "min": "20.0 Hz",
+          "name": "Band 1 Frequency",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+48.0 dB",
+          "min": "-48.0 dB",
+          "name": "Band 1 Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "2.00",
+          "link": null,
+          "max": "10000.00",
+          "min": "0.00",
+          "name": "Band 1 Q",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "25.0 Hz",
+          "link": null,
+          "max": "10000.0 Hz",
+          "min": "0.0 Hz",
+          "name": "Band 1 Width",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "On",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Band 2 Enable",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "200.0 Hz",
+          "link": null,
+          "max": "22.05 kHz",
+          "min": "20.0 Hz",
+          "name": "Band 2 Frequency",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+48.0 dB",
+          "min": "-48.0 dB",
+          "name": "Band 2 Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "2.00",
+          "link": null,
+          "max": "10000.00",
+          "min": "0.00",
+          "name": "Band 2 Q",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "100.0 Hz",
+          "link": null,
+          "max": "10000.0 Hz",
+          "min": "0.0 Hz",
+          "name": "Band 2 Width",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "On",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Band 3 Enable",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "800.0 Hz",
+          "link": null,
+          "max": "22.05 kHz",
+          "min": "20.0 Hz",
+          "name": "Band 3 Frequency",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+48.0 dB",
+          "min": "-48.0 dB",
+          "name": "Band 3 Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "2.00",
+          "link": null,
+          "max": "10000.00",
+          "min": "0.00",
+          "name": "Band 3 Q",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "400.0 Hz",
+          "link": null,
+          "max": "10000.0 Hz",
+          "min": "0.0 Hz",
+          "name": "Band 3 Width",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "On",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Band 4 Enable",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "3.20 kHz",
+          "link": null,
+          "max": "22.05 kHz",
+          "min": "20.0 Hz",
+          "name": "Band 4 Frequency",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+48.0 dB",
+          "min": "-48.0 dB",
+          "name": "Band 4 Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "2.00",
+          "link": null,
+          "max": "10000.00",
+          "min": "0.00",
+          "name": "Band 4 Q",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "1600.0 Hz",
+          "link": null,
+          "max": "10000.0 Hz",
+          "min": "0.0 Hz",
+          "name": "Band 4 Width",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "On",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Band 5 Enable",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "12.80 kHz",
+          "link": null,
+          "max": "22.05 kHz",
+          "min": "20.0 Hz",
+          "name": "Band 5 Frequency",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+48.0 dB",
+          "min": "-48.0 dB",
+          "name": "Band 5 Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "2.00",
+          "link": null,
+          "max": "10000.00",
+          "min": "0.00",
+          "name": "Band 5 Q",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "6400.0 Hz",
+          "link": null,
+          "max": "10000.0 Hz",
+          "min": "0.0 Hz",
+          "name": "Band 5 Width",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "EQ",
+      "curve": true,
+      "file": null,
+      "id": "graphic-eq-10",
+      "latency": 7193,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Graphic EQ (10 bands)",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+64.0 dB",
+          "min": "-64.0 dB",
+          "name": "Master Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "+48.0 dB",
+          "link": null,
+          "max": "+120.0 dB",
+          "min": "+1.5 dB",
+          "name": "Range",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "31 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "63 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "125 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "250 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "500 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "1 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "2 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "4 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "8 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "16 kHz",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "EQ",
+      "curve": true,
+      "file": null,
+      "id": "graphic-eq-20",
+      "latency": 7193,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Graphic EQ (20 bands)",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+64.0 dB",
+          "min": "-64.0 dB",
+          "name": "Master Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "+48.0 dB",
+          "link": null,
+          "max": "+120.0 dB",
+          "min": "+1.5 dB",
+          "name": "Range",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "31 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "44 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "63 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "88 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "125 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "177 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "250 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "354 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "500 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "707 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "1 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "1.4 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "2 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "2.8 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "4 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "5.7 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "8 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "11.3 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "16 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "22.6 kHz",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "EQ",
+      "curve": true,
+      "file": null,
+      "id": "graphic-eq-30",
+      "latency": 7193,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Graphic EQ (30 bands)",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+64.0 dB",
+          "min": "-64.0 dB",
+          "name": "Master Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "+48.0 dB",
+          "link": null,
+          "max": "+120.0 dB",
+          "min": "+1.5 dB",
+          "name": "Range",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "31 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "39 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "50 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "63 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "79 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "99 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "125 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "157 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "198 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "250 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "315 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "397 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "500 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "630 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "794 Hz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "1 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "1.26 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "1.59 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "2 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "2.52 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "3.17 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "4 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "5.04 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "6.35 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "8 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "10.1 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "12.7 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "16 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "20.2 kHz",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+70.0 dB",
+          "min": "-70.0 dB",
+          "name": "25.4 kHz",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "Dynamics",
+      "curve": false,
+      "file": null,
+      "id": "limiter",
+      "latency": 960,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Limiter",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "-0.1 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-100.0 dB",
+          "name": "Maximum Amplitude",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+50.0 dB",
+          "min": "-100.0 dB",
+          "name": "Input Boost",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "7.0 ms",
+          "link": null,
+          "max": "20.0 ms",
+          "min": "5.0 ms",
+          "name": "Look-Ahead Time",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "100.0 ms",
+          "link": null,
+          "max": "200.0 ms",
+          "min": "40.0 ms",
+          "name": "Release Time",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "On",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Link Channels",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": true
+    },
+    {
+      "category": "Dynamics",
+      "curve": false,
+      "file": null,
+      "id": "compressor",
+      "latency": 47,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Compressor",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+30.0 dB",
+          "min": "-30.0 dB",
+          "name": "Output Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-60.0 dB",
+          "name": "Threshold",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "1.0:1",
+          "link": null,
+          "max": "30.0:1",
+          "min": "1.0:1",
+          "name": "Ratio",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "10.0 ms",
+          "link": null,
+          "max": "500.0 ms",
+          "min": "0.0 ms",
+          "name": "Attack",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "100.0 ms",
+          "link": null,
+          "max": "5000.0 ms",
+          "min": "0.0 ms",
+          "name": "Release",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Auto Makeup Gain",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": true
+    },
+    {
+      "category": "Dynamics",
+      "curve": false,
+      "file": null,
+      "id": "de-esser",
+      "latency": 199,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "De-esser",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "-30.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-80.0 dB",
+          "name": "Threshold",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "5000 Hz",
+          "link": null,
+          "max": "12000 Hz",
+          "min": "500 Hz",
+          "name": "Center Frequency",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "3000 Hz",
+          "link": null,
+          "max": "7500 Hz",
+          "min": "100 Hz",
+          "name": "Bandwidth",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Broadband",
+            "Multiband"
+          ],
+          "default": "Broadband",
+          "link": null,
+          "max": "Multiband",
+          "min": "Broadband",
+          "name": "Mode",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Output Sibilance Only",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "100.0 ms",
+          "link": null,
+          "max": "500.0 ms",
+          "min": "0.1 ms",
+          "name": "Attack",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "100.0 ms",
+          "link": null,
+          "max": "500.0 ms",
+          "min": "10.0 ms",
+          "name": "Release",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "Dynamics",
+      "curve": false,
+      "file": null,
+      "id": "dynamics",
+      "latency": 144,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Dynamics",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "1.0 ms",
+          "link": null,
+          "max": "500.0 ms",
+          "min": "0.0 ms",
+          "name": "Level Detector Attack",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "100.0 ms",
+          "link": null,
+          "max": "2000.0 ms",
+          "min": "0.0 ms",
+          "name": "Level Detector Release",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "24.0 ms",
+          "link": null,
+          "max": "500.0 ms",
+          "min": "0.0 ms",
+          "name": "Gain Processor Attack",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "100.0 ms",
+          "link": null,
+          "max": "2000.0 ms",
+          "min": "0.0 ms",
+          "name": "Gain Processor Release",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "3.0 ms",
+          "link": null,
+          "max": "500.0 ms",
+          "min": "0.0 ms",
+          "name": "Lookahead Time",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+48.0 dB",
+          "min": "-48.0 dB",
+          "name": "Input Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+48.0 dB",
+          "min": "-48.0 dB",
+          "name": "Output Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+100.0 dB",
+          "min": "0.0 dB",
+          "name": "Make-Up Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Link Channels",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Peak",
+            "RMS"
+          ],
+          "default": "RMS",
+          "link": null,
+          "max": "RMS",
+          "min": "Peak",
+          "name": "Detector",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Envelope Only",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "3",
+          "link": null,
+          "max": "7",
+          "min": "2",
+          "name": "Points",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "-100.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-100.0 dB",
+          "name": "X1",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "-100.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-100.0 dB",
+          "name": "Y1",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "-20.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-100.0 dB",
+          "name": "X2",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "-20.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-100.0 dB",
+          "name": "Y2",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-100.0 dB",
+          "name": "X3",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-100.0 dB",
+          "name": "Y3",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-100.0 dB",
+          "name": "X4",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-100.0 dB",
+          "name": "Y4",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-100.0 dB",
+          "name": "X5",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-100.0 dB",
+          "name": "Y5",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-100.0 dB",
+          "name": "X6",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-100.0 dB",
+          "name": "Y6",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-100.0 dB",
+          "name": "X7",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-100.0 dB",
+          "name": "Y7",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": true
+    },
+    {
+      "category": "Dynamics",
+      "curve": false,
+      "file": null,
+      "id": "multiband-compressor",
+      "latency": 693,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Multiband Compressor",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+18.0 dB",
+          "min": "-18.0 dB",
+          "name": "Output Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "120 Hz",
+          "link": null,
+          "max": "20.00 kHz",
+          "min": "20 Hz",
+          "name": "Crossover 1",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "2.00 kHz",
+          "link": null,
+          "max": "20.00 kHz",
+          "min": "20 Hz",
+          "name": "Crossover 2",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "10.00 kHz",
+          "link": null,
+          "max": "20.00 kHz",
+          "min": "20 Hz",
+          "name": "Crossover 3",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-60.0 dB",
+          "name": "Band 1 Threshold",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "2.0:1",
+          "link": null,
+          "max": "30.0:1",
+          "min": "1.0:1",
+          "name": "Band 1 Ratio",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "10.0 ms",
+          "link": null,
+          "max": "500.0 ms",
+          "min": "0.0 ms",
+          "name": "Band 1 Attack",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "100.0 ms",
+          "link": null,
+          "max": "5000.0 ms",
+          "min": "0.0 ms",
+          "name": "Band 1 Release",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+18.0 dB",
+          "min": "-18.0 dB",
+          "name": "Band 1 Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Band 1 Bypass",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Band 1 Solo",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-60.0 dB",
+          "name": "Band 2 Threshold",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "2.0:1",
+          "link": null,
+          "max": "30.0:1",
+          "min": "1.0:1",
+          "name": "Band 2 Ratio",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "10.0 ms",
+          "link": null,
+          "max": "500.0 ms",
+          "min": "0.0 ms",
+          "name": "Band 2 Attack",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "100.0 ms",
+          "link": null,
+          "max": "5000.0 ms",
+          "min": "0.0 ms",
+          "name": "Band 2 Release",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+18.0 dB",
+          "min": "-18.0 dB",
+          "name": "Band 2 Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Band 2 Bypass",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Band 2 Solo",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-60.0 dB",
+          "name": "Band 3 Threshold",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "2.0:1",
+          "link": null,
+          "max": "30.0:1",
+          "min": "1.0:1",
+          "name": "Band 3 Ratio",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "10.0 ms",
+          "link": null,
+          "max": "500.0 ms",
+          "min": "0.0 ms",
+          "name": "Band 3 Attack",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "100.0 ms",
+          "link": null,
+          "max": "5000.0 ms",
+          "min": "0.0 ms",
+          "name": "Band 3 Release",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+18.0 dB",
+          "min": "-18.0 dB",
+          "name": "Band 3 Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Band 3 Bypass",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Band 3 Solo",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-60.0 dB",
+          "name": "Band 4 Threshold",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "2.0:1",
+          "link": null,
+          "max": "30.0:1",
+          "min": "1.0:1",
+          "name": "Band 4 Ratio",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "10.0 ms",
+          "link": null,
+          "max": "500.0 ms",
+          "min": "0.0 ms",
+          "name": "Band 4 Attack",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "100.0 ms",
+          "link": null,
+          "max": "5000.0 ms",
+          "min": "0.0 ms",
+          "name": "Band 4 Release",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+18.0 dB",
+          "min": "-18.0 dB",
+          "name": "Band 4 Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Band 4 Bypass",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Band 4 Solo",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Limiter Bypass",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-20.0 dB",
+          "name": "Limiter Threshold",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-5.0 dB",
+          "name": "Limiter Margin",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "4.0 ms",
+          "link": null,
+          "max": "5.0 ms",
+          "min": "1.0 ms",
+          "name": "Limiter Attack",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "500.0 ms",
+          "link": null,
+          "max": "500.0 ms",
+          "min": "10.0 ms",
+          "name": "Limiter Release",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Brickwall Limiter",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "Restoration",
+      "curve": false,
+      "file": null,
+      "id": "noise-reduction",
+      "latency": 4096,
+      "learns": true,
+      "makes_impulse": false,
+      "name": "Noise Reduction",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "100 %",
+          "link": null,
+          "max": "100 %",
+          "min": "0 %",
+          "name": "Noise Reduction",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "+40.0 dB",
+          "link": null,
+          "max": "+100.0 dB",
+          "min": "+1.0 dB",
+          "name": "Reduce By",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "65 %",
+          "link": null,
+          "max": "100 %",
+          "min": "0 %",
+          "name": "Spectral Decay Rate",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "1.00",
+          "link": null,
+          "max": "10.00",
+          "min": "0.00",
+          "name": "Smoothing",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "7",
+          "link": null,
+          "max": "20",
+          "min": "3",
+          "name": "Precision Factor",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+100.0 dB",
+          "min": "0.0 dB",
+          "name": "Transition Width",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "64",
+            "128",
+            "256",
+            "512",
+            "1024",
+            "2048",
+            "4096",
+            "8192",
+            "16384"
+          ],
+          "default": "4096",
+          "link": null,
+          "max": "16384",
+          "min": "64",
+          "name": "FFT Size",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "4000",
+          "link": null,
+          "max": "24000",
+          "min": "8",
+          "name": "Noise Print Snapshots",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Output Noise Only",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "Restoration",
+      "curve": false,
+      "file": null,
+      "id": "hiss-reduction",
+      "latency": 4096,
+      "learns": true,
+      "makes_impulse": false,
+      "name": "Hiss Reduction",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "+8.0 dB",
+          "link": null,
+          "max": "+40.0 dB",
+          "min": "-40.0 dB",
+          "name": "Noise Floor",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "+24.0 dB",
+          "link": null,
+          "max": "+100.0 dB",
+          "min": "+1.0 dB",
+          "name": "Reduce By",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "65 %",
+          "link": null,
+          "max": "100 %",
+          "min": "0 %",
+          "name": "Spectral Decay Rate",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "5",
+          "link": null,
+          "max": "20",
+          "min": "3",
+          "name": "Precision Factor",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "+7.0 dB",
+          "link": null,
+          "max": "+100.0 dB",
+          "min": "+0.5 dB",
+          "name": "Transition Width",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "64",
+            "128",
+            "256",
+            "512",
+            "1024",
+            "2048",
+            "4096",
+            "8192",
+            "16384"
+          ],
+          "default": "4096",
+          "link": null,
+          "max": "16384",
+          "min": "64",
+          "name": "FFT Size",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Output Hiss Only",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "Restoration",
+      "curve": false,
+      "file": null,
+      "id": "auto-noise-reduction",
+      "latency": 512,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Auto Noise Reduction",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "+20.0 dB",
+          "link": null,
+          "max": "+40.0 dB",
+          "min": "0.0 dB",
+          "name": "Reduce Noise By",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "30 %",
+          "link": null,
+          "max": "100 %",
+          "min": "0 %",
+          "name": "Noisiness",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "+2.0 dB",
+          "link": null,
+          "max": "+10.0 dB",
+          "min": "-10.0 dB",
+          "name": "Noise Floor",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "+2.5 dB",
+          "link": null,
+          "max": "+20.0 dB",
+          "min": "-20.0 dB",
+          "name": "Signal Threshold",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "140 ms/60dB",
+          "link": null,
+          "max": "750 ms/60dB",
+          "min": "20 ms/60dB",
+          "name": "Spectral Decay Rate",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "100 Hz",
+          "link": null,
+          "max": "500 Hz",
+          "min": "0 Hz",
+          "name": "Broadband Preservation",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "64",
+            "128",
+            "256",
+            "512",
+            "1024",
+            "2048",
+            "4096",
+            "8192",
+            "16384"
+          ],
+          "default": "512",
+          "link": null,
+          "max": "16384",
+          "min": "64",
+          "name": "FFT Size",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "Restoration",
+      "curve": true,
+      "file": null,
+      "id": "hum-remover",
+      "latency": 0,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Hum Remover",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "60.0 Hz",
+          "link": null,
+          "max": "20.00 kHz",
+          "min": "20.0 Hz",
+          "name": "Frequency",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "60.0 Q",
+          "link": null,
+          "max": "3000.0 Q",
+          "min": "30.0 Q",
+          "name": "Q",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "-60.0 dB",
+          "link": null,
+          "max": "+5.0 dB",
+          "min": "-80.0 dB",
+          "name": "Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "50 %",
+          "link": null,
+          "max": "100 %",
+          "min": "0 %",
+          "name": "Harmonic Slope",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Output Hum Only",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "8",
+          "link": null,
+          "max": "8",
+          "min": "1",
+          "name": "Number of Harmonics",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "Restoration",
+      "curve": false,
+      "file": null,
+      "id": "click-remover",
+      "latency": 4096,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Click Remover",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "29.3 %",
+          "link": null,
+          "max": "100.0 %",
+          "min": "0.0 %",
+          "name": "Threshold",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "15.2 %",
+          "link": null,
+          "max": "100.0 %",
+          "min": "0.0 %",
+          "name": "Complexity",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "Restoration",
+      "curve": false,
+      "file": null,
+      "id": "clip-repair",
+      "latency": 1480,
+      "learns": true,
+      "makes_impulse": false,
+      "name": "Clip Repair",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "-12.0 dB",
+          "link": null,
+          "max": "0.0 dB",
+          "min": "-12.0 dB",
+          "name": "Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Auto Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "10.0 %",
+          "link": null,
+          "max": "50.0 %",
+          "min": "0.0 %",
+          "name": "Tolerance",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "3 samples",
+          "link": null,
+          "max": "20 samples",
+          "min": "3 samples",
+          "name": "Min. Clip Size",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Cubic",
+            "FFT"
+          ],
+          "default": "Cubic",
+          "link": null,
+          "max": "FFT",
+          "min": "Cubic",
+          "name": "FFT Interpolation",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "8",
+            "16",
+            "32",
+            "64",
+            "128",
+            "256"
+          ],
+          "default": "32",
+          "link": null,
+          "max": "256",
+          "min": "8",
+          "name": "FFT Size",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "Restoration",
+      "curve": false,
+      "file": null,
+      "id": "click-pop-repair",
+      "latency": 22016,
+      "learns": true,
+      "makes_impulse": false,
+      "name": "Click & Pop Repair",
+      "params": [
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "30.0",
+          "link": null,
+          "max": "150.0",
+          "min": "1.0",
+          "name": "Max Threshold",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "12.0",
+          "link": null,
+          "max": "150.0",
+          "min": "1.0",
+          "name": "Avg Threshold",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "15.0",
+          "link": null,
+          "max": "150.0",
+          "min": "1.0",
+          "name": "Min Threshold",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "-12.0 dB",
+          "link": null,
+          "max": "+10.0 dB",
+          "min": "-120.0 dB",
+          "name": "Max Level",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "-50.0 dB",
+          "link": null,
+          "max": "+10.0 dB",
+          "min": "-120.0 dB",
+          "name": "Avg Level",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "-24.0 dB",
+          "link": null,
+          "max": "+10.0 dB",
+          "min": "-120.0 dB",
+          "name": "Min Level",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "40.0",
+          "link": null,
+          "max": "150.0",
+          "min": "1.0",
+          "name": "Max Rejection Threshold",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "18.0",
+          "link": null,
+          "max": "150.0",
+          "min": "1.0",
+          "name": "Avg Rejection Threshold",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "28.0",
+          "link": null,
+          "max": "150.0",
+          "min": "1.0",
+          "name": "Min Rejection Threshold",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "32 samples",
+          "link": null,
+          "max": "4096 samples",
+          "min": "8 samples",
+          "name": "FFT Size",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "12 samples",
+          "link": null,
+          "max": "300 samples",
+          "min": "0 samples",
+          "name": "Pop Size",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "10 samples",
+          "link": null,
+          "max": "1000 samples",
+          "min": "0 samples",
+          "name": "Run Size",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "8 passes",
+          "link": null,
+          "max": "32 passes",
+          "min": "1 passes",
+          "name": "Number of Times",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "60.0",
+          "link": null,
+          "max": "200.0",
+          "min": "30.0",
+          "name": "Big Pop Level",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "14.0",
+          "link": null,
+          "max": "50.0",
+          "min": "4.0",
+          "name": "Sensitivity",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "20.0",
+          "link": null,
+          "max": "100.0",
+          "min": "2.0",
+          "name": "Discrimination",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "On",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Second Level Verification",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "On",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Multiple Pass",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "On",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Auto FFT",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "On",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Detect Big Pops",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Ignore Light Crackle",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Pulse Train Verify",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Link Channels",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": [
+        "Scan For Threshold Levels",
+        "Scan For All Levels"
+      ],
+      "transfer": false
+    },
+    {
+      "category": "Reverb",
+      "curve": false,
+      "file": null,
+      "id": "room-reverb",
+      "latency": 0,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Room Reverb",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "880 Hz",
+          "link": null,
+          "max": "4.00 kHz",
+          "min": "20 Hz",
+          "name": "Low Frequency Cut",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "13.80 kHz",
+          "link": null,
+          "max": "20.00 kHz",
+          "min": "20 Hz",
+          "name": "High Frequency Cut",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "70",
+          "link": null,
+          "max": "100",
+          "min": "1",
+          "name": "Room Size",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "25",
+          "link": null,
+          "max": "100",
+          "min": "0",
+          "name": "Width",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "50 %",
+          "link": null,
+          "max": "100 %",
+          "min": "0 %",
+          "name": "Diffusion",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "50 %",
+          "link": null,
+          "max": "100 %",
+          "min": "0 %",
+          "name": "Damping",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "2500 ms",
+          "link": null,
+          "max": "10000 ms",
+          "min": "200 ms",
+          "name": "Decay",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "52 %",
+          "link": null,
+          "max": "100 %",
+          "min": "0 %",
+          "name": "Early Reflections",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "50",
+          "link": null,
+          "max": "100",
+          "min": "0",
+          "name": "Early Reflections Delay",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "75 %",
+          "link": null,
+          "max": "100 %",
+          "min": "0 %",
+          "name": "Dry",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "25 %",
+          "link": null,
+          "max": "100 %",
+          "min": "0 %",
+          "name": "Wet",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "Reverb",
+      "curve": false,
+      "file": "impulse",
+      "id": "convolution-reverb",
+      "latency": 256,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Convolution Reverb",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "100 %",
+          "link": null,
+          "max": "100 %",
+          "min": "0 %",
+          "name": "Mix",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "100 %",
+          "link": null,
+          "max": "100 %",
+          "min": "10 %",
+          "name": "Room Size",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "70 %",
+          "link": null,
+          "max": "100 %",
+          "min": "10 %",
+          "name": "Damping LF",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "73 %",
+          "link": null,
+          "max": "100 %",
+          "min": "10 %",
+          "name": "Damping HF",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "0.0 ms",
+          "link": null,
+          "max": "100.0 ms",
+          "min": "0.0 ms",
+          "name": "Pre-Delay",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "100 %",
+          "link": null,
+          "max": "300 %",
+          "min": "0 %",
+          "name": "Width",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "-3.0 dB",
+          "link": null,
+          "max": "+18.0 dB",
+          "min": "-18.0 dB",
+          "name": "Gain",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "Reverb",
+      "curve": false,
+      "file": null,
+      "id": "space-reverb",
+      "latency": 256,
+      "learns": false,
+      "makes_impulse": true,
+      "name": "Space Reverb",
+      "params": [
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "2636 ms",
+          "link": null,
+          "max": "6000 ms",
+          "min": "20 ms",
+          "name": "Reverberation Decay Time",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "106.0 ms",
+          "link": null,
+          "max": "200.0 ms",
+          "min": "0.0 ms",
+          "name": "Reverberation Pre-Delay Time",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "823 ms",
+          "link": null,
+          "max": "1000 ms",
+          "min": "10 ms",
+          "name": "Diffusion",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "16.0",
+          "link": null,
+          "max": "200.0",
+          "min": "0.0",
+          "name": "Perception",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "73.1 %",
+          "link": null,
+          "max": "200.0 %",
+          "min": "0.0 %",
+          "name": "Output Level (Dry)",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "27.8 %",
+          "link": null,
+          "max": "200.0 %",
+          "min": "0.0 %",
+          "name": "Output Level (Early Reflections)",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "31.5 %",
+          "link": null,
+          "max": "500.0 %",
+          "min": "0.0 %",
+          "name": "Output Level (Reverberation)",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "8879.6 m³",
+          "link": null,
+          "max": "60000.0 m³",
+          "min": "20.0 m³",
+          "name": "Room Size",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "0.736 width/depth",
+          "link": null,
+          "max": "20.000 width/depth",
+          "min": "0.050 width/depth",
+          "name": "Dimension",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "-3.4 %",
+          "link": null,
+          "max": "100.0 %",
+          "min": "-100.0 %",
+          "name": "Left/Right Location",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "50.0 Hz",
+          "link": null,
+          "max": "96.00 kHz",
+          "min": "20.0 Hz",
+          "name": "Early Reflections High Pass Cutoff",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "-15.71 dB",
+          "link": null,
+          "max": "+20.00 dB",
+          "min": "-30.00 dB",
+          "name": "Low Shelf Gain",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "-4.29 dB",
+          "link": null,
+          "max": "+20.00 dB",
+          "min": "-30.00 dB",
+          "name": "Mid Coloration Gain",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "-23.57 dB",
+          "link": null,
+          "max": "+20.00 dB",
+          "min": "-30.00 dB",
+          "name": "High Shelf Gain",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "52.2 Hz",
+          "link": null,
+          "max": "96.00 kHz",
+          "min": "20.0 Hz",
+          "name": "Low Shelf Frequency",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "16.95 kHz",
+          "link": null,
+          "max": "96.00 kHz",
+          "min": "20.0 Hz",
+          "name": "High Shelf Frequency",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "3.39 kHz",
+          "link": null,
+          "max": "96.00 kHz",
+          "min": "20.0 Hz",
+          "name": "Mid Coloration Center Frequency",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "1.00",
+          "link": null,
+          "max": "20.00",
+          "min": "0.10",
+          "name": "Mid Coloration Q",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "200 ms",
+          "link": null,
+          "max": "500 ms",
+          "min": "0 ms",
+          "name": "Coloration Decay",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "On",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Sum Inputs",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "On",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Include Direct",
+          "output": false,
+          "shapes_file": true
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Set Reverb Based on Room Size",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "100 %",
+          "link": null,
+          "max": "100 %",
+          "min": "0 %",
+          "name": "Calculating Impulse",
+          "output": true,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Is Processing",
+          "output": true,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "2",
+          "link": null,
+          "max": "32",
+          "min": "1",
+          "name": "Number of Channels",
+          "output": true,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "21.82 m",
+          "link": null,
+          "max": "1000.00 m",
+          "min": "0.00 m",
+          "name": "Room Width",
+          "output": true,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "29.65 m",
+          "link": null,
+          "max": "1000.00 m",
+          "min": "0.00 m",
+          "name": "Room Height",
+          "output": true,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "13.72 m",
+          "link": null,
+          "max": "1000.00 m",
+          "min": "0.00 m",
+          "name": "Room Depth",
+          "output": true,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "44100 Hz",
+          "link": null,
+          "max": "192000 Hz",
+          "min": "0 Hz",
+          "name": "Original Sample Rate",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "Delay",
+      "curve": false,
+      "file": null,
+      "id": "delay",
+      "latency": 0,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Delay",
+      "params": [
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "120.0 ms",
+          "link": null,
+          "max": "500.0 ms",
+          "min": "-500.0 ms",
+          "name": "Left Channel Delay Time",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Invert Left Channel",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "75 %",
+          "link": null,
+          "max": "100 %",
+          "min": "0 %",
+          "name": "Left Channel Mix",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "180.0 ms",
+          "link": null,
+          "max": "500.0 ms",
+          "min": "-500.0 ms",
+          "name": "Right Channel Delay Time",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Invert Right Channel",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "65 %",
+          "link": null,
+          "max": "100 %",
+          "min": "0 %",
+          "name": "Right Channel Mix",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Milliseconds",
+            "Beats",
+            "Samples"
+          ],
+          "default": "Milliseconds",
+          "link": null,
+          "max": "Samples",
+          "min": "Milliseconds",
+          "name": "Delay Time Units",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "Delay",
+      "curve": true,
+      "file": null,
+      "id": "echo",
+      "latency": 0,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Echo",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "348.8 ms",
+          "link": "Lock Left & Right Channels",
+          "max": "2000.0 ms",
+          "min": "0.0 ms",
+          "name": "Delay Time (Left Channel)",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "232.6 ms",
+          "link": "Lock Left & Right Channels",
+          "max": "2000.0 ms",
+          "min": "0.0 ms",
+          "name": "Delay Time (Right Channel)",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "64.0 %",
+          "link": "Lock Left & Right Channels",
+          "max": "100.0 %",
+          "min": "0.1 %",
+          "name": "Feedback (Left Channel)",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "64.0 %",
+          "link": "Lock Left & Right Channels",
+          "max": "100.0 %",
+          "min": "0.1 %",
+          "name": "Feedback (Right Channel)",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "85.0 %",
+          "link": "Lock Left & Right Channels",
+          "max": "100.0 %",
+          "min": "0.1 %",
+          "name": "Echo Level (Left Channel)",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "85.0 %",
+          "link": "Lock Left & Right Channels",
+          "max": "100.0 %",
+          "min": "0.1 %",
+          "name": "Echo Level (Right Channel)",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "-9.8 dB",
+          "link": null,
+          "max": "+15.0 dB",
+          "min": "-15.0 dB",
+          "name": "EQ Band 1",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "-9.9 dB",
+          "link": null,
+          "max": "+15.0 dB",
+          "min": "-15.0 dB",
+          "name": "EQ Band 2",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "-9.6 dB",
+          "link": null,
+          "max": "+15.0 dB",
+          "min": "-15.0 dB",
+          "name": "EQ Band 3",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "-9.5 dB",
+          "link": null,
+          "max": "+15.0 dB",
+          "min": "-15.0 dB",
+          "name": "EQ Band 4",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "-2.4 dB",
+          "link": null,
+          "max": "+15.0 dB",
+          "min": "-15.0 dB",
+          "name": "EQ Band 5",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "-7.0 dB",
+          "link": null,
+          "max": "+15.0 dB",
+          "min": "-15.0 dB",
+          "name": "EQ Band 6",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "-1.1 dB",
+          "link": null,
+          "max": "+15.0 dB",
+          "min": "-15.0 dB",
+          "name": "EQ Band 7",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+15.0 dB",
+          "min": "-15.0 dB",
+          "name": "EQ Band 8",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Lock Left & Right Channels",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Echo Bounce",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Milliseconds",
+            "Beats",
+            "Samples"
+          ],
+          "default": "Milliseconds",
+          "link": null,
+          "max": "Samples",
+          "min": "Milliseconds",
+          "name": "Delay Time Units",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "Delay",
+      "curve": false,
+      "file": null,
+      "id": "vintage-delay",
+      "latency": 0,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Vintage Delay",
+      "params": [
+        {
+          "automatable": true,
+          "choices": [
+            "Analog",
+            "Tape/Tube",
+            "Tape"
+          ],
+          "default": "Analog",
+          "link": null,
+          "max": "Tape",
+          "min": "Analog",
+          "name": "Mode",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "70.0 %",
+          "link": null,
+          "max": "100.0 %",
+          "min": "0.0 %",
+          "name": "Dry Out",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "30.0 %",
+          "link": null,
+          "max": "100.0 %",
+          "min": "0.0 %",
+          "name": "Wet Out",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "200.0 ms",
+          "link": null,
+          "max": "8000.0 ms",
+          "min": "10.0 ms",
+          "name": "Delay",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "20.0 %",
+          "link": null,
+          "max": "200.0 %",
+          "min": "0.0 %",
+          "name": "Feedback",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "25.0 %",
+          "link": null,
+          "max": "100.0 %",
+          "min": "0.0 %",
+          "name": "Trash",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "100.0 %",
+          "link": null,
+          "max": "200.0 %",
+          "min": "0.0 %",
+          "name": "Spread",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Tempo Sync",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "1/4",
+          "link": null,
+          "max": "8 bars",
+          "min": "1/64 dotted",
+          "name": "Sync Note",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "Modulation",
+      "curve": false,
+      "file": null,
+      "id": "chorus",
+      "latency": 0,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Chorus",
+      "params": [
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "31.40 ms",
+          "link": null,
+          "max": "50.00 ms",
+          "min": "0.10 ms",
+          "name": "Delay Time",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "0.10 Hz",
+          "link": null,
+          "max": "12.00 Hz",
+          "min": "0.10 Hz",
+          "name": "Delay Rate",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "0.0 %",
+          "link": null,
+          "max": "50.0 %",
+          "min": "0.0 %",
+          "name": "Feedback",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "70.0 %",
+          "link": null,
+          "max": "200.0 %",
+          "min": "0.0 %",
+          "name": "Dry Output Level",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "30.0 %",
+          "link": null,
+          "max": "200.0 %",
+          "min": "0.0 %",
+          "name": "Wet Output Level",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "30.0 ms",
+          "link": null,
+          "max": "200.0 ms",
+          "min": "0.0 ms",
+          "name": "Spread",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "100.0 %",
+          "link": null,
+          "max": "100.0 %",
+          "min": "0.0 %",
+          "name": "Stereo Field",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "0.10 Hz",
+          "link": null,
+          "max": "30.00 Hz",
+          "min": "0.10 Hz",
+          "name": "Modulation Rate",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+15.0 dB",
+          "min": "0.0 dB",
+          "name": "Modulation Depth",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": null,
+          "default": "2",
+          "link": null,
+          "max": "16",
+          "min": "1",
+          "name": "Voices",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Average Left & Right Channel Input",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Add Binaural Cues",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": false,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Highest Quality",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "Modulation",
+      "curve": false,
+      "file": null,
+      "id": "flanger",
+      "latency": 5082,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Flanger",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.00 ms",
+          "link": null,
+          "max": "20.00 ms",
+          "min": "0.00 ms",
+          "name": "Initial Delay Time",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "4.16 ms",
+          "link": null,
+          "max": "20.00 ms",
+          "min": "0.00 ms",
+          "name": "Final Delay Time",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "28 °",
+          "link": null,
+          "max": "360 °",
+          "min": "0 °",
+          "name": "Stereo Phasing",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.232 Hz",
+          "link": null,
+          "max": "60.000 Hz",
+          "min": "0.001 Hz",
+          "name": "Modulation Rate",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "40.0 %",
+          "link": null,
+          "max": "100.0 %",
+          "min": "0.0 %",
+          "name": "Mix",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "60.0 %",
+          "link": null,
+          "max": "100.0 %",
+          "min": "0.0 %",
+          "name": "Feedback",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Inverted Mode",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Special Effects Mode",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "On",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Sinusoidal Mode",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    },
+    {
+      "category": "Modulation",
+      "curve": false,
+      "file": null,
+      "id": "phaser",
+      "latency": 0,
+      "learns": false,
+      "makes_impulse": false,
+      "name": "Phaser",
+      "params": [
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "3",
+          "link": null,
+          "max": "6",
+          "min": "1",
+          "name": "Stages",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "95.0 %",
+          "link": null,
+          "max": "100.0 %",
+          "min": "0.0 %",
+          "name": "Intensity",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "70.0 %",
+          "link": null,
+          "max": "100.0 %",
+          "min": "0.0 %",
+          "name": "Depth",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.25 Hz",
+          "link": null,
+          "max": "5.00 Hz",
+          "min": "0.00 Hz",
+          "name": "Mod Rate",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0 °",
+          "link": null,
+          "max": "180 °",
+          "min": "-180 °",
+          "name": "Phase Diff",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "14000 Hz",
+          "link": null,
+          "max": "20000 Hz",
+          "min": "20 Hz",
+          "name": "Upper Freq",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 %",
+          "link": null,
+          "max": "90.0 %",
+          "min": "-90.0 %",
+          "name": "Feedback",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "50.0 %",
+          "link": null,
+          "max": "100.0 %",
+          "min": "0.0 %",
+          "name": "Mix",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": null,
+          "default": "0.0 dB",
+          "link": null,
+          "max": "+6.0 dB",
+          "min": "-18.0 dB",
+          "name": "Output Gain",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Triangle",
+            "Sine"
+          ],
+          "default": "Triangle",
+          "link": null,
+          "max": "Sine",
+          "min": "Triangle",
+          "name": "Shape",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Logarithmic",
+            "Linear"
+          ],
+          "default": "Linear",
+          "link": null,
+          "max": "Linear",
+          "min": "Logarithmic",
+          "name": "Step",
+          "output": false,
+          "shapes_file": false
+        },
+        {
+          "automatable": true,
+          "choices": [
+            "Off",
+            "On"
+          ],
+          "default": "Off",
+          "link": null,
+          "max": "On",
+          "min": "Off",
+          "name": "Sync Channels",
+          "output": false,
+          "shapes_file": false
+        }
+      ],
+      "scans": null,
+      "transfer": false
+    }
+  ],
+  "rate": 48000.0
+}

@@ -1,0 +1,521 @@
+# Examples of the project actions (daw-core's api/actions/project.rs). Each runs on a fresh
+# copy of the example project; how to write them: docs/manual/README.md, "Writing the MCP
+# manual".
+
+[[example]]
+action = "get_project"
+title = "Read the example project"
+notes = """
+The first call an agent makes: every track, clip, insert and send with its id. This is the
+example project the other examples start from, whole.
+"""
+result = '''
+{
+  "chase_notes": true,
+  "folder": "<project>",
+  "grid": "1/8",
+  "length": 192000,
+  "loudness_target": -14.0,
+  "markers": [
+    {
+      "bar": 2,
+      "beat": 1,
+      "id": 20,
+      "name": "Chorus",
+      "number": 1,
+      "position": 96000,
+      "tick": 3840
+    }
+  ],
+  "master": {
+    "automation": [],
+    "automation_mode": "read",
+    "height": 84.0,
+    "inserts": [],
+    "mixer": {"gain_db": 0.0, "mute": false, "pan": 0.0, "solo": false},
+    "output_channel": 0,
+    "show_automation": false
+  },
+  "midi_record": {"quantize": null, "replace": false},
+  "name": "Example",
+  "path": "<project>\\Example.oxide",
+  "sample_rate": 48000,
+  "tempo": 120.0,
+  "time_signature": [4, 4],
+  "tracks": [
+    {
+      "arm": false,
+      "automation": [],
+      "automation_mode": "read",
+      "clips": [],
+      "color": [224, 164, 74],
+      "height": 44.0,
+      "id": 1,
+      "input": "None",
+      "inserts": [],
+      "kind": "Folder",
+      "midi_clips": [],
+      "mixer": {"gain_db": 0.0, "mute": false, "pan": 0.0, "solo": false},
+      "monitor": "Auto",
+      "name": "Guitars",
+      "output": "Parent",
+      "parent": null,
+      "sends": []
+    },
+    {
+      "arm": false,
+      "automation": [],
+      "automation_mode": "read",
+      "clips": [
+        {
+          "active": 0,
+          "fade_in": {"length": 0, "shape": "equal_power"},
+          "fade_out": {"length": 0, "shape": "equal_power"},
+          "file": "<project>\\Imported\\guitar-l.wav",
+          "gain_db": 0.0,
+          "id": 7,
+          "length": 96000,
+          "name": "guitar-l",
+          "offset": 0,
+          "pitch": 0.0,
+          "rendering": false,
+          "start": 0,
+          "stretch": 1.0,
+          "takes": [
+            {"file": "<project>\\Imported\\guitar-l.wav", "name": "guitar-l", "offset": 0}
+          ],
+          "transients": true
+        }
+      ],
+      "color": [200, 200, 80],
+      "height": 64.0,
+      "id": 2,
+      "input": {
+        "Audio": {"channel": 0, "stereo": false}
+      },
+      "inserts": [
+        {"bypass": false, "id": 17, "latency": 47, "loaded": true, "name": "Compressor"}
+      ],
+      "kind": "Audio",
+      "midi_clips": [],
+      "mixer": {"gain_db": 0.0, "mute": false, "pan": -0.5, "solo": false},
+      "monitor": "Auto",
+      "name": "Guitar L",
+      "output": "Parent",
+      "parent": 1,
+      "sends": []
+    },
+    {
+      "arm": false,
+      "automation": [],
+      "automation_mode": "read",
+      "clips": [
+        {
+          "active": 0,
+          "fade_in": {"length": 0, "shape": "equal_power"},
+          "fade_out": {"length": 0, "shape": "equal_power"},
+          "file": "<project>\\Imported\\guitar-r.wav",
+          "gain_db": 0.0,
+          "id": 8,
+          "length": 96000,
+          "name": "guitar-r",
+          "offset": 0,
+          "pitch": 0.0,
+          "rendering": false,
+          "start": 0,
+          "stretch": 1.0,
+          "takes": [
+            {"file": "<project>\\Imported\\guitar-r.wav", "name": "guitar-r", "offset": 0}
+          ],
+          "transients": true
+        }
+      ],
+      "color": [108, 192, 106],
+      "height": 64.0,
+      "id": 3,
+      "input": {
+        "Audio": {"channel": 0, "stereo": false}
+      },
+      "inserts": [],
+      "kind": "Audio",
+      "midi_clips": [],
+      "mixer": {"gain_db": 0.0, "mute": false, "pan": 0.5, "solo": false},
+      "monitor": "Auto",
+      "name": "Guitar R",
+      "output": "Parent",
+      "parent": 1,
+      "sends": []
+    },
+    {
+      "arm": true,
+      "automation": [],
+      "automation_mode": "read",
+      "clips": [],
+      "color": [74, 184, 200],
+      "height": 64.0,
+      "id": 4,
+      "input": {
+        "Midi": {"channel": null, "port": null}
+      },
+      "inserts": [],
+      "kind": "Instrument",
+      "midi_clips": [
+        {"controllers": 0, "id": 10, "length": 7680, "name": "Chords", "notes": 6, "start": 0}
+      ],
+      "mixer": {"gain_db": 0.0, "mute": false, "pan": 0.0, "solo": false},
+      "monitor": "Auto",
+      "name": "Keys",
+      "output": "Parent",
+      "parent": null,
+      "sends": []
+    },
+    {
+      "arm": false,
+      "automation": [],
+      "automation_mode": "read",
+      "clips": [
+        {
+          "active": 0,
+          "fade_in": {"length": 0, "shape": "equal_power"},
+          "fade_out": {"length": 0, "shape": "equal_power"},
+          "file": "<project>\\Imported\\vocal.wav",
+          "gain_db": 0.0,
+          "id": 9,
+          "length": 96000,
+          "name": "vocal",
+          "offset": 0,
+          "pitch": 0.0,
+          "rendering": false,
+          "start": 96000,
+          "stretch": 1.0,
+          "takes": [
+            {"file": "<project>\\Imported\\vocal.wav", "name": "vocal", "offset": 0}
+          ],
+          "transients": true
+        }
+      ],
+      "color": [90, 134, 224],
+      "height": 64.0,
+      "id": 5,
+      "input": {
+        "Audio": {"channel": 0, "stereo": false}
+      },
+      "inserts": [],
+      "kind": "Audio",
+      "midi_clips": [],
+      "mixer": {"gain_db": -3.0, "mute": false, "pan": 0.0, "solo": false},
+      "monitor": "Auto",
+      "name": "Vocal",
+      "output": "Parent",
+      "parent": null,
+      "sends": [
+        {
+          "gain_db": -6.0,
+          "mute": false,
+          "pre_fader": false,
+          "send": 19,
+          "target": 6,
+          "track": 5
+        }
+      ]
+    },
+    {
+      "arm": false,
+      "automation": [],
+      "automation_mode": "read",
+      "clips": [],
+      "color": [154, 108, 224],
+      "height": 44.0,
+      "id": 6,
+      "input": "None",
+      "inserts": [
+        {"bypass": false, "id": 18, "latency": 0, "loaded": true, "name": "Room Reverb"}
+      ],
+      "kind": "Bus",
+      "midi_clips": [],
+      "mixer": {"gain_db": 0.0, "mute": false, "pan": 0.0, "solo": false},
+      "monitor": "Auto",
+      "name": "Reverb",
+      "output": "Parent",
+      "parent": null,
+      "sends": []
+    }
+  ]
+}
+'''
+
+[[example]]
+action = "undo"
+title = "Take back a tempo change"
+notes = "The setup changes the tempo, so there is something to undo. Every edit is one undo step, named after its action."
+setup = [
+    { action = "set_tempo", input = '{"bpm": 90}' },
+]
+result = '{"bytes": "*", "done": "Set tempo", "redo": ["Set tempo"], "undo": []}'
+
+[[example]]
+action = "new_project"
+title = "Start a project in a folder of its own"
+notes = '''
+Closes the open project (save it first: unsaved changes are lost) and makes `folder/<name>/` holding `Demo.oxide` and the folders its files go in. The answer is the project file's path. Without `name` and `folder` a new project is unsaved and can't record or import yet, so agents should always give both.
+'''
+input = '{"name": "Demo", "folder": "<project>/Temp"}'
+result = '{"path": "<project>/Temp\\Demo\\Demo.oxide"}'
+
+[[example]]
+action = "new_project"
+title = "Refuse a folder that already has something in it"
+notes = '''
+A project's folder is made fresh: if `folder/<name>/` exists and isn't empty the call is refused and the open project stays open.
+'''
+input = '{"name": "Imported", "folder": "<project>"}'
+error = "<project>\\Imported already exists and isn't empty: choose another name or folder"
+
+[[example]]
+action = "open_project"
+title = "Open a project file"
+notes = '''
+Replaces the open project; the setup's tempo change was never saved, so it is lost. In the app the call answers once the project is in, behind the loading bar (`get_busy` reports the stages meanwhile). The answer's `newer_backup` is set when a backup is newer than the file (Oxide was closed without saving): open it with `open_backup`.
+'''
+setup = [
+    { action = "set_tempo", input = '{"bpm": 90}' },
+]
+input = '{"path": "<project>/Example.oxide"}'
+result = '{"newer_backup": null, "path": "<project>/Example.oxide"}'
+
+[[example]]
+action = "save_backup"
+title = "Back the project up now"
+notes = '''
+Autosave does the same every few minutes while there are unsaved changes. The project file is left alone; the answer is the backup's path, named after the time it was made.
+'''
+setup = [
+    { action = "set_tempo", input = '{"bpm": 100}' },
+]
+result = '{"path": "*"}'
+
+[[example]]
+action = "list_backups"
+title = "See the backups, newest first"
+notes = '''
+`modified` is seconds since 1970, `age_seconds` how old the backup is and `size` its bytes. The file name carries the time it was made, so these differ on every run and the example shows them as `"*"`.
+'''
+setup = [
+    { action = "save_backup" },
+]
+result = '''
+{
+  "backups": [
+    {"age_seconds": "*", "modified": "*", "path": "*", "size": "*"}
+  ]
+}
+'''
+
+[[example]]
+action = "open_backup"
+title = "A backup that isn't there"
+notes = '''
+`open_backup` takes a path from `list_backups` (or `open_project`'s `newer_backup`). The backup becomes the open project, unsaved until `save_project`.
+'''
+input = '{"path": "<project>/Backups/missing.oxide"}'
+error = 'reading <project>/Backups/missing.oxide: The system cannot find the file specified. (os error 2)'
+
+[[example]]
+action = "get_busy"
+title = "Ask what Oxide is busy with"
+notes = '''
+Everything is null or false when nothing runs. While a project opens (or saves) it reports the stage and how far it has come, and it is one of the few calls answered at once during an open.
+'''
+result = '{"exporting": false, "loading": null, "save": null, "saving": null}'
+
+[[example]]
+action = "cancel_open"
+title = "Cancel an open that isn't happening"
+notes = '''
+While a project opens, every call waits except `get_busy`, `cancel_open` and `screenshot`: so `cancel_open` is for another call to make while an open is running (or the app's Cancel button). With nothing opening the call is refused.
+'''
+error = 'no project is being opened'
+
+[[example]]
+action = "get_unsaved_changes"
+title = "Would closing lose anything?"
+notes = '''
+The same check as the app's "Save the changes?" question. `project` is true because the tempo differs from the saved file; `files` lists the Waveform view's files with unsaved edits.
+'''
+setup = [
+    { action = "set_tempo", input = '{"bpm": 100}' },
+]
+result = '{"files": [], "project": true}'
+
+[[example]]
+action = "save_project"
+title = "Save the project"
+notes = '''
+Without `path` it writes the file the project was opened from. The answer is the path.
+'''
+setup = [
+    { action = "set_tempo", input = '{"bpm": 100}' },
+]
+result = '{"path": "<project>\\Example.oxide"}'
+
+[[example]]
+action = "save_project"
+title = "Save a copy in another folder"
+notes = '''
+Saved into another folder, the project's recordings, imported copies and renders are copied along, so the new folder is complete. The new file is then the project's file: later saves go there.
+'''
+input = '{"path": "<project>/Temp/Copy/Copy.oxide"}'
+result = '{"path": "<project>/Temp/Copy/Copy.oxide"}'
+
+[[example]]
+action = "redo"
+title = "Bring back what undo took away"
+notes = '''
+Any new edit after an undo clears what could be redone.
+'''
+setup = [
+    { action = "set_tempo", input = '{"bpm": 90}' },
+    { action = "undo" },
+]
+result = '{"bytes": "*", "done": "Set tempo", "redo": [], "undo": ["Set tempo"]}'
+
+[[example]]
+action = "get_history"
+title = "See what undo and redo would do"
+notes = '''
+Most recent first. After the undo, "Add track" can be redone and "Set tempo" undone.
+'''
+setup = [
+    { action = "set_tempo", input = '{"bpm": 90}' },
+    { action = "add_track", input = '{"kind": "audio", "name": "Bass"}' },
+    { action = "undo" },
+]
+result = '{"bytes": "*", "redo": ["Add track"], "undo": ["Set tempo"]}'
+
+[[example]]
+action = "set_tempo"
+title = "Slow the song to 90 BPM"
+notes = '''
+Quarter notes per minute, 20 to 300. Audio clips stay where they are in time unless they follow the tempo (`set_clip`'s `source_tempo`); MIDI clips stay on their beats.
+'''
+input = '{"bpm": 90}'
+result = '{"changes": [], "tempo": 90.0, "time_signature": [4, 4]}'
+
+[[example]]
+action = "set_tempo"
+title = "A tempo out of range"
+input = '{"bpm": 400}'
+error = 'tempo 400 is outside 20..300 BPM'
+
+[[example]]
+action = "set_time_signature"
+title = "Change to 3/4"
+notes = '''
+The opening time signature, which holds until a change added by `add_tempo_change`.
+'''
+input = '{"numerator": 3, "denominator": 4}'
+result = '{"changes": [], "tempo": 120.0, "time_signature": [3, 4]}'
+
+[[example]]
+action = "set_grid"
+title = "Use sixteenth notes"
+notes = '''
+"1/4" to "1/64" of a whole note, each with a `t` for triplets ("1/8t"), or "auto", where the division follows each view's zoom.
+'''
+input = '{"grid": "1/16"}'
+result = '{"grid": "1/16"}'
+
+[[example]]
+action = "add_tempo_change"
+title = "Speed up at the chorus"
+notes = '''
+From bar 2 on (bar 1 is the opening: `set_tempo`). A change sits in bars and beats, so it stays on its bar if an earlier tempo changes; changes are instant.
+'''
+input = '{"bar": 2, "bpm": 140}'
+result = '''
+{
+  "changes": [
+    {
+      "bar": 2,
+      "beat": 1,
+      "position": 96000,
+      "tempo": 140.0,
+      "tick": 3840,
+      "time_signature": null
+    }
+  ],
+  "tempo": 120.0,
+  "time_signature": [4, 4]
+}
+'''
+
+[[example]]
+action = "add_tempo_change"
+title = "Switch to 7/8 on a bar line"
+notes = '''
+A time signature changes only on beat 1.
+'''
+input = '{"bar": 3, "numerator": 7, "denominator": 8}'
+result = '''
+{
+  "changes": [
+    {
+      "bar": 3,
+      "beat": 1,
+      "position": 192000,
+      "tempo": null,
+      "tick": 7680,
+      "time_signature": [7, 8]
+    }
+  ],
+  "tempo": 120.0,
+  "time_signature": [4, 4]
+}
+'''
+
+[[example]]
+action = "get_tempo_map"
+title = "Read the tempo map"
+notes = '''
+The opening tempo and meter, then each change with its bar and beat, and where it falls in samples (`position`) and ticks (`tick`, 960 to a quarter note).
+'''
+setup = [
+    { action = "add_tempo_change", input = '{"bar": 2, "bpm": 140}' },
+]
+result = '''
+{
+  "changes": [
+    {
+      "bar": 2,
+      "beat": 1,
+      "position": 96000,
+      "tempo": 140.0,
+      "tick": 3840,
+      "time_signature": null
+    }
+  ],
+  "tempo": 120.0,
+  "time_signature": [4, 4]
+}
+'''
+
+[[example]]
+action = "remove_tempo_change"
+title = "Take the change away again"
+setup = [
+    { action = "add_tempo_change", input = '{"bar": 2, "bpm": 140}' },
+]
+input = '{"bar": 2}'
+result = '{"changes": [], "tempo": 120.0, "time_signature": [4, 4]}'
+
+[[example]]
+action = "new_project"
+title = "Start from a template"
+notes = '''
+`template` is a name from `list_templates` and needs `name` and `folder`. The new project has the template's tracks, buses, routing and plug-ins with their settings, and no clips.
+'''
+input = '{"name": "Take 2", "folder": "D:\\Music", "template": "Guitar tracking"}'
+shown_only = "templates are kept in the app's Templates folder, which a headless session doesn't have"
+result = '''
+{"path": "D:\\Music\\Take 2\\Take 2.oxide"}
+'''

@@ -1,0 +1,37 @@
+# Examples of the manual actions (daw-core's api/actions/manual.rs). Each runs on a fresh copy
+# of the example project; how to write them: docs/manual/README.md, "Writing the MCP manual".
+
+[[example]]
+action = "search_manual"
+title = "Answer a question from the manual"
+notes = "The best passage first. The passage's text and score change as the manual is written, so the example shows them as `\"*\"`."
+input = '''
+{"question": "raise the processing block", "limit": 1}
+'''
+result = '''
+{
+  "manual": "*",
+  "question": "raise the processing block",
+  "results": [
+    {
+      "anchor": "raise-the-processing-block",
+      "heading": "Raise the processing block",
+      "page": "choppy-audio",
+      "score": "*",
+      "snippet": "*",
+      "text": "*",
+      "title": "Crackling, choppy audio and high DSP"
+    }
+  ],
+  "version": "*"
+}
+'''
+
+[[example]]
+action = "open_manual"
+title = "Open a page of the manual for the user"
+notes = '''
+Shows the page in the user's web browser, at the best passage `search_manual` would give; `page` (an id, optionally `#anchor`) opens a page by name. It needs the app window, so the headless example is a refusal.
+'''
+input = '{"topic": "raise the processing block"}'
+error = 'opening the manual need the app window (this host is headless)'

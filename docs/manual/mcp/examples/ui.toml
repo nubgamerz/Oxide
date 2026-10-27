@@ -1,0 +1,361 @@
+# Examples of the window actions (daw-core's api/actions/ui.rs). Each runs on a fresh copy of
+# the example project; how to write them: docs/manual/README.md, "Writing the MCP manual".
+
+[[example]]
+action = "screenshot"
+title = "See the window as the user does"
+notes = "The answer is an image (MCP image content, a PNG), not JSON."
+shown_only = "it needs the app window, and the tests run without one"
+result = '"(a PNG image of the window)"'
+
+[[example]]
+action = "get_meters"
+title = "Read the meters"
+notes = '''
+Peak and peak-hold per track and for the master, in dBFS (-100 is silence), the hardware input and output levels and the DSP load, as the meters in the window show them.
+'''
+shown_only = "it needs the app window, and the tests run without one"
+result = '''
+{
+  "tracks": [
+    {
+      "track": 2,
+      "name": "Guitar L",
+      "level": {
+        "peak_db": -14.2,
+        "hold_db": [
+          -9.8,
+          -10.1
+        ]
+      }
+    },
+    "..."
+  ],
+  "master": {
+    "peak_db": -11.6,
+    "hold_db": [
+      -6.3,
+      -6.4
+    ]
+  },
+  "inputs_db": [
+    -100.0,
+    -100.0
+  ],
+  "outputs_db": [
+    -11.6,
+    -11.7
+  ],
+  "dsp_load": 0.06,
+  "dsp_peak": 0.11
+}
+'''
+
+[[example]]
+action = "get_view"
+title = "Read what the window shows"
+notes = '''
+The selection, the visible range in samples, zoom, which panels are open, snap and the song's grid. Trimmed here.
+'''
+shown_only = "it needs the app window, and the tests run without one"
+result = '''
+{
+  "selected_track": null,
+  "master_selected": false,
+  "selected_clip": null,
+  "selected_clips": [],
+  "visible": {
+    "start": 0,
+    "end": 384000
+  },
+  "samples_per_pixel": 256.0,
+  "waveform_scale": 1.0,
+  "show_mixer": true,
+  "show_inspector": true,
+  "show_diagnostics": false,
+  "snap": true,
+  "grid": "1/8",
+  "grid_division": "1/8",
+  "follow_playhead": true,
+  "piano_roll": null,
+  "loudness_scale": "ebu9",
+  "loudness_relative": true,
+  "time_selection": null,
+  "view_mode": "multitrack",
+  "document": null,
+  "...": "*"
+}
+'''
+
+[[example]]
+action = "set_view"
+title = "Select the vocal and zoom to fit"
+notes = '''
+Only the fields given change, and view changes are never undo steps. The answer is the new view, as `get_view` gives it.
+'''
+input = '{"select_track": 5, "zoom": "fit"}'
+shown_only = "it needs the app window, and the tests run without one"
+result = '''
+{
+  "selected_track": 5,
+  "master_selected": false,
+  "selected_clip": null,
+  "selected_clips": [],
+  "visible": {
+    "start": 0,
+    "end": 384000
+  },
+  "samples_per_pixel": 256.0,
+  "waveform_scale": 1.0,
+  "show_mixer": true,
+  "show_inspector": true,
+  "show_diagnostics": false,
+  "snap": true,
+  "grid": "1/8",
+  "grid_division": "1/8",
+  "follow_playhead": true,
+  "piano_roll": null,
+  "loudness_scale": "ebu9",
+  "loudness_relative": true,
+  "time_selection": null,
+  "view_mode": "multitrack",
+  "document": null,
+  "...": "*"
+}
+'''
+
+[[example]]
+action = "get_layout"
+title = "Read the window's layout"
+notes = '''
+Where the panes are, as nested splits and tabs, and the names of the saved layouts ("Default" first). Trimmed here.
+'''
+shown_only = "it needs the app window, and the tests run without one"
+result = '''
+{
+  "layout": {
+    "type": "vertical",
+    "shares": [
+      0.7,
+      0.3
+    ],
+    "visible": true,
+    "children": [
+      {
+        "type": "tabs",
+        "active": "multitrack",
+        "visible": true,
+        "tabs": [
+          {
+            "pane": "multitrack",
+            "visible": true
+          },
+          {
+            "pane": "waveform",
+            "visible": true,
+            "document": 1
+          }
+        ]
+      },
+      {
+        "type": "tabs",
+        "active": "mixer",
+        "visible": true,
+        "tabs": [
+          {
+            "pane": "mixer",
+            "visible": true
+          }
+        ]
+      }
+    ]
+  },
+  "layouts": [
+    "Default",
+    "Mixing"
+  ]
+}
+'''
+
+[[example]]
+action = "set_layout"
+title = "Arrange the window as a saved layout"
+notes = '''
+The panes go where the layout has them; open files go where it keeps their place. The answer is the layout, as `get_layout` gives it.
+'''
+input = '{"name": "Mixing"}'
+shown_only = "it needs the app window, and the tests run without one"
+result = '''
+{
+  "layout": {
+    "type": "vertical",
+    "shares": [
+      0.7,
+      0.3
+    ],
+    "visible": true,
+    "children": [
+      {
+        "type": "tabs",
+        "active": "multitrack",
+        "visible": true,
+        "tabs": [
+          {
+            "pane": "multitrack",
+            "visible": true
+          },
+          {
+            "pane": "waveform",
+            "visible": true,
+            "document": 1
+          }
+        ]
+      },
+      {
+        "type": "tabs",
+        "active": "mixer",
+        "visible": true,
+        "tabs": [
+          {
+            "pane": "mixer",
+            "visible": true
+          }
+        ]
+      }
+    ]
+  },
+  "layouts": [
+    "Default",
+    "Mixing"
+  ]
+}
+'''
+
+[[example]]
+action = "save_layout"
+title = "Keep the layout under a name"
+notes = '''
+App-wide, in the settings: where each pane is and how big, and where files open (not the open files themselves). Replaces a saved layout of that name. The answer is the layout, as `get_layout` gives it.
+'''
+input = '{"name": "Mixing"}'
+shown_only = "it needs the app window, and the tests run without one"
+result = '''
+{
+  "layout": {
+    "type": "vertical",
+    "shares": [
+      0.7,
+      0.3
+    ],
+    "visible": true,
+    "children": [
+      {
+        "type": "tabs",
+        "active": "multitrack",
+        "visible": true,
+        "tabs": [
+          {
+            "pane": "multitrack",
+            "visible": true
+          },
+          {
+            "pane": "waveform",
+            "visible": true,
+            "document": 1
+          }
+        ]
+      },
+      {
+        "type": "tabs",
+        "active": "mixer",
+        "visible": true,
+        "tabs": [
+          {
+            "pane": "mixer",
+            "visible": true
+          }
+        ]
+      }
+    ]
+  },
+  "layouts": [
+    "Default",
+    "Mixing"
+  ]
+}
+'''
+
+[[example]]
+action = "delete_layout"
+title = "Delete a saved layout"
+notes = '''
+The answer is the layout, as `get_layout` gives it, with the names left.
+'''
+input = '{"name": "Mixing"}'
+shown_only = "it needs the app window, and the tests run without one"
+result = '''
+{
+  "layout": {
+    "...": "*"
+  },
+  "layouts": [
+    "Default"
+  ]
+}
+'''
+
+[[example]]
+action = "list_recent_projects"
+title = "List the start screen's projects"
+notes = '''
+Most recently opened first. `state` is "present", "missing" (the file is gone or its drive isn't connected) or "unknown" (the drive didn't answer in time); `path` is what `open_project` takes.
+'''
+shown_only = "it needs the app window, and the tests run without one"
+result = '''
+[
+  {
+    "path": "D:\\Music\\Song\\Song.oxide",
+    "name": "Song",
+    "folder": "D:\\Music\\Song",
+    "state": "present",
+    "modified": "2026-10-25T14:32:08+01:00",
+    "saved": "yesterday",
+    "template": null,
+    "open": true
+  },
+  "..."
+]
+'''
+
+[[example]]
+action = "get_app_info"
+title = "Read the version"
+notes = '''
+`version` is the running Oxide's own (for example `"0.3.0"`); it is matched with `*` here so
+the example holds for every release.
+'''
+result = '{"commit": null, "folder": null, "version": "*"}'
+
+[[example]]
+action = "remove_recent_project"
+title = "Take a project off the list"
+notes = '''
+The list only: the project's files stay as they are. The answer is the list left.
+'''
+input = '{"path": "D:\\Music\\Old song\\Old song.oxide"}'
+shown_only = "it needs the app window, and the tests run without one"
+result = '''
+[
+  {
+    "path": "D:\\Music\\Song\\Song.oxide",
+    "name": "Song",
+    "folder": "D:\\Music\\Song",
+    "state": "present",
+    "modified": "2026-10-25T14:32:08+01:00",
+    "saved": "yesterday",
+    "template": null,
+    "open": true
+  },
+  "..."
+]
+'''

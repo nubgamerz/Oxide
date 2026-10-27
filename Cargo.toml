@@ -1,0 +1,66 @@
+[workspace]
+resolver = "2"
+members = ["crates/daw-core", "crates/daw-app", "crates/dawpoc", "crates/mcp-link", "crates/manual", "crates/manual-search"]
+default-members = ["crates/daw-app"]
+# Third-party code kept here with changes (see each folder's VENDORED.md); not ours to lint.
+exclude = ["vendor"]
+
+[workspace.package]
+# The app's version (Help > About, the installer's name and its upgrade check): bump it per release.
+version = "0.3.1"
+edition = "2021"
+publish = false
+# Oxide is GPLv3 (LICENSE; NOTICE adds the section 7(e) term on the name and logo).
+license = "GPL-3.0-only"
+
+[workspace.dependencies]
+anyhow = "1"
+base64 = "0.22"
+clap = { version = "4", features = ["derive"] }
+cpal = "0.18"
+eframe = "0.37"
+egui = "0.37"
+hound = "3.5"
+log = "0.4"
+midir = "0.11"
+midly = "0.5"
+rfd = "0.17"
+rtrb = "0.4"
+rustfft = "6"
+schemars = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# Time-stretch and pitch-shift (MIT; compiles the C++ library with cc and bindgen, which uses
+# the same libclang as cpal's ASIO).
+signalsmith-stretch = "0.1.3"
+# Decoding FLAC, MP3 and AIFF for import (MPL-2.0: file-level copyleft, which covers
+# changes to its own files only). WAV stays on hound.
+symphonia = { version = "0.6.1", default-features = false, features = ["flac", "mp3", "aiff", "pcm", "wav", "ogg", "vorbis"] }
+# No default features: no bundled cpal backend and no out-of-process helper.
+vst3-host = { version = "0.10.0", default-features = false }
+
+[profile.release]
+debug = 1
+
+# Line tables only in debug builds: panics and crash dumps still name the file and line, at a
+# fraction of the size. Full debug info (the default) grew target/debug past 170 GB: every test
+# and example binary got a PDB of about 500 MB, and old ones are never removed.
+[profile.dev]
+debug = "line-tables-only"
+
+# Audio code is unusably slow unoptimized; keep dependencies fast even in debug builds. No debug
+# info for them: we never step into a dependency.
+[profile.dev.package."*"]
+opt-level = 2
+debug = false
+
+# The engine's own tests run real-length test signals (EBU loudness cases run for minutes of
+# audio); unoptimized, they take most of a minute. Optimize daw-core in test builds only.
+[profile.test.package.daw-core]
+opt-level = 1
+
+[patch.crates-io]
+# A fixed random seed, so stretches beyond 2x are deterministic (vendor/signalsmith-stretch/VENDORED.md).
+signalsmith-stretch = { path = "vendor/signalsmith-stretch" }
+# Opens plug-in editors without holding the plug-in's lock, so its track keeps playing (TD3; vendor/vst3-host/VENDORED.md).
+vst3-host = { path = "vendor/vst3-host" }

@@ -1,0 +1,425 @@
+# Examples of the audio clip actions (daw-core's api/actions/clips.rs). Each runs on a fresh
+# copy of the example project; how to write them: docs/manual/README.md, "Writing the MCP
+# manual".
+
+[[example]]
+action = "split_clip"
+title = "Split Guitar L's clip on beat 3"
+notes = "Positions are samples on the timeline: at 120 BPM and 48 kHz a beat is 24,000 samples, so beat 3 of bar 1 is 48,000. The first piece keeps the clip's id."
+input = '''
+{"clip": 7, "position": 48000}
+'''
+result = '''
+{
+  "first": {
+    "active": 0,
+    "clip": 7,
+    "fade_in": {"length": 0, "shape": "equal_power"},
+    "fade_out": {"length": 0, "shape": "equal_power"},
+    "gain_db": 0.0,
+    "length": 48000,
+    "name": "guitar-l",
+    "offset": 0,
+    "pitch": 0.0,
+    "rendering": false,
+    "start": 0,
+    "stretch": 1.0,
+    "takes": 1,
+    "track": 2,
+    "transients": true
+  },
+  "second": {
+    "active": 0,
+    "clip": 21,
+    "fade_in": {"length": 0, "shape": "equal_power"},
+    "fade_out": {"length": 0, "shape": "equal_power"},
+    "gain_db": 0.0,
+    "length": 48000,
+    "name": "guitar-l",
+    "offset": 48000,
+    "pitch": 0.0,
+    "rendering": false,
+    "start": 48000,
+    "stretch": 1.0,
+    "takes": 1,
+    "track": 2,
+    "transients": true
+  }
+}
+'''
+
+[[example]]
+action = "split_range"
+title = "Cut every track at bar 1 beat 3 and bar 2"
+notes = '''
+What a time selection's Split does: every clip crossing either edge of `start`..`end` (samples) is cut there, on the tracks given (`tracks`, ids; omit for every track holding clips). The answer lists the new clips' ids.
+'''
+input = '{"start": 48000, "end": 96000}'
+result = '{"clips": [21, 22, 23, 24]}'
+
+[[example]]
+action = "delete_range"
+title = "Delete half a bar on Guitar L"
+notes = '''
+As Delete on a time selection does: clips are cut at the edges and the parts inside removed. Later clips don't move. The answer counts the clips (or parts) removed.
+'''
+input = '{"start": 0, "end": 48000, "tracks": [2]}'
+result = '{"removed": 1}'
+
+[[example]]
+action = "import_audio"
+title = "Put a file on Guitar R after its clip"
+notes = '''
+`path` is an absolute path to a WAV, FLAC, MP3 or AIFF file (a file at another sample rate is converted); `position` is in samples, by default the playhead. The file is copied into the project's `Imported` folder, unless it is already in the project, as this one is.
+'''
+input = '{"track": 3, "path": "<project>/Imported/vocal.wav", "position": 96000}'
+result = '''
+{
+  "active": 0,
+  "clip": 21,
+  "fade_in": {"length": 0, "shape": "equal_power"},
+  "fade_out": {"length": 0, "shape": "equal_power"},
+  "gain_db": 0.0,
+  "length": 96000,
+  "name": "vocal",
+  "offset": 0,
+  "pitch": 0.0,
+  "rendering": false,
+  "start": 96000,
+  "stretch": 1.0,
+  "takes": 1,
+  "track": 3,
+  "transients": true
+}
+'''
+
+[[example]]
+action = "move_clip"
+title = "Move the vocal to bar 3"
+notes = '''
+`start` is in samples (a bar is 96,000 at 120 BPM and 48 kHz). With `track` the clip moves to another audio or instrument track too. Only the fields given change.
+'''
+input = '{"clip": 9, "start": 192000}'
+result = '''
+{
+  "active": 0,
+  "clip": 9,
+  "fade_in": {"length": 0, "shape": "equal_power"},
+  "fade_out": {"length": 0, "shape": "equal_power"},
+  "gain_db": 0.0,
+  "length": 96000,
+  "name": "vocal",
+  "offset": 0,
+  "pitch": 0.0,
+  "rendering": false,
+  "start": 192000,
+  "stretch": 1.0,
+  "takes": 1,
+  "track": 5,
+  "transients": true
+}
+'''
+
+[[example]]
+action = "delete_clip"
+title = "Delete the vocal clip"
+notes = '''
+The clip leaves the timeline; the audio file stays on disk.
+'''
+input = '{"clip": 9}'
+result = '{"clip": 9}'
+
+[[example]]
+action = "set_clip"
+title = "Fade a clip in and out and turn it down"
+notes = '''
+Fade lengths are in samples from each end. Only the fields given change. The answer is the clip as it is now.
+'''
+input = '{"clip": 8, "gain_db": -3, "fade_in": 4800, "fade_out": 9600, "fade_out_shape": "linear"}'
+result = '''
+{
+  "active": 0,
+  "clip": 8,
+  "fade_in": {"length": 4800, "shape": "equal_power"},
+  "fade_out": {"length": 9600, "shape": "linear"},
+  "gain_db": -3.0,
+  "length": 96000,
+  "name": "guitar-r",
+  "offset": 0,
+  "pitch": 0.0,
+  "rendering": false,
+  "start": 0,
+  "stretch": 1.0,
+  "takes": 1,
+  "track": 3,
+  "transients": true
+}
+'''
+
+[[example]]
+action = "set_clip"
+title = "Transpose a clip up a fifth"
+notes = '''
+`pitch` is in semitones (-24 to +24) at the same length; `stretch` is a ratio (0.25 to 4). A stretched or transposed clip renders in the background and plays unchanged until `rendering` is false (the example shows it as `"*"`: it changes as the render finishes); `export_mixdown` refuses while any clip is rendering.
+'''
+input = '{"clip": 7, "pitch": 7}'
+result = '''
+{
+  "active": 0,
+  "clip": 7,
+  "fade_in": {"length": 0, "shape": "equal_power"},
+  "fade_out": {"length": 0, "shape": "equal_power"},
+  "gain_db": 0.0,
+  "length": 96000,
+  "name": "guitar-l",
+  "offset": 0,
+  "pitch": 7.0,
+  "rendering": "*",
+  "start": 0,
+  "stretch": 1.0,
+  "takes": 1,
+  "track": 2,
+  "transients": true
+}
+'''
+
+[[example]]
+action = "set_clip"
+title = "Make a clip follow the tempo"
+notes = '''
+`source_tempo` is the tempo the audio was recorded at, in quarter notes per minute. The clip then keeps its place in bars and stretches to fit the tempo map when the tempo changes.
+'''
+input = '{"clip": 7, "source_tempo": 120}'
+result = '''
+{
+  "active": 0,
+  "clip": 7,
+  "fade_in": {"length": 0, "shape": "equal_power"},
+  "fade_out": {"length": 0, "shape": "equal_power"},
+  "gain_db": 0.0,
+  "length": 96000,
+  "name": "guitar-l",
+  "offset": 0,
+  "pitch": 0.0,
+  "rendering": false,
+  "source_tempo": 120.0,
+  "start": 0,
+  "stretch": 1.0,
+  "takes": 1,
+  "track": 2,
+  "transients": true
+}
+'''
+
+[[example]]
+action = "set_clip"
+title = "A fade longer than the clip is cut to its length"
+notes = '''
+Both fades together can be at most the clip's length: a longer one isn't refused but cut to fit (here the whole 96,000 samples).
+'''
+input = '{"clip": 7, "fade_in": 200000}'
+result = '''
+{
+  "active": 0,
+  "clip": 7,
+  "fade_in": {"length": 96000, "shape": "equal_power"},
+  "fade_out": {"length": 0, "shape": "equal_power"},
+  "gain_db": 0.0,
+  "length": 96000,
+  "name": "guitar-l",
+  "offset": 0,
+  "pitch": 0.0,
+  "rendering": false,
+  "start": 0,
+  "stretch": 1.0,
+  "takes": 1,
+  "track": 2,
+  "transients": true
+}
+'''
+
+[[example]]
+action = "copy_clips"
+title = "Copy both guitar clips"
+notes = '''
+The clipboard belongs to the session: it isn't saved and isn't part of undo.
+'''
+input = '{"clips": [7, 8]}'
+result = '{"clips": 2}'
+
+[[example]]
+action = "cut_clips"
+title = "Cut the vocal"
+notes = '''
+Copies to the clipboard and removes from the timeline. All or none.
+'''
+input = '{"clips": [9]}'
+result = '{"clips": 1}'
+
+[[example]]
+action = "delete_clips"
+title = "Delete both guitar clips in one step"
+input = '{"clips": [7, 8]}'
+result = '{"clips": 2}'
+
+[[example]]
+action = "paste_clips"
+title = "Paste the guitar clip on the vocal's track"
+notes = '''
+The earliest copied clip starts at `position` (default: the playhead); with `track` the topmost lands on that track. Every pasted clip gets a new id.
+'''
+setup = [
+    { action = "copy_clips", input = '{"clips": [7]}' },
+]
+input = '{"track": 5, "position": 192000}'
+result = '{"clips": [21]}'
+
+[[example]]
+action = "duplicate_clips"
+title = "Repeat Guitar L's bar"
+notes = '''
+Copies the clips to right after the last of them ends, on the same tracks. The clipboard is left alone.
+'''
+input = '{"clips": [7]}'
+result = '{"clips": [21]}'
+
+[[example]]
+action = "move_clips"
+title = "Move both guitar clips a bar later"
+notes = '''
+`delta` samples later (negative: earlier) and `track_delta` rows down (negative: up). All or none.
+'''
+input = '{"clips": [7, 8], "delta": 96000}'
+result = '{"clips": 2}'
+
+[[example]]
+action = "move_clips"
+title = "A move before the start of the song"
+input = '{"clips": [7], "delta": -1000}'
+error = 'clip 7 would start 1000 samples before 0'
+
+[[example]]
+action = "copy_clips_to"
+title = "Copy the guitar clip a bar later, keeping the original"
+notes = '''
+As Alt-dragging does in the arrangement. The answer lists the copies' ids in the order given.
+'''
+input = '{"clips": [7], "delta": 96000}'
+result = '{"clips": [21]}'
+
+[[example]]
+action = "crossfade_clips"
+title = "Crossfade two pieces of one take"
+notes = '''
+The setup cuts clip 7 in two; the second piece is clip 21. The earlier piece fades out and this one fades in over `length` samples; both are extended into the audio beyond their ends. `linear` suits two pieces of the same audio; `equal_power` (the default) two different takes.
+'''
+setup = [
+    { action = "split_clip", input = '{"clip": 7, "position": 48000}' },
+]
+input = '{"clip": 21, "length": 2400, "shape": "linear"}'
+result = '''
+{
+  "earlier": {
+    "active": 0,
+    "clip": 7,
+    "fade_in": {"length": 0, "shape": "equal_power"},
+    "fade_out": {"length": 2400, "shape": "linear"},
+    "gain_db": 0.0,
+    "length": 49200,
+    "name": "guitar-l",
+    "offset": 0,
+    "pitch": 0.0,
+    "rendering": false,
+    "start": 0,
+    "stretch": 1.0,
+    "takes": 1,
+    "track": 2,
+    "transients": true
+  },
+  "later": {
+    "active": 0,
+    "clip": 21,
+    "fade_in": {"length": 2400, "shape": "linear"},
+    "fade_out": {"length": 0, "shape": "equal_power"},
+    "gain_db": 0.0,
+    "length": 49200,
+    "name": "guitar-l",
+    "offset": 46800,
+    "pitch": 0.0,
+    "rendering": false,
+    "start": 46800,
+    "stretch": 1.0,
+    "takes": 1,
+    "track": 2,
+    "transients": true
+  }
+}
+'''
+
+[[example]]
+action = "set_active_take"
+title = "Play a clip's first take"
+notes = '''
+A loop recording gives a clip one take per pass, newest last; `get_project` lists them. Split the clip first to pick different takes for different parts (comping). This clip has only the one.
+'''
+input = '{"clip": 7, "take": 0}'
+result = '''
+{
+  "active": 0,
+  "clip": 7,
+  "fade_in": {"length": 0, "shape": "equal_power"},
+  "fade_out": {"length": 0, "shape": "equal_power"},
+  "gain_db": 0.0,
+  "length": 96000,
+  "name": "guitar-l",
+  "offset": 0,
+  "pitch": 0.0,
+  "rendering": false,
+  "start": 0,
+  "stretch": 1.0,
+  "takes": 1,
+  "track": 2,
+  "transients": true
+}
+'''
+
+[[example]]
+action = "set_active_take"
+title = "A take the clip doesn't have"
+input = '{"clip": 7, "take": 3}'
+error = 'clip 7 has 1 takes (0 to 0)'
+
+[[example]]
+action = "delete_take"
+title = "The last take can't be deleted"
+notes = '''
+Delete the clip instead. With several takes, the one before the removed take plays if the playing one is removed.
+'''
+input = '{"clip": 7, "take": 0}'
+error = "take 0 is clip 7's only take; delete the clip instead"
+
+[[example]]
+action = "get_clip_waveform"
+title = "Look at where the vocal is loud"
+notes = '''
+`points` evenly spaced segments (default 200, up to 4000), each the minimum and maximum sample (-1 to 1) with its start on the timeline, written `[start, min, max]`: a way for an agent to see where audio is loud, quiet or silent.
+'''
+input = '{"clip": 9, "points": 8}'
+result = '''
+{
+  "clip": 9,
+  "length": 96000,
+  "points": [
+    [96000, -0.30000001192092896, 0.29999998211860657],
+    [108000, -0.2999999523162842, 0.30000001192092896],
+    [120000, -0.30000001192092896, 0.29999998211860657],
+    [132000, -0.30000001192092896, 0.30000001192092896],
+    [144000, -0.30000001192092896, 0.30000001192092896],
+    [156000, -0.29999998211860657, 0.30000001192092896],
+    [168000, -0.2999996840953827, 0.30000001192092896],
+    [180000, -0.30000001192092896, 0.29999998211860657]
+  ],
+  "start": 96000,
+  "step": 12000.0
+}
+'''

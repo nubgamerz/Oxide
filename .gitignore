@@ -1,0 +1,21 @@
+/target
+/out
+*.wav
+
+# Screenshots stay out of the repo, except those it needs: the checks write theirs to out/.
+# The manual's shots are committed (docs/manual/shots, 28.1): builds (scripts/installer.ps1)
+# use them as they are, and the manual tier retakes them (scripts/manual_shots.ps1) for review.
+*.png
+!/docs/screenshot.png
+!/docs/manual/shots/*.png
+# The README's images (28.3), cut from those shots by scripts/readme_images.ps1.
+!/docs/images/*.png
+!/crates/manual/tests/fixtures/**/*.png
+
+# The dev plan is the maintainer's working notes, kept locally, not in the repository.
+/devplan.md
+
+# Claude Code's project notes and agents for the maintainer, kept locally: they describe their own setup.
+/CLAUDE.md
+/.claude/
+

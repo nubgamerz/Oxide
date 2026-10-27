@@ -1,0 +1,480 @@
+/* Oxide's manual. Light and dark follow the system; prints without the navigation. */
+
+:root {
+  --bg: #ffffff;
+  --panel: #f4f5f7;
+  --raised: #ffffff;
+  --text: #1f2329;
+  --dim: #5d6470;
+  --border: #dde0e6;
+  --accent: #1c6cd0;
+  --accent-soft: rgba(28, 108, 208, 0.11);
+  --code-bg: #f0f2f5;
+  --mark: #ffe48a;
+  --hl: #ffd040;          /* the app's playhead yellow */
+  --hl-ink: #1b1d22;
+  --shadow: 0 10px 30px rgba(20, 24, 32, 0.16);
+  --header: 56px;
+  --sans: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  --mono: "Cascadia Mono", Consolas, ui-monospace, monospace;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1d22;        /* the app's background */
+    --panel: #202329;
+    --raised: #2a2e36;
+    --text: #d8dbe0;
+    --dim: #8a909c;       /* the app's dim text */
+    --border: #343843;
+    --accent: #4aa8ff;    /* the app's accent */
+    --accent-soft: rgba(74, 168, 255, 0.14);
+    --code-bg: #262a31;
+    --mark: rgba(255, 208, 64, 0.38);
+    --shadow: 0 12px 34px rgba(0, 0, 0, 0.5);
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-padding-top: calc(var(--header) + 16px); }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 var(--sans);
+  -webkit-text-size-adjust: 100%;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ---------------------------------------------------------------- header and search */
+
+.ox-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: var(--header);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 20px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.ox-brand { font-weight: 650; font-size: 18px; color: var(--text); white-space: nowrap; }
+.ox-brand span { color: var(--dim); font-weight: 400; }
+.ox-brand:hover { text-decoration: none; }
+
+.ox-menu {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 36px;
+  height: 36px;
+  padding: 0 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.ox-menu span { display: block; height: 2px; background: var(--text); border-radius: 1px; }
+.ox-menu:hover { background: var(--accent-soft); }
+
+.ox-search { position: relative; flex: 1; max-width: 560px; margin-left: auto; }
+
+#ox-search {
+  width: 100%;
+  height: 36px;
+  padding: 0 36px 0 12px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+}
+#ox-search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+.ox-slash {
+  position: absolute;
+  right: 9px;
+  top: 8px;
+  pointer-events: none;
+}
+#ox-search:focus + .ox-slash { display: none; }
+
+.ox-results {
+  position: absolute;
+  top: 42px;
+  left: 0;
+  right: 0;
+  max-height: 70vh;
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+.ox-results li a {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 7px;
+  color: var(--text);
+}
+.ox-results li a:hover { text-decoration: none; background: var(--accent-soft); }
+.ox-results li[aria-selected="true"] a { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+.ox-r-where { display: block; font-weight: 600; font-size: 14.5px; }
+.ox-r-where .ox-r-sep { color: var(--dim); font-weight: 400; padding: 0 4px; }
+.ox-r-snip { display: block; color: var(--dim); font-size: 13.5px; line-height: 1.45; margin-top: 2px; }
+.ox-results mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1px; }
+.ox-results .ox-none { padding: 10px; color: var(--dim); }
+
+/* ---------------------------------------------------------------- layout */
+
+.ox-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 230px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.ox-sidebar, .ox-toc {
+  position: sticky;
+  top: var(--header);
+  align-self: start;
+  max-height: calc(100vh - var(--header));
+  overflow-y: auto;
+  padding: 24px 16px 40px;
+  font-size: 14.5px;
+}
+.ox-sidebar { border-right: 1px solid var(--border); }
+
+.ox-chapter h2, .ox-toc h2 {
+  margin: 18px 10px 6px;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.ox-chapter:first-child h2, .ox-toc h2 { margin-top: 0; }
+.ox-sidebar ul, .ox-toc ul { list-style: none; margin: 0; padding: 0; }
+.ox-sidebar a {
+  display: block;
+  padding: 5px 10px;
+  border-radius: 6px;
+  color: var(--text);
+}
+.ox-sidebar a:hover { background: var(--accent-soft); text-decoration: none; }
+.ox-sidebar a[aria-current="page"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.ox-toc a { display: block; padding: 3px 10px; color: var(--dim); border-left: 2px solid var(--border); }
+.ox-toc a:hover { color: var(--accent); text-decoration: none; }
+.ox-toc .ox-toc-3 a { padding-left: 22px; font-size: 13.5px; }
+
+.ox-main { min-width: 0; padding: 32px 48px 48px; }
+
+/* ---------------------------------------------------------------- the page */
+
+.ox-page { max-width: 760px; }
+.ox-page h1 { font-size: 32px; line-height: 1.25; margin: 0 0 20px; font-weight: 700; }
+.ox-page h2 { font-size: 23px; line-height: 1.3; margin: 40px 0 12px; padding-top: 8px; border-top: 1px solid var(--border); }
+.ox-page h3 { font-size: 18.5px; margin: 28px 0 8px; }
+.ox-page h4 { font-size: 16px; margin: 22px 0 6px; }
+.ox-page p, .ox-page ul, .ox-page ol { margin: 0 0 14px; }
+.ox-page li { margin: 4px 0; }
+.ox-page li > p { margin: 0 0 6px; }
+
+.ox-anchor { visibility: hidden; color: var(--dim); font-weight: 400; padding-left: 4px; }
+h2:hover .ox-anchor, h3:hover .ox-anchor, h4:hover .ox-anchor, .ox-anchor:focus { visibility: visible; }
+
+code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  background: var(--code-bg);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+pre { background: var(--code-bg); border-radius: 8px; padding: 12px 16px; overflow-x: auto; line-height: 1.45; }
+pre code { padding: 0; background: none; font-size: 14px; }
+
+kbd {
+  display: inline-block;
+  min-width: 1.6em;
+  padding: 0 6px;
+  font: 600 0.82em/1.7 var(--sans);
+  text-align: center;
+  color: var(--text);
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+.ox-keys { white-space: nowrap; }
+.ox-keys kbd { margin: 0 2px; }
+
+blockquote {
+  margin: 0 0 14px;
+  padding: 10px 16px;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  border-radius: 0 8px 8px 0;
+}
+blockquote p:last-child { margin-bottom: 0; }
+
+table { border-collapse: collapse; margin: 0 0 16px; width: 100%; font-size: 15px; display: block; overflow-x: auto; }
+th, td { text-align: left; vertical-align: top; padding: 7px 10px; border-bottom: 1px solid var(--border); }
+th { font-weight: 650; border-bottom-width: 2px; }
+
+.ox-action code { color: var(--accent); }
+.ox-broken { color: #d0342c; text-decoration: wavy underline; }
+.ox-safety { color: var(--dim); font-size: 14px; margin-bottom: 6px; }
+.ox-optional { color: var(--dim); font-size: 12px; }
+.ox-params td:first-child { white-space: nowrap; }
+
+/* ---------------------------------------------------------------- the MCP reference (27.6) */
+
+.ox-badges { margin: -4px 0 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+.ox-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.6;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--dim);
+  background: var(--panel);
+  white-space: nowrap;
+}
+.ox-badge-read { color: #1f7a3d; border-color: rgba(31, 122, 61, 0.35); background: rgba(31, 122, 61, 0.08); }
+.ox-badge-edit { color: var(--accent); border-color: rgba(28, 108, 208, 0.35); background: var(--accent-soft); }
+.ox-badge-transport { color: #8a5a00; border-color: rgba(176, 116, 0, 0.4); background: rgba(255, 190, 40, 0.14); }
+.ox-badge-destructive { color: #b42318; border-color: rgba(180, 35, 24, 0.35); background: rgba(180, 35, 24, 0.08); }
+.ox-badge-shown { font-weight: 500; }
+@media (prefers-color-scheme: dark) {
+  .ox-badge-read { color: #6fd08f; }
+  .ox-badge-transport { color: #f0c060; }
+  .ox-badge-destructive { color: #ff8a80; }
+}
+.ox-legend { color: var(--dim); font-size: 14px; }
+.ox-legend .ox-badge { font-size: 11px; }
+h2.ox-action-name { margin-top: 42px; padding-top: 18px; border-top: 1px solid var(--border); }
+h2.ox-action-name code { font-size: 0.92em; background: none; padding: 0; }
+.ox-description { margin-bottom: 12px; }
+.ox-description p { margin: 0 0 8px; }
+.ox-schema caption, .ox-params caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 650;
+  padding: 4px 0 6px;
+}
+.ox-schema td:nth-child(2) { color: var(--dim); white-space: nowrap; font-size: 14px; }
+.ox-schema td:nth-child(3) { font-size: 14px; }
+.ox-schema code { background: none; padding: 0; }
+.ox-schema .ox-depth-1 td:first-child { padding-left: 26px; }
+.ox-schema .ox-depth-2 td:first-child { padding-left: 42px; }
+.ox-schema .ox-depth-3 td:first-child { padding-left: 58px; }
+.ox-schema .ox-depth-4 td:first-child { padding-left: 74px; }
+.ox-schema .ox-depth-5 td:first-child,
+.ox-schema .ox-depth-6 td:first-child { padding-left: 90px; }
+.ox-schema tr.ox-form td { background: var(--panel); font-style: italic; }
+.ox-schema-none { font-size: 15px; margin: 0 0 12px; }
+.ox-example {
+  margin: 14px 0 18px;
+  padding: 10px 16px 4px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  background: var(--raised);
+}
+.ox-example-head { font-weight: 650; margin: 0 0 6px; }
+.ox-example-notes { font-size: 15px; }
+.ox-example-notes p { margin: 0 0 8px; }
+.ox-example-label { font-size: 14px; color: var(--dim); margin: 8px 0 4px; }
+.ox-example pre { margin: 0 0 8px; padding: 8px 12px; }
+.ox-example pre code { font-size: 13px; }
+.ox-example-why { font-size: 14px; color: var(--dim); font-style: italic; }
+.ox-refusal code { color: #b42318; }
+.ox-overview td:nth-child(2) { white-space: nowrap; }
+.ox-prompt summary { cursor: pointer; font-weight: 600; margin: 6px 0; }
+.ox-prompt-text { font-size: 15px; padding: 4px 0 4px 14px; border-left: 3px solid var(--border); }
+
+/* ---------------------------------------------------------------- figures */
+
+.ox-figure { margin: 22px 0 26px; }
+
+/* The frame is a ring drawn outside the box (not a border), so the box keeps the image's own
+   proportions however thin a crop is; callouts may stand out past its edges. */
+.ox-shot {
+  position: relative;
+  width: 100%;
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px var(--border);
+  background: var(--panel);
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+.ox-shot img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+}
+.ox-shot.ox-missing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  border: 1px dashed var(--border);
+  color: var(--dim);
+  font-size: 14px;
+}
+
+.ox-dim { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: inherit; }
+.ox-dim > rect { fill: rgba(0, 0, 0, 0.5); }
+
+.ox-hl {
+  position: absolute;
+  border: 2px solid var(--hl);
+  border-radius: 5px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.65), inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+}
+.ox-callout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 11px;
+  font: 700 12.5px/1 var(--sans);
+  color: var(--hl-ink);
+  background: var(--hl);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+/* A badge stands beside its outline, never on it (crates/manual/src/callout.rs picks the side):
+   4 px from the outline's outer edge (the offsets count from inside its 2 px border). */
+.ox-hl > .ox-callout { position: absolute; white-space: nowrap; }
+.ox-hl > .ox-at-left { right: calc(100% + 6px); top: 50%; transform: translateY(-50%); }
+.ox-hl > .ox-at-right { left: calc(100% + 6px); top: 50%; transform: translateY(-50%); }
+.ox-hl > .ox-at-above { bottom: calc(100% + 6px); left: -2px; }
+.ox-hl > .ox-at-below { top: calc(100% + 6px); left: -2px; }
+
+/* Room round a picture for badges that have none in it (a thin strip). */
+.ox-frame { position: relative; }
+
+.ox-figure figcaption { margin-top: 8px; font-size: 14.5px; color: var(--dim); }
+.ox-figure figcaption p { margin: 0 0 6px; }
+.ox-callouts { list-style: none; margin: 0; padding: 0; }
+.ox-callouts li { margin: 4px 0; color: var(--text); }
+.ox-callouts .ox-callout { margin-right: 6px; box-shadow: none; }
+
+/* ---------------------------------------------------------------- search hits on the page */
+
+mark.ox-hit { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1px; }
+
+.ox-hits {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 18px;
+  padding: 8px 12px;
+  font-size: 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.ox-hits b { font-weight: 600; }
+.ox-hits button {
+  margin-left: auto;
+  font: inherit;
+  color: var(--accent);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 10px;
+  cursor: pointer;
+}
+.ox-hits button:hover { background: var(--accent-soft); }
+
+/* ---------------------------------------------------------------- previous / next, footer */
+
+.ox-pager { display: flex; justify-content: space-between; gap: 16px; max-width: 760px; margin-top: 48px; }
+.ox-pager a {
+  flex: 0 1 48%;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-weight: 600;
+}
+.ox-pager a:hover { border-color: var(--accent); text-decoration: none; }
+.ox-pager a span { display: block; font-size: 13px; font-weight: 400; color: var(--dim); }
+.ox-next { text-align: right; margin-left: auto; }
+
+.ox-footer { max-width: 760px; margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 13.5px; color: var(--dim); }
+
+/* ---------------------------------------------------------------- narrower windows */
+
+@media (max-width: 1200px) {
+  .ox-layout { grid-template-columns: 240px minmax(0, 1fr); }
+  .ox-toc { display: none; }
+}
+
+@media (max-width: 860px) {
+  .ox-layout { display: block; }
+  .ox-menu { display: flex; }
+  .ox-header { padding: 0 12px; gap: 10px; }
+  .ox-sidebar {
+    display: none;
+    position: fixed;
+    top: var(--header);
+    left: 0;
+    bottom: 0;
+    width: min(300px, 85vw);
+    max-height: none;
+    /* Fixed with top and bottom: fill the height (start would shrink it to its content). */
+    align-self: normal;
+    z-index: 15;
+    background: var(--panel);
+    box-shadow: var(--shadow);
+  }
+  .ox-nav-toggle:checked ~ .ox-layout .ox-sidebar { display: block; }
+  .ox-main { padding: 22px 18px 40px; }
+  .ox-page h1 { font-size: 27px; }
+  .ox-slash { display: none; }
+}
+
+/* ---------------------------------------------------------------- print */
+
+@media print {
+  :root { --bg: #fff; --text: #000; --dim: #444; --border: #ccc; --panel: #f4f4f4; --code-bg: #f2f2f2; }
+  .ox-header, .ox-sidebar, .ox-toc, .ox-pager, .ox-hits, .ox-anchor { display: none !important; }
+  .ox-layout { display: block; }
+  .ox-main { padding: 0; }
+  .ox-page { max-width: none; }
+  body { font-size: 11pt; background: #fff; color: #000; }
+  a { color: inherit; }
+  .ox-figure, pre, table, .ox-example { break-inside: avoid; }
+  .ox-prompt { display: block; }
+  h2, h3 { break-after: avoid; }
+  mark.ox-hit { background: none; }
+}

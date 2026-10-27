@@ -1,0 +1,78 @@
+name: Bug report
+description: Something in Oxide doesn't work the way it should.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. The more you can fill in, the quicker this can be fixed.
+        Issues are public: don't attach anything you wouldn't want everyone to see.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Tell us what went wrong, in your own words.
+      placeholder: "When I split a clip while the project was playing, the sound stopped."
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to make it happen
+      description: What did you do, in order, until it went wrong? Does it happen every time?
+      placeholder: |
+        1. Open a project with two tracks
+        2. Press Space to play
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Oxide version
+      description: Shown in Help > About.
+      placeholder: "0.3.0"
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      description: For example Windows 11 23H2 (Settings > System > About).
+      placeholder: "Windows 11 23H2"
+    validations:
+      required: true
+  - type: dropdown
+    id: driver
+    attributes:
+      label: Audio driver
+      description: Shown in Options > Settings > Audio.
+      options:
+        - WASAPI
+        - ASIO
+        - Other
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: buffer
+    attributes:
+      label: Buffer size
+      description: In samples, from Options > Settings > Audio. Leave it blank if it doesn't seem related.
+      placeholder: "128"
+  - type: textarea
+    id: plugins
+    attributes:
+      label: Plug-ins involved
+      description: Names and versions of any VST3 plug-ins on the tracks involved, or "none".
+  - type: textarea
+    id: logs
+    attributes:
+      label: Screenshots, logs and projects
+      description: Drag screenshots or files into this box. Attach a project only if you're happy to share it.

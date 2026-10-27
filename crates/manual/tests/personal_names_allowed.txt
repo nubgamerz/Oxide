@@ -1,0 +1,7 @@
+# Phrases the repository may keep although they hold a name `personal_names.rs` looks for (dev
+# plan 27.7, 28.2): one phrase a line, then `#` and why. The phrase is taken out of the text
+# before the search, so it allows only that exact wording. Phrases that would name someone's
+# own setup don't go here (this file is public) but in the local list beside it.
+#
+# Kept on purpose, never looked for: FlexASIO and ASIO4ALL (free drivers many readers use,
+# named as drivers).

@@ -1,0 +1,92 @@
+# Examples of the markers actions (daw-core's api/actions/markers.rs). Each runs on a fresh copy
+# of the example project; how to write them: docs/manual/README.md, "Writing the MCP manual".
+
+[[example]]
+action = "get_markers"
+title = "List the markers"
+notes = '''
+In time order, with the `number` the keys 1 to 9 jump to, the `id`, the `tick` (markers keep their bar when the tempo changes), the `position` in samples and `bar` / `beat`.
+'''
+result = '''
+{
+  "markers": [
+    {
+      "bar": 2,
+      "beat": 1,
+      "id": 20,
+      "name": "Chorus",
+      "number": 1,
+      "position": 96000,
+      "tick": 3840
+    }
+  ]
+}
+'''
+
+[[example]]
+action = "add_marker"
+title = "Mark the bridge at bar 3"
+notes = '''
+At `position` (samples) or `bar` (and `beat`, from 1); the playhead by default. The answer is all the markers.
+'''
+input = '{"bar": 3, "name": "Bridge"}'
+result = '''
+{
+  "marker": 21,
+  "markers": [
+    {
+      "bar": 2,
+      "beat": 1,
+      "id": 20,
+      "name": "Chorus",
+      "number": 1,
+      "position": 96000,
+      "tick": 3840
+    },
+    {
+      "bar": 3,
+      "beat": 1,
+      "id": 21,
+      "name": "Bridge",
+      "number": 2,
+      "position": 192000,
+      "tick": 7680
+    }
+  ]
+}
+'''
+
+[[example]]
+action = "set_marker"
+title = "Rename the chorus marker and move it to bar 4"
+input = '{"marker": 20, "name": "Final chorus", "bar": 4}'
+result = '''
+{
+  "markers": [
+    {
+      "bar": 4,
+      "beat": 1,
+      "id": 20,
+      "name": "Final chorus",
+      "number": 1,
+      "position": 288000,
+      "tick": 11520
+    }
+  ]
+}
+'''
+
+[[example]]
+action = "remove_marker"
+title = "Remove the chorus marker"
+input = '{"marker": 20}'
+result = '{"markers": []}'
+
+[[example]]
+action = "go_to_marker"
+title = "Jump to the next marker"
+notes = '''
+By `marker` id, by `number` (1 is the first in time), or `direction` "next" / "previous" from the playhead. Give exactly one.
+'''
+input = '{"direction": "next"}'
+result = '{"marker": 20, "position": 96000}'

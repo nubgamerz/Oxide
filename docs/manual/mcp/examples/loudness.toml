@@ -1,0 +1,60 @@
+# Examples of the loudness actions (daw-core's api/actions/loudness.rs). Each runs on a fresh copy
+# of the example project; how to write them: docs/manual/README.md, "Writing the MCP manual".
+
+[[example]]
+action = "get_loudness"
+title = "Read the master's loudness meter"
+notes = '''
+Momentary and short-term loudness are always measured; the integrated reading, range, true peak and maxima accumulate only while the timeline plays. -120 means silence, null not measured yet.
+'''
+result = '''
+{
+  "integrated": null,
+  "max_momentary": null,
+  "max_short_term": null,
+  "momentary": null,
+  "offset": null,
+  "range": null,
+  "seconds": 0.0,
+  "short_term": null,
+  "target": -14.0,
+  "true_peak": null
+}
+'''
+
+[[example]]
+action = "set_loudness_target"
+title = "Aim for broadcast loudness"
+notes = '''
+`preset` "streaming" is -14 LUFS, "broadcast" -23 (EBU R 128); `lufs` takes any value from -40 to -5.
+'''
+input = '{"preset": "broadcast"}'
+result = '{"target": -23.0}'
+
+[[example]]
+action = "reset_loudness"
+title = "Start a new measurement"
+notes = '''
+Clears the integrated loudness, range, true peak and maxima. Not an edit of the project.
+'''
+result = '{"done": true}'
+
+[[example]]
+action = "measure_loudness"
+title = "Measure a file"
+notes = '''
+The same EBU R 128 meter as the master, over a whole mono or stereo file. Short-term loudness and the range need 3 s of audio, so this 2 second file leaves them null. A mono file is measured as one channel, so it reads about 3 dB lower than the same audio panned centre in a stereo mix.
+'''
+input = '{"path": "<project>/Imported/vocal.wav"}'
+result = '''
+{
+  "integrated": "*",
+  "max_momentary": "*",
+  "max_short_term": null,
+  "momentary": "*",
+  "range": null,
+  "seconds": 2.0,
+  "short_term": null,
+  "true_peak": "*"
+}
+'''

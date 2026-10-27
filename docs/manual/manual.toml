@@ -1,0 +1,90 @@
+# Oxide's manual: the chapters in order, each with its pages in order.
+#
+# A page is a Markdown file listed by its path from this folder; it is built to
+# <file name>.html, and other pages link to it by that name ([[page:choppy-audio]]), so file
+# names must differ across folders. The first page is index.md. Entries starting with "@" are
+# generated from the action registry (27.6): "@mcp-reference" (every action by area),
+# "@mcp-actions" (a page per area, mcp-<area>.html) and "@mcp-prompts". Every .md here but
+# README.md must be listed.
+# How to write pages: README.md.
+#
+# F1 in the app opens pages and headings by name (daw-app's help.rs, `Place::page`): keep
+# their file names and headings, or change the table with them (its test fails otherwise).
+
+[[chapter]]
+title = "Welcome"
+pages = ["index.md"]
+
+[[chapter]]
+title = "Getting started"
+pages = [
+    "getting-started/getting-started.md",
+    "getting-started/main-window.md",
+    "getting-started/audio-device.md",
+]
+
+[[chapter]]
+title = "Recording"
+pages = ["recording/recording.md"]
+
+[[chapter]]
+title = "Editing"
+pages = ["editing/multitrack.md", "editing/piano-roll.md"]
+
+[[chapter]]
+title = "Mixing"
+pages = ["mixing/mixer.md", "mixing/automation.md"]
+
+[[chapter]]
+title = "Built-in effects"
+pages = [
+    "effects/effects.md",
+    "effects/effects-dynamics.md",
+    "effects/effects-eq.md",
+    "effects/effects-restoration.md",
+    "effects/effects-reverb.md",
+    "effects/effects-delay.md",
+    "effects/effects-modulation.md",
+]
+
+[[chapter]]
+title = "The Waveform view"
+pages = ["waveform/waveform-view.md"]
+
+[[chapter]]
+title = "Exporting"
+pages = ["exporting/exporting.md", "exporting/rendering.md"]
+
+[[chapter]]
+title = "Projects"
+pages = ["projects/projects.md"]
+
+[[chapter]]
+title = "Settings"
+pages = ["settings/settings.md"]
+
+[[chapter]]
+title = "Troubleshooting"
+pages = [
+    "troubleshooting/choppy-audio.md",
+    "troubleshooting/no-sound.md",
+    "troubleshooting/plugin-problems.md",
+    "troubleshooting/slow-open.md",
+    "troubleshooting/mcp-not-connecting.md",
+]
+
+[[chapter]]
+title = "Reference"
+pages = ["reference/keyboard.md", "reference/glossary.md"]
+
+[[chapter]]
+title = "AI control (MCP)"
+pages = [
+    "mcp/ai-control.md",
+    "mcp/mcp-connecting.md",
+    "mcp/mcp-how-actions-work.md",
+    "mcp/mcp-workflows.md",
+    "@mcp-prompts",
+    "@mcp-reference",
+    "@mcp-actions",
+]

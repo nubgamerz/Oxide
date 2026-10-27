@@ -1,0 +1,79 @@
+# Examples of the rack actions (daw-core's api/actions/rack.rs). Each runs on a fresh copy
+# of the example project; how to write them: docs/manual/README.md, "Writing the MCP manual".
+
+[[example]]
+action = "list_rack_presets"
+title = "List the rack presets"
+shown_only = "rack presets are kept in the app's RackPresets folder, which a headless session doesn't have"
+result = '''
+{
+  "presets": [
+    {
+      "modified": 1792998803,
+      "name": "Vocal clean-up",
+      "path": "D:\\Oxide\\RackPresets\\Vocal clean-up.json"
+    }
+  ]
+}
+'''
+
+[[example]]
+action = "save_rack_preset"
+title = "Save the rack as a preset"
+notes = '''
+The Waveform view's effects rack as it is now: its slots in order, each with its bypass and settings. Kept in the app's RackPresets folder, for every project. Refused if the rack is empty, or the name is empty, holds a character a file name can't, or exists (unless `replace`).
+'''
+setup = [
+    { action = "add_insert", input = '{"plugin": "native:amplify", "editor": true}' },
+]
+input = '{"name": "Vocal clean-up"}'
+shown_only = "rack presets are kept in the app's RackPresets folder, which a headless session doesn't have"
+result = '''
+{
+  "path": "D:\\Oxide\\RackPresets\\Vocal clean-up.json"
+}
+'''
+
+[[example]]
+action = "load_rack_preset"
+title = "Load a preset that doesn't exist"
+notes = '''
+Replaces the rack with the preset's slots; plug-ins load one at a time behind the busy bar, and the call answers once they are in. The preset must be one `list_rack_presets` gives.
+'''
+input = '{"name": "Vocal clean-up"}'
+shown_only = "rack presets are kept in the app's RackPresets folder, which a headless session doesn't have"
+error = 'no rack preset called "Vocal clean-up" in D:\Oxide\RackPresets'
+
+[[example]]
+action = "set_rack_sync"
+title = "Sync the rack with Guitar L's track"
+notes = '''
+The document must have been opened from a clip. The rack becomes copies of the track's inserts, and edits to either side are mirrored onto the other. `sync` false stops and brings back the rack set aside.
+'''
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+]
+input = '{"document": 1, "sync": true}'
+result = '''
+{
+  "slots": [
+    {"insert": 4026531841, "loaded": true, "name": "Compressor"}
+  ],
+  "sync": {"clip": 7, "document": 1, "track": 2, "track_name": "Guitar L"}
+}
+'''
+
+[[example]]
+action = "delete_rack_preset"
+title = "Delete a preset"
+setup = [
+    { action = "add_insert", input = '{"plugin": "native:amplify", "editor": true}' },
+    { action = "save_rack_preset", input = '{"name": "Vocal clean-up"}' },
+]
+input = '{"name": "Vocal clean-up"}'
+shown_only = "rack presets are kept in the app's RackPresets folder, which a headless session doesn't have"
+result = '''
+{
+  "done": true
+}
+'''

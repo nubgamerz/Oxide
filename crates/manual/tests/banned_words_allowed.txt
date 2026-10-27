@@ -1,0 +1,3 @@
+# Tracked files allowed to name the program the built-in effects were once compared with, or its
+# maker (dev plan 28.5; checked by banned_words.rs): one path a line (`*` within a folder, `**`
+# across folders), then `#` and why. Meant to be empty.

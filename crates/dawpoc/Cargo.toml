@@ -1,0 +1,13 @@
+[package]
+name = "dawpoc"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+license.workspace = true
+description = "Proof of concept for a custom DAW engine: VST3 effect hosting, offline render, null tests and CPU benchmarks"
+
+[dependencies]
+anyhow.workspace = true
+clap.workspace = true
+daw-core = { path = "../daw-core" }
+vst3-host.workspace = true

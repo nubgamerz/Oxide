@@ -1,0 +1,166 @@
+# Examples of the automation actions (daw-core's api/actions/automation.rs). Each runs on a fresh copy
+# of the example project; how to write them: docs/manual/README.md, "Writing the MCP manual".
+
+[[example]]
+action = "set_automation_mode"
+title = "Touch mode on the vocal"
+notes = '''
+`read` plays the lanes; `touch`, `latch` and `write` write them while a person moves a control. Agents add points with `add_automation_points`. Without `track` the mode is the master's.
+'''
+input = '{"mode": "touch", "track": 5}'
+result = '{"mode": "touch", "track": 5}'
+
+[[example]]
+action = "add_automation_lane"
+title = "Automate the vocal's volume"
+notes = '''
+`target` is `volume` (dB), `pan` (-1 to 1), `mute`, `send_level` (with a `send` id) or `parameter` (an `insert` on the same track and a `parameter` id or name; values 0 to 1). One lane per target. Without `points` the lane starts with one point at tick 0 holding the current setting, so adding it changes nothing.
+'''
+input = '{"track": 5, "target": {"type": "volume"}, "points": [{"bar": 1, "value": -12}, {"bar": 2, "value": -3}]}'
+result = '''
+{
+  "enabled": true,
+  "lane": 21,
+  "points": [
+    {"curve": 0.0, "point": 22, "tick": 0, "value": -12.0},
+    {"curve": 0.0, "point": 23, "tick": 3840, "value": -3.0}
+  ],
+  "target": {"type": "volume"},
+  "track": 5,
+  "units": "dB, -60 to +12"
+}
+'''
+
+[[example]]
+action = "add_automation_lane"
+title = "Automate the compressor's threshold"
+notes = '''
+A parameter's values are normalized, 0 to 1. The lane starts with one point at tick 0 holding the current value.
+'''
+input = '{"track": 2, "target": {"type": "parameter", "insert": 17, "parameter": "Threshold"}}'
+result = '''
+{
+  "enabled": true,
+  "lane": 21,
+  "parameter_name": "Threshold",
+  "points": [
+    {"curve": 0.0, "point": 22, "tick": 0, "value": 1.0}
+  ],
+  "target": {"insert": 17, "parameter": 1, "type": "parameter"},
+  "track": 2,
+  "units": "normalized, 0 to 1"
+}
+'''
+
+[[example]]
+action = "add_automation_lane"
+title = "A second lane for the same target"
+setup = [
+    { action = "add_automation_lane", input = '{"track": 5, "target": {"type": "volume"}}' },
+]
+input = '{"track": 5, "target": {"type": "volume"}}'
+error = 'track 5 already has a volume (dB) lane (lane 21)'
+
+[[example]]
+action = "get_automation_lane"
+title = "Read a lane"
+notes = '''
+Its owner, target, units, whether it is on, and its points in time order (id, tick, value, curve).
+'''
+setup = [
+    { action = "add_automation_lane", input = '{"track": 5, "target": {"type": "volume"}, "points": [{"bar": 1, "value": -12}, {"bar": 2, "value": -3}]}' },
+]
+input = '{"lane": 21}'
+result = '''
+{
+  "enabled": true,
+  "lane": 21,
+  "points": [
+    {"curve": 0.0, "point": 22, "tick": 0, "value": -12.0},
+    {"curve": 0.0, "point": 23, "tick": 3840, "value": -3.0}
+  ],
+  "target": {"type": "volume"},
+  "track": 5,
+  "units": "dB, -60 to +12"
+}
+'''
+
+[[example]]
+action = "set_automation_lane"
+title = "Switch a lane off"
+notes = '''
+An off lane keeps its points but moves nothing.
+'''
+setup = [
+    { action = "add_automation_lane", input = '{"track": 5, "target": {"type": "volume"}}' },
+]
+input = '{"lane": 21, "enabled": false}'
+result = '''
+{
+  "enabled": false,
+  "lane": 21,
+  "points": [
+    {"curve": 0.0, "point": 22, "tick": 0, "value": -3.0}
+  ],
+  "target": {"type": "volume"},
+  "track": 5,
+  "units": "dB, -60 to +12"
+}
+'''
+
+[[example]]
+action = "remove_automation_lane"
+title = "Delete a lane"
+setup = [
+    { action = "add_automation_lane", input = '{"track": 5, "target": {"type": "volume"}}' },
+]
+input = '{"lane": 21}'
+result = '{"done": true}'
+
+[[example]]
+action = "add_automation_points"
+title = "Add a dip with a curve"
+notes = '''
+Each point is at a `tick` (960 to a quarter note) or a `bar` (and `beat`, from 1), with a `value` in the lane's units. `curve` (-1 to 1) shapes the segment to the next point: 0 is straight. Values hold before the first point and after the last. The answer lists the new point ids.
+'''
+setup = [
+    { action = "add_automation_lane", input = '{"track": 5, "target": {"type": "volume"}}' },
+]
+input = '{"lane": 21, "points": [{"bar": 3, "value": -18, "curve": 0.4}, {"bar": 4, "value": -3}]}'
+result = '{"points": [23, 24]}'
+
+[[example]]
+action = "set_automation_point"
+title = "Lower a point"
+notes = '''
+Setup lane 21 holds points 22 and 23. Only the fields given change (`tick` or `bar` and `beat`, `value`, `curve`).
+'''
+setup = [
+    { action = "add_automation_lane", input = '{"track": 5, "target": {"type": "volume"}, "points": [{"bar": 1, "value": -12}, {"bar": 2, "value": -3}]}' },
+]
+input = '{"point": 23, "value": -6}'
+result = '{"curve": 0.0, "point": 23, "tick": 3840, "value": -6.0}'
+
+[[example]]
+action = "remove_automation_points"
+title = "Delete a point and everything from bar 2 on"
+notes = '''
+Removes the points listed and those from `from_tick` up to (not including) `to_tick`. The answer counts how many went.
+'''
+setup = [
+    { action = "add_automation_lane", input = '{"track": 5, "target": {"type": "volume"}, "points": [{"bar": 1, "value": -12}, {"bar": 2, "value": -3}, {"bar": 3, "value": -6}]}' },
+]
+input = '{"lane": 21, "points": [22], "from_tick": 3840}'
+result = '{"removed": 3}'
+
+[[example]]
+action = "get_automation_value"
+title = "Ask for the value at bar 1 beat 3"
+notes = '''
+Halfway between the two points, in the lane's units (dB here). Null for a lane with no points.
+'''
+setup = [
+    { action = "add_automation_lane", input = '{"track": 5, "target": {"type": "volume"}, "points": [{"bar": 1, "value": -12}, {"bar": 2, "value": -4}]}' },
+]
+input = '{"lane": 21, "bar": 1, "beat": 3}'
+result = '{"tick": 1920.0, "value": -8.0}'

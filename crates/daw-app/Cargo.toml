@@ -1,0 +1,65 @@
+[package]
+name = "daw-app"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+license.workspace = true
+description = "The DAW's desktop user interface"
+
+[[bin]]
+name = "daw"
+path = "src/main.rs"
+
+# The stdio bridge Claude Desktop runs (dev plan 17.3): built beside daw.exe, linking only
+# `mcp-link` and serde_json.
+[[bin]]
+name = "oxide-mcp"
+path = "src/bin/oxide_mcp.rs"
+
+[features]
+default = ["asio"]
+asio = ["daw-core/asio"]
+
+[dependencies]
+anyhow.workspace = true
+axum = "0.8"
+base64.workspace = true
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
+daw-core = { path = "../daw-core" }
+eframe.workspace = true
+egui.workspace = true
+getrandom = "0.3"
+# The dockable window: panes as tabs that split and move (dev plan 14.3).
+egui_tiles = { version = "0.18", features = ["serde"] }
+# Cover art thumbnails (View > Metadata).
+image = { version = "0.25", default-features = false, features = ["png", "jpeg"] }
+log.workspace = true
+# Claude Code's and Claude Desktop's configs, and the bridge (Settings > AI control).
+mcp-link = { path = "../mcp-link" }
+png = "0.18"
+# The window's handle, to ask Windows where the pointer is during a file drag (16.2).
+raw-window-handle = "0.6"
+rfd.workspace = true
+rmcp = { version = "3.5", default-features = false, features = ["server", "macros", "transport-streamable-http-server"] }
+serde.workspace = true
+serde_json.workspace = true
+tokio = { version = "1", features = ["rt-multi-thread", "net", "time", "sync"] }
+tokio-util = "0.7"
+# Help > Manual and F1 (27.3): the manual's pages as `file:///` URLs with their anchor, opened
+# in the default browser (both already in the build through eframe).
+url = "2"
+webbrowser = "1.2"
+
+[target.'cfg(windows)'.dependencies]
+# Where the pointer is while files from Explorer hover (winit 0.30 sends no position then).
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphics_Gdi", "Win32_Security", "Win32_System_Threading", "Win32_UI_WindowsAndMessaging"] }
+
+[dev-dependencies]
+# Render the icon from its SVG (`icon.rs`'s test); builds use the committed renders.
+ico = "0.4"
+resvg = "0.45"
+# F1's table checked against docs/manual built in memory (help.rs's test, 27.3).
+manual = { path = "../manual" }
+
+[build-dependencies]
+winresource = "0.1"

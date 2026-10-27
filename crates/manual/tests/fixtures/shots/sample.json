@@ -1,0 +1,8 @@
+{
+  "image": [160, 90],
+  "marks": {
+    "transport.record": [38, 1, 14, 12],
+    "transport.dsp": [108, 1, 48, 12],
+    "status": [0, 80, 160, 10]
+  }
+}

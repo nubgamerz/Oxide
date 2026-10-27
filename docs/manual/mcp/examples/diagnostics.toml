@@ -1,0 +1,129 @@
+# Examples of the diagnostics actions (daw-core's api/actions/diagnostics.rs). Each runs on a fresh copy
+# of the example project; how to write them: docs/manual/README.md, "Writing the MCP manual".
+
+[[example]]
+action = "find_audio_problems"
+title = "Scan a file for clicks"
+notes = '''
+`kind` is `click-repair` (clicks and pops, with `threshold` and `complexity`) or `clip-repair` (clipped runs, with `min_clip_size` and `tolerance`). Changes no audio. The list stays on the file until its audio changes.
+'''
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+]
+input = '{"document": 1, "kind": "click-repair", "start": 0, "end": 4800}'
+result = '''
+{
+  "count": "*",
+  "kind": "click-repair",
+  "problems": [
+    {
+      "channel": 0,
+      "id": 1,
+      "kind": "click-repair",
+      "length": 10,
+      "level_db": "*",
+      "start": 432
+    },
+    {
+      "channel": 0,
+      "id": 2,
+      "kind": "click-repair",
+      "length": 10,
+      "level_db": "*",
+      "start": 868
+    },
+    "..."
+  ],
+  "stale": false
+}
+'''
+
+[[example]]
+action = "find_audio_problems"
+title = "Scan a file for clipped runs"
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+]
+input = '{"document": 1, "kind": "clip-repair", "start": 0, "end": 24000}'
+result = '''
+{
+  "count": "*",
+  "kind": "clip-repair",
+  "problems": [
+    {
+      "channel": 0,
+      "id": 1,
+      "kind": "clip-repair",
+      "length": 22,
+      "level_db": "*",
+      "start": 0
+    },
+    {
+      "channel": 0,
+      "id": 2,
+      "kind": "clip-repair",
+      "length": 24,
+      "level_db": "*",
+      "start": 413
+    },
+    "..."
+  ],
+  "stale": false
+}
+'''
+
+[[example]]
+action = "get_audio_problems"
+title = "Read the list the last scan found"
+notes = '''
+`stale` is true (and the list empty) when there was no scan or the file's audio has changed since.
+'''
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+    { action = "find_audio_problems", input = '{"document": 1, "kind": "click-repair", "start": 0, "end": 4800}' },
+]
+input = '{"document": 1}'
+result = '''
+{
+  "count": "*",
+  "kind": "click-repair",
+  "problems": [
+    {
+      "channel": 0,
+      "id": 1,
+      "kind": "click-repair",
+      "length": 10,
+      "level_db": "*",
+      "start": 432
+    },
+    {
+      "channel": 0,
+      "id": 2,
+      "kind": "click-repair",
+      "length": 10,
+      "level_db": "*",
+      "start": 868
+    },
+    "..."
+  ],
+  "stale": false
+}
+'''
+
+[[example]]
+action = "repair_audio_problems"
+title = "Repair every problem found"
+notes = '''
+Or `ids`, from the list. One step of the file's own history (`undo_audio_edit` takes it back).
+'''
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+    { action = "find_audio_problems", input = '{"document": 1, "kind": "click-repair", "start": 0, "end": 4800}' },
+]
+input = '{"document": 1, "all": true}'
+result = '''
+{
+  "left": {"count": 0, "kind": "click-repair", "problems": [], "stale": false},
+  "repaired": 10
+}
+'''

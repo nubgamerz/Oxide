@@ -1,0 +1,22 @@
+[package]
+name = "manual"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+license.workspace = true
+description = "Builds Oxide's HTML manual from docs/manual (Markdown) and checks its references; build-time only, never linked into the app"
+
+# Build-time only: nothing here ships inside daw.exe (third_party.ps1 lists daw-app's normal
+# dependencies, which never include this crate).
+[dependencies]
+anyhow.workspace = true
+# The search index and its ranking, shared with the app (27.3).
+manual-search = { path = "../manual-search" }
+# The figures' images (27.2): cut, scaled and written as PNGs; MIT, build-time only.
+color_quant = "1.1"
+image = { version = "0.25", default-features = false, features = ["png"] }
+png = "0.18"
+pulldown-cmark = { version = "0.13", default-features = false, features = ["html"] }
+serde.workspace = true
+serde_json.workspace = true
+toml = "1"

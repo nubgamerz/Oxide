@@ -1,0 +1,86 @@
+# Examples of the sends actions (daw-core's api/actions/sends.rs). Each runs on a fresh copy
+# of the example project; how to write them: docs/manual/README.md, "Writing the MCP manual".
+
+[[example]]
+action = "add_send"
+title = "Send Guitar R to the reverb"
+notes = '''
+A copy of the track's signal into a folder or bus, alongside its main output. `pre_fader` takes it before the fader and pan (default false: post-fader). The answer is the send, with its id.
+'''
+input = '{"track": 3, "target": 6, "gain_db": -12}'
+result = '''
+{
+  "gain_db": -12.0,
+  "mute": false,
+  "pre_fader": false,
+  "send": 21,
+  "target": 6,
+  "track": 3
+}
+'''
+
+[[example]]
+action = "add_send"
+title = "A send that would loop"
+input = '{"track": 6, "target": 6}'
+error = 'routing track 6 into itself would create a loop'
+
+[[example]]
+action = "add_send_to_new_bus"
+title = "Send the vocal to a new delay bus"
+notes = '''
+Adds a bus at the end of the project, routed to the master, and sends into it. The answer's `target` is the new bus's id: put a delay on it with `add_insert`.
+'''
+input = '{"track": 5, "gain_db": -8}'
+result = '''
+{
+  "gain_db": -8.0,
+  "mute": false,
+  "pre_fader": false,
+  "send": 22,
+  "target": 21,
+  "track": 5
+}
+'''
+
+[[example]]
+action = "set_send"
+title = "Turn the vocal's reverb send up"
+notes = '''
+Send 19 is the vocal's, to Reverb at -6 dB. Only the fields given change.
+'''
+input = '{"send": 19, "gain_db": -3}'
+result = '''
+{
+  "gain_db": -3.0,
+  "mute": false,
+  "pre_fader": false,
+  "send": 19,
+  "target": 6,
+  "track": 5
+}
+'''
+
+[[example]]
+action = "remove_send"
+title = "Remove the vocal's reverb send"
+input = '{"send": 19}'
+result = '{"done": true}'
+
+[[example]]
+action = "add_send"
+title = "A pre-fader send for a headphone mix"
+notes = '''
+`pre_fader` takes the signal before the track's fader and pan, so the fader doesn't change what the send carries. The vocal already has a post-fader send to Reverb (send 19); this adds a second one to the same bus.
+'''
+input = '{"track": 5, "target": 6, "gain_db": -6, "pre_fader": true}'
+result = '''
+{
+  "gain_db": -6.0,
+  "mute": false,
+  "pre_fader": true,
+  "send": 21,
+  "target": 6,
+  "track": 5
+}
+'''

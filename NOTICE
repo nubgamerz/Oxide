@@ -1,0 +1,21 @@
+Oxide
+Copyright (C) 2026 nubgamerz
+
+Oxide is free software: you can redistribute it and/or modify it under the terms of the GNU
+General Public License as published by the Free Software Foundation, version 3 (see LICENSE).
+
+Oxide is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+Public License for more details.
+
+Additional term under section 7(e) of the GNU General Public License: this licence does not
+grant any rights to the name "Oxide" or its logo. A modified version must not be distributed
+under that name or with that logo.
+
+The music, recordings and projects you make with Oxide are yours; the licence does not cover
+them.
+
+Oxide includes third-party components under their own licences, listed in THIRD-PARTY.txt
+beside the program. VST is a trademark of Steinberg Media Technologies GmbH. ASIO is a
+trademark and software of Steinberg Media Technologies GmbH; Oxide uses the ASIO SDK under its
+GNU General Public License version 3 option.

@@ -1,0 +1,31 @@
+name: Feature request
+description: Suggest something Oxide could do, or do better.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Oxide stays simple on purpose, so not every good idea fits. Telling us what you're trying
+        to do helps most: there may be a smaller change that solves it.
+  - type: textarea
+    id: goal
+    attributes:
+      label: What are you trying to do?
+      description: Describe it as a musician, not just the button you'd like.
+      placeholder: "I want to nudge a whole vocal take earlier without losing its fades."
+    validations:
+      required: true
+  - type: textarea
+    id: today
+    attributes:
+      label: How do you do it today?
+      description: Another app, a workaround, or "I can't".
+  - type: textarea
+    id: ideas
+    attributes:
+      label: Ideas
+      description: How might it work in Oxide? Sketches and screenshots are welcome.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered

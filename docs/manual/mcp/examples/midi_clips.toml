@@ -1,0 +1,357 @@
+# Examples of the MIDI actions (daw-core's api/actions/midi_clips.rs). Each runs on a fresh copy
+# of the example project; how to write them: docs/manual/README.md, "Writing the MCP manual".
+
+[[example]]
+action = "add_notes"
+title = "A melody in bars and note names"
+notes = "`at` is the song position as \"bar:beat:tick\" (from 1, 960 ticks to a quarter note), so notes can be written as music; `length` is in ticks (480: an eighth note). Clip 10 is Keys' \"Chords\"."
+input = '''
+{
+  "clip": 10,
+  "notes": [
+    {"pitch": "E5", "at": "1:1:0", "length": 480},
+    {"pitch": "D5", "at": "1:1:480", "length": 480},
+    {"pitch": "C5", "at": "1:2:0", "length": 960, "velocity": 110}
+  ]
+}
+'''
+result = '{"notes": [21, 22, 23]}'
+
+[[example]]
+action = "insert_midi_track"
+title = "Insert a MIDI track after Keys"
+notes = '''
+A new armed instrument track holding an empty MIDI clip from bar 3 for 2 bars. `instrument` (an installed plug-in's name) is loaded on it and names the track; the example loads none, so the track is silent.
+'''
+input = '{"after": 4, "bar": 3, "bars": 2}'
+result = '''
+{
+  "clip": {
+    "clip": 22,
+    "controllers": [],
+    "end_sample": 384000,
+    "length": 7680,
+    "name": "MIDI 1",
+    "notes": [],
+    "start": 7680,
+    "start_sample": 192000,
+    "track": 21
+  },
+  "insert": null,
+  "track": 21
+}
+'''
+
+[[example]]
+action = "add_midi_clip"
+title = "Add a clip for a bridge"
+notes = '''
+`bar` and `beat` count from 1; `start` and `length` are in ticks (960 to a quarter note). One bar by default. The answer is the clip as `get_midi_clip` shows it.
+'''
+input = '{"track": 4, "bar": 3, "bars": 2, "name": "Bridge"}'
+result = '''
+{
+  "clip": 21,
+  "controllers": [],
+  "end_sample": 384000,
+  "length": 7680,
+  "name": "Bridge",
+  "notes": [],
+  "start": 7680,
+  "start_sample": 192000,
+  "track": 4
+}
+'''
+
+[[example]]
+action = "get_midi_clip"
+title = "Read Keys' chords"
+notes = '''
+Ticks run from the clip's start; pitches 0 to 127 (60 is middle C); channels 0 to 15.
+'''
+input = '{"clip": 10}'
+result = '''
+{
+  "clip": 10,
+  "controllers": [],
+  "end_sample": 192000,
+  "length": 7680,
+  "name": "Chords",
+  "notes": [
+    {"channel": 0, "id": 11, "length": 3840, "pitch": 60, "tick": 0, "velocity": 90},
+    {"channel": 0, "id": 12, "length": 3840, "pitch": 64, "tick": 0, "velocity": 90},
+    "..."
+  ],
+  "start": 0,
+  "start_sample": 0,
+  "track": 4
+}
+'''
+
+[[example]]
+action = "describe_midi_clip"
+title = "Read Keys' chords as music"
+notes = '''
+The same notes as bars and beats, names, the estimated key and the chords bar by bar, to write a part that fits. It is an estimate: check it by ear.
+'''
+input = '{"clip": 10}'
+result = '''
+{
+  "bars": {"first": 1, "last": 2, "length": 2.0},
+  "chords": [
+    {
+      "at": "1:1:000",
+      "bass": "C",
+      "chord": "C",
+      "length": 3840,
+      "quality": "major",
+      "root": "C",
+      "tick": 0,
+      "tones": ["C", "E", "G"]
+    },
+    "..."
+  ],
+  "clip": 10,
+  "end": "3:1:000",
+  "key": {
+    "mode": "major",
+    "name": "C major",
+    "scale": ["C", "D", "E", "F", "G", "A", "B"],
+    "score": 0.813,
+    "signature": "no sharps or flats",
+    "tonic": "C"
+  },
+  "length": 7680,
+  "meters": [
+    {"at": "1:1:000", "tempo": 120.0, "tick": 0, "time_signature": [4, 4]}
+  ],
+  "name": "Chords",
+  "notes": [
+    {
+      "at": "1:1:000",
+      "channel": 0,
+      "id": 11,
+      "length": 3840,
+      "name": "C4",
+      "pitch": 60,
+      "tick": 0,
+      "velocity": 90
+    },
+    "..."
+  ],
+  "progression": "C | Am",
+  "range": {"highest": "G4", "highest_pitch": 67, "lowest": "A3", "lowest_pitch": 57},
+  "runner_up": {
+    "mode": "minor",
+    "name": "A minor",
+    "scale": ["A", "B", "C", "D", "E", "F", "G"],
+    "score": 0.725,
+    "signature": "no sharps or flats",
+    "tonic": "A"
+  },
+  "start": "1:1:000",
+  "start_tick": 0,
+  "track": 4,
+  "track_name": "Keys"
+}
+'''
+
+[[example]]
+action = "set_midi_clip"
+title = "Rename the clip and move it"
+notes = '''
+`start` and `length` are in ticks. Shortening hides the notes past the new end without deleting them.
+'''
+input = '{"clip": 10, "name": "Verse chords", "start": 3840}'
+result = '''
+{
+  "clip": 10,
+  "controllers": [],
+  "end_sample": 288000,
+  "length": 7680,
+  "name": "Verse chords",
+  "notes": [
+    {"channel": 0, "id": 11, "length": 3840, "pitch": 60, "tick": 0, "velocity": 90},
+    {"channel": 0, "id": 12, "length": 3840, "pitch": 64, "tick": 0, "velocity": 90},
+    "..."
+  ],
+  "start": 3840,
+  "start_sample": 96000,
+  "track": 4
+}
+'''
+
+[[example]]
+action = "remove_midi_clip"
+title = "Delete a MIDI clip"
+input = '{"clip": 10}'
+result = '{"done": true}'
+
+[[example]]
+action = "set_notes"
+title = "Soften the chord's top note"
+notes = '''
+Notes are changed by id; only the fields given change (`tick` or `at`, `length`, `pitch`, `velocity`, `channel`). All or nothing.
+'''
+input = '{"clip": 10, "notes": [{"note": 13, "velocity": 60, "at": "1:1:0"}]}'
+result = '''
+{
+  "notes": [
+    {"channel": 0, "id": 13, "length": 3840, "pitch": 67, "tick": 0, "velocity": 60}
+  ]
+}
+'''
+
+[[example]]
+action = "resize_notes"
+title = "Shorten the first chord by a beat"
+notes = '''
+`edge` "start" or "end" moves by `by` ticks (negative is earlier); the other edge stays. A note keeps at least 1 tick.
+'''
+input = '{"clip": 10, "notes": [11, 12, 13], "edge": "end", "by": -960}'
+result = '''
+{
+  "notes": [
+    {"channel": 0, "id": 11, "length": 2880, "pitch": 60, "tick": 0, "velocity": 90},
+    {"channel": 0, "id": 12, "length": 2880, "pitch": 64, "tick": 0, "velocity": 90},
+    {"channel": 0, "id": 13, "length": 2880, "pitch": 67, "tick": 0, "velocity": 90}
+  ]
+}
+'''
+
+[[example]]
+action = "remove_notes"
+title = "Delete bar 2's chord"
+input = '{"clip": 10, "notes": [14, 15, 16]}'
+result = '{"done": true}'
+
+[[example]]
+action = "add_controller_events"
+title = "Hold the sustain pedal through bar 1"
+notes = '''
+`kind` is a control change (`cc`, number and value 0 to 127), `pitch_bend` (-8192 to 8191) or `program_change`. 64 is the sustain pedal.
+'''
+input = '{"clip": 10, "events": [{"tick": 0, "kind": {"type": "cc", "number": 64, "value": 127}}, {"tick": 3840, "kind": {"type": "cc", "number": 64, "value": 0}}]}'
+result = '{"events": [21, 22]}'
+
+[[example]]
+action = "remove_controller_events"
+title = "Release the pedal events"
+notes = '''
+Events are removed by the ids `add_controller_events` or `get_midi_clip` gave.
+'''
+setup = [
+    { action = "add_controller_events", input = '{"clip": 10, "events": [{"tick": 0, "kind": {"type": "cc", "number": 64, "value": 127}}]}' },
+]
+input = '{"clip": 10, "events": [21]}'
+result = '{"done": true}'
+
+[[example]]
+action = "export_midi_clip"
+title = "Save the chords as a MIDI file"
+notes = '''
+A type 0 Standard MIDI file at 960 ticks to a quarter note, with the tempo and time signature at the clip's start. Overwrites `path`.
+'''
+input = '{"clip": 10, "path": "<project>/Temp/chords.mid"}'
+result = '{"done": true}'
+
+[[example]]
+action = "export_midi_track"
+title = "Save all of Keys' clips as one file"
+notes = '''
+Each clip at its place in the song, with the project's tempo changes, for another program to import.
+'''
+input = '{"track": 4, "path": "<project>/Temp/keys.mid"}'
+result = '{"done": true}'
+
+[[example]]
+action = "read_midi_file"
+title = "Look inside a MIDI file"
+notes = '''
+Lists its tracks with their note counts and the tempo map it asks for, before deciding on `import_midi_file`'s `set_tempo`.
+'''
+setup = [
+    { action = "export_midi_clip", input = '{"clip": 10, "path": "<project>/Temp/chords.mid"}' },
+]
+input = '{"path": "<project>/Temp/chords.mid"}'
+result = '''
+{
+  "tempo": {"bpm": 120.0, "changes": [], "time_signature": [4, 4]},
+  "tracks": [
+    {"controllers": 0, "import_as": "Keys", "length": 7680, "name": "Keys", "notes": 6}
+  ]
+}
+'''
+
+[[example]]
+action = "import_midi_file"
+title = "Import the file at bar 5"
+notes = '''
+The file's first track with notes goes on `track` (an instrument track); others get new instrument tracks. The answer lists the tracks and clips made.
+'''
+setup = [
+    { action = "export_midi_clip", input = '{"clip": 10, "path": "<project>/Temp/chords.mid"}' },
+]
+input = '{"path": "<project>/Temp/chords.mid", "bar": 5, "track": 4}'
+result = '''
+{
+  "clips": [
+    {"clip": 21, "notes": 6, "track": 4}
+  ]
+}
+'''
+
+[[example]]
+action = "quantize_notes"
+title = "Pull a loose note onto the eighth-note grid"
+notes = '''
+The setup nudges note 11 to tick 50. Each start moves `strength` (0 to 100 %, default 100) of the way to the nearest line of `division` ("1/16", "1/8t", "beat", "bar"), exactly in ticks; lengths are kept. `notes` picks some by id.
+'''
+setup = [
+    { action = "set_notes", input = '{"clip": 10, "notes": [{"note": 11, "tick": 50}]}' },
+]
+input = '{"clip": 10, "division": "1/8"}'
+result = '''
+{
+  "clip": 10,
+  "controllers": [],
+  "end_sample": 192000,
+  "length": 7680,
+  "name": "Chords",
+  "notes": [
+    {"channel": 0, "id": 11, "length": 3840, "pitch": 60, "tick": 0, "velocity": 90},
+    {"channel": 0, "id": 12, "length": 3840, "pitch": 64, "tick": 0, "velocity": 90},
+    "..."
+  ],
+  "start": 0,
+  "start_sample": 0,
+  "track": 4
+}
+'''
+
+[[example]]
+action = "preview_note"
+title = "Preview a note on a track with no instrument"
+notes = '''
+Plays through the track's plug-in whether or not it is armed; nothing is recorded or changed. Keys has no plug-in in the example project, so the call is refused: load an instrument first (`add_insert`).
+'''
+input = '{"track": 4, "pitch": 60, "duration_ms": 300}'
+error = 'track 4 has no plug-in to play'
+
+[[example]]
+action = "set_midi_record_options"
+title = "Quantize recorded notes to sixteenths, overdubbing"
+notes = '''
+`replace` true first deletes what the track has in the recorded range; false (the default) merges. `quantize` snaps recorded note starts to a division, or "off".
+'''
+input = '{"quantize": "1/16", "replace": false}'
+result = '{"quantize": "1/16", "replace": false}'
+
+[[example]]
+action = "set_chase_notes"
+title = "Turn chase notes off"
+notes = '''
+On by default: when playback starts in the middle of a note, the note is struck there.
+'''
+input = '{"on": false}'
+result = '{"chase_notes": false}'

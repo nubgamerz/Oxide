@@ -1,0 +1,64 @@
+# Examples of the templates actions (daw-core's api/actions/templates.rs). Each runs on a fresh copy
+# of the example project; how to write them: docs/manual/README.md, "Writing the MCP manual".
+
+[[example]]
+action = "save_template"
+title = "Save the setup as a template"
+notes = '''
+Every track, route, send, mixer setting and plug-in with its settings, automation lanes without their points, the tempo map, loudness target and markers: no clips or audio. Kept in the app's Templates folder, for every project. Refused if the name exists, unless `replace`.
+'''
+input = '{"name": "Guitar tracking"}'
+shown_only = "templates are kept in the app's Templates folder, which a headless session doesn't have"
+result = '''
+{
+  "path": "D:\\Oxide\\Templates\\Guitar tracking.oxide-template"
+}
+'''
+
+[[example]]
+action = "list_templates"
+title = "List the templates"
+shown_only = "templates are kept in the app's Templates folder, which a headless session doesn't have"
+result = '''
+{
+  "templates": [
+    {
+      "modified": 1792998803,
+      "name": "Guitar tracking",
+      "path": "D:\\Oxide\\Templates\\Guitar tracking.oxide-template",
+      "size": 9195
+    }
+  ]
+}
+'''
+
+[[example]]
+action = "rename_template"
+title = "Rename a template"
+setup = [
+    { action = "save_template", input = '{"name": "Guitar tracking"}' },
+]
+input = '{"name": "Guitar tracking", "new_name": "Guitars"}'
+shown_only = "templates are kept in the app's Templates folder, which a headless session doesn't have"
+result = '''
+{
+  "path": "D:\\Oxide\\Templates\\Guitars.oxide-template"
+}
+'''
+
+[[example]]
+action = "delete_template"
+title = "Delete a template"
+notes = '''
+For good; projects made from it keep their setup.
+'''
+setup = [
+    { action = "save_template", input = '{"name": "Guitar tracking"}' },
+]
+input = '{"name": "Guitar tracking"}'
+shown_only = "templates are kept in the app's Templates folder, which a headless session doesn't have"
+result = '''
+{
+  "done": true
+}
+'''

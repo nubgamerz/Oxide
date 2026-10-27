@@ -1,0 +1,307 @@
+# The manual's screenshots (dev plan 27.2). `scripts/check.ps1 -Tier manual` runs the release
+# app once per shot, on the demo project (`--demo <wav> --mute`, MCP on a test port), with these
+# arguments, and keeps the picture and its marks (`--screenshot`, `--marks`) in
+# out/manual-shots/<name>.png and .json. A figure (`::: shot <name>`) may only use a shot listed
+# here. `args` are the app's check flags (parsed in crates/daw-app/src/main.rs): a `--show` scenario,
+# `--mixer`, `--play`; `size` is the window's size in points (1440x900 when left out).
+#
+# Add a shot: a table below, then `pwsh scripts/check.ps1 -Tier manual` to take it.
+
+[shots.main-window]
+about = "The window as the demo opens: the transport bar, the Multitrack with its track headers, the inspector, the status bar."
+
+[shots.settings-audio]
+about = "Options > Settings… on its Audio section: driver, devices, buffer size, processing block, threads, record offset, Apply."
+args = ["--show", "settings-audio", "--claude-profile", "out/check/claude/settings"]
+
+[shots.mixer]
+about = "The mixer docked under the Multitrack: a strip per track (name, inserts, sends, pan, fader, meter, M/S/arm, automation, output) and the master's."
+args = ["--mixer"]
+
+[shots.piano-roll]
+about = "Keys' MIDI clip in the piano roll: its toolbar (Snap, Quantize), ruler, keyboard, grid, scroll bar and velocity lane."
+args = ["--show", "piano-roll"]
+
+[shots.waveform-rack]
+about = "The Waveform view on a guitar recording with a selection, a plug-in in its effects rack (slots, power, Presets, Sync, Apply)."
+args = ["--show", "waveform-fx"]
+
+[shots.cpu]
+about = "The CPU use window over the Multitrack: the whole app's share and each track's and plug-in's time."
+args = ["--show", "cpu"]
+
+# The user guide, part 1 (27.4).
+
+[shots.start]
+about = "The start screen (File > New project…) over the demo: the new project's name, template and folder, Open project…, the recent projects."
+args = ["--show", "start"]
+
+[shots.settings-midi]
+about = "Options > Settings… on its MIDI section: the inputs opened and Reconnect MIDI devices."
+args = ["--show", "settings-midi", "--claude-profile", "out/check/claude/settings"]
+
+[shots.recording]
+about = "A take growing as it records: Vocal selected and armed on In 1, its input and monitoring in the inspector."
+args = ["--show", "recording", "--wait", "4"]
+
+[shots.record-menu]
+about = "The Record button's right-click menu: the count-in choices."
+args = ["--show", "record-menu"]
+
+[shots.count-in]
+about = "The time display during a count-in, before the take starts."
+args = ["--show", "count-in"]
+
+[shots.loop-range]
+about = "A loop range drawn in the ruler over bars 2-3, with Loop still off."
+args = ["--show", "loop-range-off"]
+
+[shots.markers]
+about = "Four markers in the strip under the ruler, the playhead on the second."
+args = ["--show", "markers"]
+
+[shots.selection]
+about = "Two clips duplicated and selected, with a time selection over the copies' first half."
+args = ["--show", "selection"]
+
+[shots.clip-magnet]
+about = "A clip dragged onto the playhead and held there by its magnet, the line lit."
+args = ["--show", "clip-magnet"]
+
+[shots.fades]
+about = "A clip split, the pieces crossfaded, a fade in and a fade out, the second piece's gain lowered; zoomed to the first piece."
+args = ["--show", "fades-close"]
+
+[shots.trim]
+about = "A trimmed clip, and a long name cut short on split pieces."
+args = ["--show", "trim"]
+
+[shots.stretch]
+about = "A stretched clip selected: its Stretch, Pitch and Tempo in the inspector's Clip section."
+args = ["--show", "stretch"]
+
+[shots.header]
+about = "Track headers at every height: the knobs, the automation mode and the effects rack on tall rows."
+args = ["--show", "header"]
+
+[shots.grid-menu]
+about = "The ruler's right-click menu open on Grid, Auto chosen."
+args = ["--show", "grid-menu"]
+
+[shots.drop-question]
+about = "A copy of the guitar recording dropped from Explorer over Vocal: the question, into the track or onto a new one."
+args = ["--show", "drop-question"]
+
+[shots.insert-midi]
+about = "A MIDI track inserted with an instrument over a time selection: the new clip open in the piano roll."
+args = ["--show", "insert-midi"]
+
+[shots.midi-split]
+about = "Keys' MIDI clip split with S through a chord, the piano roll on the first piece."
+args = ["--show", "midi-split"]
+
+[shots.quantize]
+about = "The slicer (Slice at transients…) open on a guitar clip, its transients drawn on the clip."
+args = ["--show", "quantize"]
+
+[shots.busy]
+about = "A project opening behind the loading bar, its plug-ins loading one at a time."
+args = ["--show", "busy"]
+
+[shots.mcp-port-in-use]
+about = "The status bar when MCP's port is taken: why it is off, and Retry."
+args = ["--show", "mcp-port-in-use", "--claude-profile", "out/check/claude/settings"]
+
+[shots.rack-restored]
+about = "The Waveform view's effects rack restored with a plug-in that is no longer installed, greyed in its slot."
+args = ["--show", "rack-restored"]
+
+# The user guide, part 2 (27.5).
+
+[shots.master]
+about = "The master's row selected, taller: the Limiter in its rack and a volume lane."
+args = ["--show", "master"]
+
+[shots.browser]
+about = "The plug-in browser for Guitar L: the search, Rescan, the built-in effects first (then the VST3 plug-ins installed)."
+args = ["--show", "browser"]
+
+[shots.automation]
+about = "Volume and pan lanes under Guitar L, a point selected, the track in Touch."
+args = ["--show", "automation"]
+
+[shots.automation-mixer]
+about = "The same lanes with the mixer docked: each strip's automation mode button."
+args = ["--show", "automation", "--mixer"]
+
+[shots.waveform]
+about = "A guitar recording open in the Waveform view with a selection: the toolbar, the waveform, the effects rack."
+args = ["--show", "waveform"]
+
+[shots.waveform-edit]
+about = "A copy of the guitar recording edited (faded in, amplified, a piece deleted), the Save question open."
+args = ["--show", "waveform-edit"]
+
+[shots.spectral]
+about = "The guitar recording with its spectrogram under the waveform and a box drawn with the Box tool."
+args = ["--show", "spectral", "--wait", "1"]
+
+[shots.noise-reduction]
+about = "A noise print captured from the recording's first half second into the rack's Noise Reduction, its editor open."
+args = ["--show", "noise-reduction"]
+
+[shots.diagnostics]
+about = "A copy of the guitar recording with clicks added, scanned by the Diagnostics' Click Repair: the list, a row picked and shown."
+args = ["--show", "diagnostics"]
+
+[shots.rack-sync]
+about = "The recording opened from Guitar L's clip, the rack synced with Guitar L: its chain in the rack."
+args = ["--show", "rack-sync"]
+
+[shots.rack-presets]
+about = "The Waveform view's rack with its Presets menu open on two saved presets."
+args = ["--show", "rack-presets"]
+
+[shots.metadata]
+about = "View > Metadata… on the recording: title, artist and the other tags, and a cover."
+args = ["--show", "metadata"]
+
+[shots.waveform-export]
+about = "File > Export file… in the Waveform view, set to an MP3."
+args = ["--show", "waveform-export"]
+
+[shots.export]
+about = "File > Export mixdown…: format (24-bit FLAC), sample rate, dither, normalising, the tail."
+args = ["--show", "export"]
+
+[shots.export-report]
+about = "The report after a normalised export: integrated loudness against the target, range, true peak."
+args = ["--show", "export-report", "--silent"]
+
+[shots.loudness]
+about = "The master's loudness panel while the demo plays (silently): the M and S bars, readings, target."
+args = ["--show", "loudness", "--play", "--silent", "--wait", "5"]
+
+[shots.render]
+about = "Guitar R switched off under its render, and the Render dialog open on Guitar L."
+args = ["--show", "render"]
+
+[shots.mixdown]
+about = "The demo mixed down to a new file, open in the Waveform view."
+args = ["--show", "mixdown", "--silent"]
+
+[shots.backups]
+about = "File > Open backup…: two backups of the demo."
+args = ["--show", "backups"]
+
+[shots.templates]
+about = "File > Templates…: the templates saved, with Rename and Delete."
+args = ["--show", "templates"]
+
+[shots.settings-projects]
+about = "Options > Settings… on its Projects section: autosave, backups kept, the file type, the settings file."
+args = ["--show", "settings-projects", "--claude-profile", "out/check/claude/settings"]
+
+[shots.settings-mcp]
+about = "Options > Settings… on AI control (MCP): the server, port, token, status, command and Connect Claude (neither client configured, a profile of the shots' own)."
+args = ["--show", "mcp-connect", "--claude-profile", "out/check/claude/manual-mcp"]
+
+# Each built-in effect's editor (27.5): the ui tier's scenarios where they exist (set to a
+# few settings), else `effect:<id>` (the effect at its defaults on the first track,
+# the Guitars folder).
+
+[shots.effect-amplify]
+about = "Amplify on the Guitars folder (the first track), its left channel at +3 dB."
+args = ["--show", "native"]
+
+[shots.effect-channel-mixer]
+about = "The Channel Mixer at its defaults."
+args = ["--show", "effect:channel-mixer"]
+
+[shots.effect-eq]
+about = "The Parametric EQ set: a high-pass, a low shelf, two bands, a high shelf; its curve."
+args = ["--show", "eq"]
+
+[shots.effect-graphic-eq]
+about = "The 10-band Graphic EQ with four bands moved; its curve."
+args = ["--show", "graphic-eq"]
+
+[shots.effect-limiter]
+about = "The Limiter at its defaults."
+args = ["--show", "effect:limiter"]
+
+[shots.effect-compressor]
+about = "The Compressor at -24 dB, 4:1; its transfer curve."
+args = ["--show", "compressor"]
+
+[shots.effect-de-esser]
+about = "The De-esser at its defaults."
+args = ["--show", "effect:de-esser"]
+
+[shots.effect-dynamics]
+about = "Dynamics at its defaults; its curve."
+args = ["--show", "effect:dynamics"]
+
+[shots.effect-multiband]
+about = "The Multiband Compressor with band 1 and the limiter set."
+args = ["--show", "multiband"]
+
+[shots.effect-hiss-reduction]
+about = "Hiss Reduction at its defaults."
+args = ["--show", "effect:hiss-reduction"]
+
+[shots.effect-auto-noise-reduction]
+about = "Auto Noise Reduction at its defaults."
+args = ["--show", "effect:auto-noise-reduction"]
+
+[shots.effect-hum-remover]
+about = "The Hum Remover at 50 Hz with five harmonics, its notches marked."
+args = ["--show", "dehummer"]
+
+[shots.effect-click-remover]
+about = "The Click Remover with its threshold and complexity raised."
+args = ["--show", "auto-click-remover"]
+
+[shots.effect-clip-repair]
+about = "Clip Repair at -6 dB, the first clip's file scanned into it."
+args = ["--show", "declipper"]
+
+[shots.effect-click-pop-repair]
+about = "The Click & Pop Repair at its defaults, the first clip's file scanned: its threshold and rejection curves."
+args = ["--show", "click-pop"]
+
+[shots.effect-room-reverb]
+about = "The Room Reverb on the Reverb bus as a medium room, its decay sketch."
+args = ["--show", "studio-reverb"]
+
+[shots.effect-convolution-reverb]
+about = "The Convolution Reverb on the Reverb bus, a room impulse loaded."
+args = ["--show", "convolution-reverb"]
+
+[shots.effect-space-reverb]
+about = "The Space Reverb on the Reverb bus as a long hall, the impulse it made."
+args = ["--show", "full-reverb"]
+
+[shots.effect-delay]
+about = "The Delay with its left copy early, its taps drawn."
+args = ["--show", "delay"]
+
+[shots.effect-echo]
+about = "The Echo bouncing, its EQ curve and repeats."
+args = ["--show", "echo"]
+
+[shots.effect-vintage-delay]
+about = "The Vintage Delay on Tape/Tube: its mode buttons, shaper and low-pass."
+args = ["--show", "analog-delay"]
+
+[shots.effect-chorus]
+about = "The Chorus with four voices, its voices drawn."
+args = ["--show", "chorus"]
+
+[shots.effect-flanger]
+about = "The Flanger with feedback, its sweep drawn."
+args = ["--show", "flanger"]
+
+[shots.effect-phaser]
+about = "The Phaser with six stages, its response at both ends of the sweep."
+args = ["--show", "phaser"]

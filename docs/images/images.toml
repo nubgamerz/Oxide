@@ -1,0 +1,45 @@
+# The README's images (dev plan 28.3), cut from the manual's committed screenshots
+# (docs/manual/shots, taken with --neutral) by `scripts/readme_images.ps1`. Each table makes
+# docs/images/<name>.png: `shot` names the screenshot; `marks` (names from the shot's .json,
+# grown by `pad` pixels) or `rect` (x, y, w, h in its pixels) picks the part; `max_width`
+# scales it down. No crop: the whole shot. See crates/manual/src/readme_images.rs.
+
+[images.hero]
+about = "The main window: the Multitrack with a folder of two guitars, keys, vocal and a reverb bus, the inspector on Guitar L"
+shot = "main-window"
+max_width = 1280
+
+[images.recording]
+about = "Recording: the transport running, Keys and Vocal armed, Vocal's take growing red under the playhead"
+shot = "recording"
+rect = [0, 25, 1136, 545]
+
+[images.piano-roll]
+about = "The piano roll: Keys' chords with their note names, the Snap menu, Quantize and the velocity lane"
+shot = "piano-roll"
+marks = ["pane.piano_roll"]
+pad = 2
+
+[images.mixer]
+about = "The mixer: a strip per track and folder with sends to the reverb, and the master strip"
+shot = "mixer"
+marks = ["pane.mixer"]
+pad = 2
+
+[images.waveform]
+about = "The Waveform view finishing a file: its effects rack, the waveform and the spectrogram with a box drawn over 1-4 kHz"
+shot = "spectral"
+marks = ["pane.waveform"]
+pad = 2
+
+[images.effects]
+about = "A built-in effect: the Parametric EQ's editor with its curve, on the Guitars folder"
+shot = "effect-eq"
+marks = ["effect.editor"]
+pad = 2
+
+[images.export]
+about = "The export's report: integrated loudness on the -14 LUFS target, loudness range, true peak, the normalising gain applied"
+shot = "export-report"
+marks = ["export.report"]
+pad = 2

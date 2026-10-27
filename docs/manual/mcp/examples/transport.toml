@@ -1,0 +1,186 @@
+# Examples of the transport actions (daw-core's api/actions/transport.rs). Each runs on a fresh copy
+# of the example project; how to write them: docs/manual/README.md, "Writing the MCP manual".
+
+[[example]]
+action = "get_transport"
+title = "Read the transport"
+notes = '''
+Playing, recording, the playhead in samples, bar.beat and quarter notes, the tempo and time signature there, the loop, punch and metronome. `recording_takes` and `count_in` appear only while recording and counting in.
+'''
+result = '''
+{
+  "bar_beat": "1.1",
+  "loop": {"enabled": false, "end": 0, "start": 0},
+  "metronome": {
+    "count_in_bars": 0,
+    "enabled": false,
+    "only_while_recording": false,
+    "volume_db": -6.0
+  },
+  "playing": false,
+  "position": 0,
+  "position_beats": 0.0,
+  "position_quarter_notes": 0.0,
+  "punch": {"enabled": false, "end": 0, "start": 0},
+  "recording": false,
+  "sample_rate": 48000,
+  "tempo": 120.0,
+  "time_signature": [4, 4]
+}
+'''
+
+[[example]]
+action = "play"
+title = "Start playback"
+notes = '''
+From the playhead. With no audio device, as in the examples, the transport still runs.
+'''
+result = '{"...": "*", "playing": true, "position": 0}'
+
+[[example]]
+action = "stop"
+title = "Stop"
+notes = '''
+The playhead stays where playback stopped. Recorded takes appear as clips shortly after.
+'''
+setup = [
+    { action = "play" },
+]
+result = '{"...": "*", "playing": false, "position": 0}'
+
+[[example]]
+action = "locate"
+title = "Move the playhead to bar 2"
+notes = '''
+`position` is in samples. Refused while recording.
+'''
+input = '{"position": 96000}'
+result = '{"...": "*", "bar_beat": "2.1", "position": 96000, "position_quarter_notes": 4.0}'
+
+[[example]]
+action = "set_loop"
+title = "Loop the first two bars"
+notes = '''
+`start` and `end` are samples and go together; `enabled` turns looping on or off. Turning it on with no region loops the 4 bars from the bar the playhead is in.
+'''
+input = '{"start": 0, "end": 192000, "enabled": true}'
+result = '''
+{
+  "...": "*",
+  "loop": {"enabled": true, "end": 192000, "start": 0}
+}
+'''
+
+[[example]]
+action = "set_punch"
+title = "Punch in on bar 2"
+notes = '''
+While on, `record` records only inside the range, to the sample.
+'''
+input = '{"start": 96000, "end": 192000, "enabled": true}'
+result = '''
+{
+  "...": "*",
+  "punch": {"enabled": true, "end": 192000, "start": 96000}
+}
+'''
+
+[[example]]
+action = "set_metronome"
+title = "Click on, with a one-bar count-in"
+notes = '''
+Fields left out stay as they are. The click is live only: it is never in an export.
+'''
+input = '{"enabled": true, "count_in_bars": 1, "volume_db": -12}'
+result = '''
+{
+  "...": "*",
+  "metronome": {
+    "count_in_bars": 1,
+    "enabled": true,
+    "only_while_recording": false,
+    "volume_db": -12.0
+  }
+}
+'''
+
+[[example]]
+action = "record"
+title = "Start recording"
+notes = '''
+Starts every armed audio track that has an audio input, and plays. Takes become clips when `stop` is called. The answer is the transport, as `get_transport` gives it; here no armed track has an input, so no take is made.
+'''
+result = '{"...": "*", "playing": true, "recording": true}'
+
+[[example]]
+action = "export_mixdown"
+title = "Export the mix as a 16-bit WAV"
+notes = '''
+Renders the master mix through the live engine and plug-ins, bit-faithful to playback; the default is a 32-bit float WAV of the whole project plus a 2 second tail. It runs in the background: poll `get_export_status`. The example waits for it.
+'''
+input = '{"path": "<project>/Exported/mix.wav", "format": {"type": "wav", "bits": 16}, "tail_seconds": 1}'
+result = '''
+{
+  "kind": "export",
+  "progress": "*",
+  "state": "running",
+  "what": "Exporting mix.wav"
+}
+'''
+
+[[example]]
+action = "export_mixdown"
+title = "Export normalised to the project's loudness target"
+notes = '''
+`normalize` brings the file to the loudness target (`set_loudness_target`) with one constant gain and no limiter, held back so the true peak stays at or under `ceiling_dbtp`. `get_export_status` reports the gain.
+'''
+input = '{"path": "<project>/Exported/mix.wav", "normalize": true, "ceiling_dbtp": -1}'
+result = '''
+{
+  "kind": "export",
+  "progress": "*",
+  "state": "running",
+  "what": "Exporting mix.wav"
+}
+'''
+
+[[example]]
+action = "mixdown_to_new_file"
+title = "Mix down into the Waveform view"
+notes = '''
+The same render as an export, into the project's `Rendered` folder, then opened in the Waveform view. The answer is the file's path.
+'''
+input = '{"tail_seconds": 1}'
+result = '{"path": "*"}'
+
+[[example]]
+action = "get_export_status"
+title = "After an export has finished"
+notes = '''
+The loudness figures are shown as `"*"`. While running: `progress` 0 to 1 and what it is making. Finished: the file's path and its loudness as `get_loudness` reports it; failed: the reason.
+'''
+setup = [
+    { action = "export_mixdown", input = '{"path": "<project>/Exported/mix.wav", "tail_seconds": 1}' },
+]
+result = '''
+{
+  "loudness": {
+    "integrated": "*",
+    "max_momentary": "*",
+    "max_short_term": "*",
+    "momentary": "*",
+    "range": "*",
+    "seconds": "*",
+    "short_term": "*",
+    "true_peak": "*"
+  },
+  "normalized": null,
+  "path": "<project>/Exported/mix.wav",
+  "state": "finished"
+}
+'''
+
+[[example]]
+action = "cancel_export"
+title = "Cancel when nothing is exporting"
+result = '{"state": "idle"}'

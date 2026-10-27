@@ -1,0 +1,4 @@
+# A manual of one page, for the generator's tests (its screenshot is in ../shots).
+[[chapter]]
+title = "Fixture"
+pages = ["index.md", "@mcp-reference", "@mcp-actions"]

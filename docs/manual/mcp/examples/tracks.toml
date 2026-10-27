@@ -1,0 +1,189 @@
+# Examples of the track actions (daw-core's api/actions/tracks.rs). Each runs on a fresh copy
+# of the example project; how to write them: docs/manual/README.md, "Writing the MCP manual".
+
+[[example]]
+action = "add_track"
+title = "Add a bus for a delay"
+notes = "New ids continue from the project's last one; the answer is the new track's id."
+input = '''
+{"kind": "bus", "name": "Delay"}
+'''
+result = '{"name": "Delay", "track": 21}'
+
+[[example]]
+action = "set_track"
+title = "Rename the vocal and recolour it"
+notes = "Only the fields given change. The answer is the track as it is now."
+input = '''
+{"track": 5, "name": "Lead vocal", "color": "#e05a5a"}
+'''
+result = '''
+{
+  "collapsed": false,
+  "color": "#e05a5a",
+  "height": 64.0,
+  "name": "Lead vocal",
+  "show_automation": false,
+  "track": 5
+}
+'''
+
+[[example]]
+action = "remove_track"
+title = "A track that isn't there"
+notes = "A refusal names the bad id and where to find good ones."
+input = '{"track": 99}'
+error = 'no track with id 99 (see get_project)'
+
+[[example]]
+action = "add_track"
+title = "Add an audio track inside a folder"
+notes = '''
+`kind` is `audio`, `instrument`, `folder` or `bus`. `parent` puts the track in that folder (track 1 is Guitars).
+'''
+input = '{"kind": "audio", "name": "Bass DI", "parent": 1}'
+result = '{"name": "Bass DI", "track": 21}'
+
+[[example]]
+action = "set_track_input"
+title = "Record Guitar L from the interface's first input"
+notes = '''
+`channel` counts from 0 (0 is "In 1"); `stereo` takes it and the next one. For an instrument track the input is `{"type":"midi","port":null,"channel":null}`; `{"type":"none"}` disconnects.
+'''
+input = '{"track": 2, "input": {"type": "audio", "channel": 0, "stereo": false}}'
+result = '''
+{
+  "Audio": {"channel": 0, "stereo": false}
+}
+'''
+
+[[example]]
+action = "set_track_input"
+title = "Play Keys from MIDI channel 1 only"
+notes = '''
+`port` null listens to every port; `channel` 0 to 15 filters one MIDI channel.
+'''
+input = '{"track": 4, "input": {"type": "midi", "port": null, "channel": 0}}'
+result = '''
+{
+  "Midi": {"channel": 0, "port": null}
+}
+'''
+
+[[example]]
+action = "set_track_output"
+title = "Route the Guitars folder to the Reverb bus"
+notes = '''
+The main output goes to its folder or the master (`parent`, `master`), to any folder or bus that doesn't create a loop (`bus`), or straight to a hardware output pair (`hardware`). Sends are separate: see `add_send`.
+'''
+input = '{"track": 1, "output": {"type": "bus", "track": 6}}'
+result = '{"Track": 6}'
+
+[[example]]
+action = "set_track_output"
+title = "A route that would loop"
+notes = '''
+The setup feeds Guitars into the Reverb bus; routing the Reverb bus back into Guitars would feed the folder from itself, so it is refused.
+'''
+setup = [
+    { action = "set_track_output", input = '{"track": 1, "output": {"type": "bus", "track": 6}}' },
+]
+input = '{"track": 6, "output": {"type": "bus", "track": 1}}'
+error = 'routing track 6 into 1 would create a loop: 1 already feeds 6'
+
+[[example]]
+action = "set_track_monitor"
+title = "Always hear the guitar's input"
+notes = '''
+`auto` hears the input while the track is armed, `on` always, `off` never. Monitoring runs the input through the track's plug-ins.
+'''
+input = '{"track": 2, "monitor": "on"}'
+result = '{"done": true}'
+
+[[example]]
+action = "move_track"
+title = "Move Vocal up one place"
+notes = '''
+One place among its siblings, with its sub-tracks.
+'''
+input = '{"track": 5, "direction": "up"}'
+result = '{"done": true}'
+
+[[example]]
+action = "set_track_parent"
+title = "Move Keys into the Guitars folder"
+notes = '''
+Omit `folder` to take a track out to the top level.
+'''
+input = '{"track": 4, "folder": 1}'
+result = '{"done": true}'
+
+[[example]]
+action = "move_track_to"
+title = "Put Vocal before Guitars"
+notes = '''
+As dragging a header does: `before` or `after` another track (it joins that track's folder), or into a `folder` at `position`. Give at most one of the three.
+'''
+input = '{"track": 5, "before": 1}'
+result = '{"done": true}'
+
+[[example]]
+action = "set_track_mixer"
+title = "Pull Guitar R down and pan it right"
+notes = '''
+Only the fields given change; `gain_db` runs -60 to +12, `pan` -1 (left) to 1 (right). The answer is the resulting settings.
+'''
+input = '{"track": 3, "gain_db": -4.5, "pan": 0.8}'
+result = '''
+{
+  "arm": false,
+  "mixer": {"gain_db": -4.5, "mute": false, "pan": 0.800000011920929, "solo": false},
+  "track": 3
+}
+'''
+
+[[example]]
+action = "set_track_mixer"
+title = "Solo the vocal and arm it"
+input = '{"track": 5, "solo": true, "arm": true}'
+result = '''
+{
+  "arm": true,
+  "mixer": {"gain_db": -3.0, "mute": false, "pan": 0.0, "solo": true},
+  "track": 5
+}
+'''
+
+[[example]]
+action = "set_track_enabled"
+title = "Switch Guitar R off to save its CPU"
+notes = '''
+Unlike a mute, an off track leaves the audio graph: its plug-ins cost nothing. Every setting is kept.
+'''
+input = '{"track": 3, "enabled": false}'
+result = '{"enabled": false, "track": 3}'
+
+[[example]]
+action = "render_track"
+title = "Render Guitar L as it sounds"
+notes = '''
+Writes a 32-bit float WAV into `Rendered` through the same engine as an export, puts it on a new track under the original and switches the original off (`disable`, default true). It answers at once with the file's path and runs in the background: poll `get_export_status` (its `track` names the new track). The example waits for it to finish.
+'''
+input = '{"track": 2, "tail_seconds": 1}'
+result = '{"path": "*"}'
+
+[[example]]
+action = "set_master"
+title = "Master 1 dB down, with its automation lanes shown"
+notes = '''
+Only the fields given change. `output_channel` is the first channel of the hardware pair (0-based, even). Height and lanes shown are view state, not undo steps.
+'''
+input = '{"gain_db": -1.0, "show_automation": true}'
+result = '''
+{
+  "height": 84.0,
+  "mixer": {"gain_db": -1.0, "mute": false, "pan": 0.0, "solo": false},
+  "output_channel": 0,
+  "show_automation": true
+}
+'''

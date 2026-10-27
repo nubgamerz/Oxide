@@ -1,0 +1,12 @@
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ask anything about using Oxide. The manual (Help > Manual in the app, or F1 over the part you're looking at) may already answer it. Found a bug? Open an issue with the Bug report template instead.
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      description: What you're trying to do, what you tried, and your Oxide version (Help > About).
+    validations:
+      required: true

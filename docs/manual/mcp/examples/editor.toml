@@ -1,0 +1,406 @@
+# Examples of the editor actions (daw-core's api/actions/editor.rs). Each runs on a fresh copy
+# of the example project; how to write them: docs/manual/README.md, "Writing the MCP manual".
+
+[[example]]
+action = "open_audio_editor"
+title = "Open Guitar L's audio in the Waveform view"
+notes = '''
+By `clip` (an audio clip's playing take) or by `path` (absolute). A file already open gives its existing document. Opened from a clip, the document remembers the clip and its track (`source`), so the effects rack can sync with that track (`set_rack_sync`). To show it, call `set_view` with `view_mode` "waveform" and the `document`.
+'''
+input = '{"clip": 7}'
+result = '''
+{
+  "channels": 1,
+  "clips": [7],
+  "dirty": false,
+  "document": 1,
+  "format": {"bits": 32, "float": true},
+  "history": {"saved": 0, "showing": 0, "steps": ["Open"]},
+  "length": 96000,
+  "path": "<project>\\Imported\\guitar-l.wav",
+  "sample_rate": 48000,
+  "seconds": 2.0,
+  "source": {"clip": 7, "track": 2}
+}
+'''
+
+[[example]]
+action = "get_audio_editor"
+title = "See the open files and the rack"
+notes = '''
+Each document with its id, path, format, length, whether it has unsaved edits (`dirty`), its own history and the clips that use the file; then the effects rack, which file plays and where, and an Apply's progress.
+'''
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+]
+result = '''
+{
+  "applying": null,
+  "documents": [
+    {
+      "channels": 1,
+      "clips": [7],
+      "dirty": false,
+      "document": 1,
+      "format": {"bits": 32, "float": true},
+      "history": {"saved": 0, "showing": 0, "steps": ["Open"]},
+      "length": 96000,
+      "path": "<project>\\Imported\\guitar-l.wav",
+      "sample_rate": 48000,
+      "seconds": 2.0,
+      "source": {"clip": 7, "track": 2}
+    }
+  ],
+  "playing": null,
+  "rack": [],
+  "sync": null
+}
+'''
+
+[[example]]
+action = "close_audio_editor"
+title = "Close a file with no changes"
+notes = '''
+A file with unsaved edits is refused unless `discard` is true.
+'''
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+]
+input = '{"document": 1}'
+result = '{"applying": null, "documents": [], "playing": null, "rack": [], "sync": null}'
+
+[[example]]
+action = "close_audio_editor"
+title = "Close a file with unsaved edits"
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+    { action = "edit_audio", input = '{"document": 1, "op": "amplify", "db": -6}' },
+]
+input = '{"document": 1}'
+error = '<project>\Imported\guitar-l.wav has unsaved edits: save it, or close with discard'
+
+[[example]]
+action = "play_audio_editor"
+title = "Play the first beat of the file"
+notes = '''
+Plays the file on its own through the Waveform view's effects rack, with no track processing, on the master's outputs. Playing the project stops it. It is never in an export. `play` false stops it. Positions are the file's own samples.
+'''
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+]
+input = '{"document": 1, "start": 0, "end": 24000}'
+result = '''
+{
+  "applying": null,
+  "documents": [
+    {
+      "channels": 1,
+      "clips": [7],
+      "dirty": false,
+      "document": 1,
+      "format": {"bits": 32, "float": true},
+      "history": {"saved": 0, "showing": 0, "steps": ["Open"]},
+      "length": 96000,
+      "path": "<project>\\Imported\\guitar-l.wav",
+      "sample_rate": 48000,
+      "seconds": 2.0,
+      "source": {"clip": 7, "track": 2}
+    }
+  ],
+  "playing": {"document": 1, "position": 0},
+  "rack": [],
+  "sync": null
+}
+'''
+
+[[example]]
+action = "get_spectrum"
+title = "Read the spectrum in four bands"
+notes = '''
+Log-spaced bands from 20 Hz to the Nyquist frequency, each with its edges in Hz and its level in dB, where a full-scale sine reads 0 dB.
+'''
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+]
+input = '{"document": 1, "bands": 4}'
+result = '''
+{
+  "bands": [
+    {"db": "*", "high_hz": "*", "low_hz": 20.0},
+    "..."
+  ],
+  "fft": 4096,
+  "frames": 45
+}
+'''
+
+[[example]]
+action = "edit_audio"
+title = "Turn the file down 6 dB"
+notes = '''
+A step in the file's own history (`undo_audio_edit`), not the project's: nothing is written until `save_audio`. `op` also takes delete, trim, insert_silence, silence, normalize_peak, normalize_loudness, fade_in, fade_out, reverse, invert, paste and the spectral repairs; the range is `start`..`end` in the file's own samples, the whole file when left out.
+'''
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+]
+input = '{"document": 1, "op": "amplify", "db": -6}'
+result = '''
+{
+  "channels": 1,
+  "clips": [7],
+  "dirty": true,
+  "document": 1,
+  "format": {"bits": 32, "float": true},
+  "history": {"saved": 0, "showing": 1, "steps": ["Open", "Amplify -6.0 dB"]},
+  "length": 96000,
+  "path": "<project>\\Imported\\guitar-l.wav",
+  "sample_rate": 48000,
+  "seconds": 2.0,
+  "source": {"clip": 7, "track": 2}
+}
+'''
+
+[[example]]
+action = "edit_audio"
+title = "Fade out the last beat"
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+]
+input = '{"document": 1, "op": "fade_out", "start": 72000, "end": 96000, "shape": "linear"}'
+result = '''
+{
+  "channels": 1,
+  "clips": [7],
+  "dirty": true,
+  "document": 1,
+  "format": {"bits": 32, "float": true},
+  "history": {"saved": 0, "showing": 1, "steps": ["Open", "Fade out"]},
+  "length": 96000,
+  "path": "<project>\\Imported\\guitar-l.wav",
+  "sample_rate": 48000,
+  "seconds": 2.0,
+  "source": {"clip": 7, "track": 2}
+}
+'''
+
+[[example]]
+action = "edit_audio"
+title = "Normalize to a loudness"
+notes = '''
+Integrated loudness (EBU R 128) needs at least 400 ms of audio.
+'''
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+]
+input = '{"document": 1, "op": "normalize_loudness", "lufs": -14}'
+result = '''
+{
+  "channels": 1,
+  "clips": [7],
+  "dirty": true,
+  "document": 1,
+  "format": {"bits": 32, "float": true},
+  "history": {"saved": 0, "showing": 1, "steps": ["Open", "Normalize to -14.0 LUFS"]},
+  "length": 96000,
+  "path": "<project>\\Imported\\guitar-l.wav",
+  "sample_rate": 48000,
+  "seconds": 2.0,
+  "source": {"clip": 7, "track": 2}
+}
+'''
+
+[[example]]
+action = "apply_audio_effects"
+title = "Print the rack's effects into the file"
+notes = '''
+The answer comes at once, while the render runs (its `applying` and the document's history are shown as `"*"`: they change as it finishes). Renders the range through the effects rack (`add_insert` with `editor` true) exactly as `play_audio_editor` plays it, and writes the result as one step of the file's history. It runs in the background: `get_audio_editor`'s `applying` shows its progress. While the rack is synced with the file's track (`set_rack_sync`), `turn_off_track` is required.
+'''
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+    { action = "add_insert", input = '{"plugin": "native:amplify", "editor": true}' },
+]
+input = '{"document": 1}'
+result = '''
+{
+  "applying": "*",
+  "documents": "*",
+  "playing": null,
+  "rack": [
+    {
+      "bypass": false,
+      "insert": 4026531841,
+      "latency": 0,
+      "loaded": true,
+      "name": "Amplify"
+    }
+  ],
+  "sync": null
+}
+'''
+
+[[example]]
+action = "capture_noise_print"
+title = "Learn a noise print from a quiet part"
+notes = '''
+The selected audio is what the effect learns from: for Noise Reduction or Hiss Reduction a noise print (select the noise alone), for Clip Repair its clip levels, for the Click & Pop Repair a scan. It goes to `insert`, or without one to the Waveform view's rack: its first effect that learns, or a Noise Reduction it adds.
+'''
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+]
+input = '{"document": 1, "start": 0, "end": 24000}'
+result = '{"effect": "Noise Reduction", "insert": 4026531841}'
+
+[[example]]
+action = "undo_audio_edit"
+title = "Take back the last edit to the file"
+notes = '''
+The file's own history, not the project's; `redo` true brings an edit back.
+'''
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+    { action = "edit_audio", input = '{"document": 1, "op": "amplify", "db": -6}' },
+]
+input = '{"document": 1}'
+result = '''
+{
+  "document": {
+    "channels": 1,
+    "clips": [7],
+    "dirty": false,
+    "document": 1,
+    "format": {"bits": 32, "float": true},
+    "history": {"saved": 0, "showing": 0, "steps": ["Open", "Amplify -6.0 dB"]},
+    "length": 96000,
+    "path": "<project>\\Imported\\guitar-l.wav",
+    "sample_rate": 48000,
+    "seconds": 2.0,
+    "source": {"clip": 7, "track": 2}
+  },
+  "done": "Amplify -6.0 dB"
+}
+'''
+
+[[example]]
+action = "copy_audio"
+title = "Copy the first beat"
+notes = '''
+For `edit_audio`'s `paste`, into this file or another.
+'''
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+]
+input = '{"document": 1, "start": 0, "end": 24000}'
+result = '{"copied": 24000}'
+
+[[example]]
+action = "save_audio"
+title = "Write the edits over the file"
+notes = '''
+Overwrites the audio file itself in its own WAV format, and every clip on it plays the new audio. FLAC, MP3 and AIFF files are refused: use `save_audio_as`.
+'''
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+    { action = "edit_audio", input = '{"document": 1, "op": "amplify", "db": -6}' },
+]
+input = '{"document": 1}'
+result = '''
+{
+  "channels": 1,
+  "clips": [7],
+  "dirty": false,
+  "document": 1,
+  "format": {"bits": 32, "float": true},
+  "history": {"saved": 1, "showing": 1, "steps": ["Open", "Amplify -6.0 dB"]},
+  "length": 96000,
+  "path": "<project>\\Imported\\guitar-l.wav",
+  "sample_rate": 48000,
+  "seconds": 2.0,
+  "source": {"clip": 7, "track": 2}
+}
+'''
+
+[[example]]
+action = "save_audio_as"
+title = "Save the edited file as a new WAV"
+notes = '''
+Writes to `path` (absolute, .wav; its folder must exist) and carries on editing that file.
+'''
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+    { action = "edit_audio", input = '{"document": 1, "op": "amplify", "db": -6}' },
+]
+input = '{"document": 1, "path": "<project>/Exported/guitar-l-quiet.wav"}'
+result = '''
+{
+  "channels": 1,
+  "clips": [],
+  "dirty": false,
+  "document": 1,
+  "format": {"bits": 32, "float": true},
+  "history": {"saved": 1, "showing": 1, "steps": ["Open", "Amplify -6.0 dB"]},
+  "length": 96000,
+  "path": "<project>/Exported/guitar-l-quiet.wav",
+  "sample_rate": 48000,
+  "seconds": 2.0,
+  "source": {"clip": 7, "track": 2}
+}
+'''
+
+[[example]]
+action = "get_metadata"
+title = "Read a file's tags"
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+]
+input = '{"document": 1}'
+result = '''
+{
+  "album": "",
+  "album_artist": "",
+  "artist": "",
+  "comment": "",
+  "composer": "",
+  "cover": null,
+  "genre": "",
+  "title": "",
+  "track": "",
+  "year": ""
+}
+'''
+
+[[example]]
+action = "set_metadata"
+title = "Tag the file"
+notes = '''
+Only the fields given change and an empty string clears one. The change is a step of the file's own history, written by `save_audio` and `export_audio`.
+'''
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+]
+input = '{"document": 1, "title": "Guitar L", "artist": "Me", "year": "2026"}'
+result = '''
+{
+  "album": "",
+  "album_artist": "",
+  "artist": "Me",
+  "comment": "",
+  "composer": "",
+  "cover": null,
+  "genre": "",
+  "title": "Guitar L",
+  "track": "",
+  "year": "2026"
+}
+'''
+
+[[example]]
+action = "export_audio"
+title = "Export the file as 24-bit FLAC"
+notes = '''
+As the file is now, unsaved edits included, in another format; the document and its file stay as they are. A path without an extension gets the format's. It runs in the background: poll `get_export_status`; the example waits for it.
+'''
+setup = [
+    { action = "open_audio_editor", input = '{"clip": 7}' },
+]
+input = '{"document": 1, "path": "<project>/Exported/guitar-l", "format": {"type": "flac", "bits": 24, "level": 5}}'
+result = '{"path": "<project>/Exported/guitar-l.flac"}'

@@ -1,0 +1,51 @@
+[package]
+name = "daw-core"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+license.workspace = true
+description = "DAW engine: project model, routing graph with delay compensation, VST3 hosting, audio devices, MIDI, recording and export"
+
+[features]
+# ASIO needs LLVM (libclang) at build time; asio-sys downloads the ASIO SDK if CPAL_ASIO_DIR is unset.
+asio = ["cpal/asio"]
+# The comparison against reference renders (`native::reference`, the `effect_check` example):
+# local only, not in the repository; turn it on only where those files are present.
+reference = []
+
+[dependencies]
+anyhow.workspace = true
+base64.workspace = true
+# Local time for backup names.
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
+cpal.workspace = true
+# Export formats (13.6): FLAC in Rust; LAME (LGPL) and libvorbis (BSD) built from C; a
+# high-quality sample-rate converter for exports at another rate.
+# Tags: ID3 in MP3, WAV and AIFF (13.7).
+id3 = "1.17"
+flacenc = { version = "0.5", default-features = false, features = ["par"] }
+mp3lame-encoder = "0.2"
+rubato = "0.16"
+vorbis_rs = "0.5"
+hound.workspace = true
+log.workspace = true
+# The manual's search index and ranking (27.3): serde only, not the generator.
+manual-search = { path = "../manual-search" }
+midir.workspace = true
+midly.workspace = true
+rtrb.workspace = true
+rustfft.workspace = true
+schemars.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+signalsmith-stretch.workspace = true
+symphonia.workspace = true
+vst3-host.workspace = true
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_System_SystemInformation", "Win32_System_Threading", "Win32_System_WindowsProgramming"] }
+
+[dev-dependencies]
+# The manual built in memory from docs/manual, for search_manual's and open_manual's tests
+# (27.3): a test-only dependency, so daw-core's own build never links the generator.
+manual = { path = "../manual" }

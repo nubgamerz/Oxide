@@ -1,0 +1,183 @@
+# Examples of the devices actions (daw-core's api/actions/devices.rs). Each runs on a fresh copy
+# of the example project; how to write them: docs/manual/README.md, "Writing the MCP manual".
+
+[[example]]
+action = "get_audio_settings"
+title = "Read the audio configuration"
+notes = '''
+The chosen driver, devices, sample rate, buffer size, processing block and threads (null where the driver's default is used), what the running device actually opened with, and the recording latency figures. Names and numbers here are an example.
+'''
+shown_only = "its answer is about this machine's audio devices"
+result = '''
+{
+  "host": "WASAPI",
+  "output_device": null,
+  "input_device": null,
+  "sample_rate": null,
+  "buffer_size": null,
+  "threads": null,
+  "processing_block": null,
+  "stage_latency": 0,
+  "record_offset": 0,
+  "round_trip": null,
+  "record_shift": 0,
+  "running": {
+    "host": "WASAPI",
+    "output": "Speakers (Example Interface)",
+    "input": "Microphone (Example Interface)",
+    "sample_rate": 48000,
+    "inputs": 2,
+    "outputs": 2,
+    "sample_format": "F32"
+  },
+  "error": null
+}
+'''
+
+[[example]]
+action = "list_audio_devices"
+title = "List drivers and devices"
+notes = '''
+The driver types (`hosts`) and, for `host` (default: the current one), its devices and what the output device supports. ASIO drivers appear only when they can start.
+'''
+shown_only = "its answer is about this machine's audio devices"
+result = '''
+{
+  "hosts": [
+    "WASAPI",
+    "ASIO"
+  ],
+  "host": "WASAPI",
+  "outputs": [
+    "Speakers (Example Interface)",
+    "Headphones (Example Interface)"
+  ],
+  "inputs": [
+    "Microphone (Example Interface)"
+  ],
+  "sample_rates": [
+    44100,
+    48000,
+    96000
+  ],
+  "buffer_range": [
+    16,
+    4096
+  ],
+  "error": null
+}
+'''
+
+[[example]]
+action = "set_audio_settings"
+title = "Gather small buffers into 64-sample blocks"
+notes = '''
+Only the fields given change. A change of device, sample rate or buffer size restarts the device (a sample rate change also reloads every plug-in and file, and the call answers once they are in); the processing block and record offset apply without a restart. The answer is the configuration, as `get_audio_settings` gives it.
+'''
+input = '{"processing_block": 64}'
+shown_only = "its answer is about this machine's audio devices"
+result = '''
+{
+  "host": "WASAPI",
+  "output_device": null,
+  "input_device": null,
+  "sample_rate": null,
+  "buffer_size": null,
+  "threads": null,
+  "processing_block": 64,
+  "stage_latency": 0,
+  "record_offset": 0,
+  "round_trip": null,
+  "record_shift": 0,
+  "running": {
+    "host": "WASAPI",
+    "output": "Speakers (Example Interface)",
+    "input": "Microphone (Example Interface)",
+    "sample_rate": 48000,
+    "inputs": 2,
+    "outputs": 2,
+    "sample_format": "F32"
+  },
+  "error": null
+}
+'''
+
+[[example]]
+action = "get_midi_inputs"
+title = "List MIDI inputs"
+notes = '''
+The ports that opened and the ones that failed to (on Windows a port can be open in one application at a time).
+'''
+shown_only = "its answer is about this machine's MIDI ports"
+result = '''
+{
+  "ports": [
+    "Example Keyboard"
+  ],
+  "errors": []
+}
+'''
+
+[[example]]
+action = "reconnect_midi"
+title = "Reopen the MIDI ports"
+notes = '''
+Closes and reopens every MIDI input, for example after plugging in a keyboard. The answer is the ports, as `get_midi_inputs` gives it.
+'''
+shown_only = "its answer is about this machine's MIDI ports"
+result = '''
+{
+  "ports": [
+    "Example Keyboard"
+  ],
+  "errors": []
+}
+'''
+
+[[example]]
+action = "get_stats"
+title = "Read the engine's health"
+notes = '''
+DSP load (over 1 is a dropout), delay-compensation latency, the block the engine processes in, the driver's cadence, worker threads and the counters of skips and gaps. With no audio device, as here, everything is 0.
+'''
+result = '''
+{
+  "block_size": 0,
+  "cadence": 0,
+  "device_block": 0,
+  "dsp_load": 0.0,
+  "engine_skips": 0,
+  "input_gaps": 0,
+  "latency": 0,
+  "plugin_skips": 0,
+  "workers": 0
+}
+'''
+
+[[example]]
+action = "get_cpu_usage"
+title = "Read the CPU use per track"
+notes = '''
+The CPU panel's numbers: each track and each insert on it, averaged over the last half second of processing (`share` 1 is a buffer's whole deadline), plus `process`, the whole app in cores. Nothing has run here, so everything is 0; the answer is trimmed to two tracks.
+'''
+result = '''
+{
+  "process": 0.0,
+  "tracks": [
+    {
+      "inserts": [],
+      "load": {"buffers": 0, "per_buffer_us": 0.0, "share": 0.0},
+      "name": "Master",
+      "track": null
+    },
+    {
+      "inserts": [],
+      "load": {"buffers": 0, "per_buffer_us": 0.0, "share": 0.0},
+      "name": "Guitars",
+      "track": 1
+    },
+    "..."
+  ],
+  "window": 0.0
+}
+'''
