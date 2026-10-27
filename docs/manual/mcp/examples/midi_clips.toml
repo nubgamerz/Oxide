@@ -226,6 +226,36 @@ input = '{"clip": 10, "notes": [14, 15, 16]}'
 result = '{"done": true}'
 
 [[example]]
+action = "copy_notes"
+title = "Copy bar 1's chord"
+notes = '''
+As Ctrl+C in the piano roll. The note clipboard is the session's, apart from the clip clipboard: it isn't saved and isn't part of undo.
+'''
+input = '{"clip": 10, "notes": [11, 12, 13]}'
+result = '{"notes": 3}'
+
+[[example]]
+action = "cut_notes"
+title = "Cut bar 2's chord"
+notes = '''
+Copied to the note clipboard and deleted from the clip, in one undo step. All or nothing.
+'''
+input = '{"clip": 10, "notes": [14, 15, 16]}'
+result = '{"notes": 3}'
+
+[[example]]
+action = "paste_notes"
+title = "Paste two notes at bar 2"
+notes = '''
+The earliest copied note starts at `at` (or `position` in samples; the playhead without either), the others at their same distances from it. Notes reaching past the clip's end lengthen the clip to the bar line after them; a point before the clip's start is refused.
+'''
+setup = [
+    { action = "copy_notes", input = '{"clip": 10, "notes": [11, 12]}' },
+]
+input = '{"clip": 10, "at": "2:1"}'
+result = '{"notes": [21, 22]}'
+
+[[example]]
 action = "add_controller_events"
 title = "Hold the sustain pedal through bar 1"
 notes = '''

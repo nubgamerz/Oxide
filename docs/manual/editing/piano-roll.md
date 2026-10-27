@@ -81,16 +81,41 @@ A MIDI track inserted over a time selection.
 | move notes | drag a selected note: up and down changes pitch, sideways changes time |
 | make notes longer or shorter | drag a note's left or right end |
 | erase notes | right-click a note (all the selected ones, if it is selected), or [[Delete]] |
+| copy, cut and paste notes | [[Ctrl+C]], [[Ctrl+X]], then [[Ctrl+V]] pastes at the playhead (below) |
 | place without snapping | hold **Alt** while you draw, drag or click |
 
 You hear the notes as you work: a note sounds when you draw it or click it, and while you drag
 it, at each new pitch, through the track's instrument. Press a key of the keyboard on the left
 to hear that pitch, and drag along the keys to play more.
 
-The piano roll's keys work while the pointer is over it: [[Delete]] erases notes there (never
-the clip), [[Ctrl+A]] selects the clip's notes and [[Q]] quantizes. The toolbar's grey line
+The piano roll's keys work while the pointer is over it, or, with the pointer over no other
+pane (on the menu bar or the transport, say), when the piano roll was the last pane you clicked:
+[[Delete]] erases notes there (never the clip), [[Ctrl+A]] selects the clip's notes, [[Q]]
+quantizes, and [[Ctrl+C]], [[Ctrl+X]] and [[Ctrl+V]] copy, cut and paste notes. With the
+pointer over the Multitrack the same keys act on clips. The toolbar's grey line
 sums up the mouse: *Double-click: draw · Drag: move · Edges: resize · Alt: no snap ·
 Right-click/Del: erase · Ctrl+wheel: zoom*.
+
+## Copying and pasting notes
+
+1. Select the notes to copy (click, **Shift**+click or drag a box).
+2. Press [[Ctrl+C]] to copy them, or [[Ctrl+X]] to cut them (copy and erase).
+3. Put the playhead where the first of them should start: click the piano roll's ruler or an
+   empty spot of its grid.
+4. With the pointer over the piano roll, press [[Ctrl+V]]. (Over the Multitrack, [[Ctrl+V]]
+   pastes clips: if you placed the playhead there, move the pointer back first.) The earliest
+   copied note starts exactly at the playhead (not snapped) and the others keep their places
+   around it: the same distances, pitches, lengths and velocities. The pasted notes are
+   selected, so you can drag them on or paste again.
+
+Notes paste into the clip open in the piano roll, so you can copy notes from one clip, open
+another and paste them there. Notes reaching past the clip's end make it longer, to the bar line
+after them, as drawing a note there does. With the playhead before the clip's start nothing is
+pasted and Oxide says why. Each cut or paste is one step for **Edit > Undo**.
+
+The Edit menu's **Cut**, **Copy** and **Paste at playhead** do the same while the piano roll
+was the last pane you clicked. Copying notes doesn't replace copied clips: [[Ctrl+V]] over the
+Multitrack still pastes those.
 
 ## Velocity
 
@@ -153,7 +178,8 @@ Keys' clip split through a chord.
 
 An agent reads a clip with [[action:get_midi_clip]] and [[action:describe_midi_clip]] (key,
 chords, note names), writes notes with [[action:add_notes]], [[action:set_notes]],
-[[action:remove_notes]] and [[action:resize_notes]], quantizes with [[action:quantize_notes]],
+[[action:remove_notes]] and [[action:resize_notes]], copies and pastes them with
+[[action:copy_notes]], [[action:cut_notes]] and [[action:paste_notes]], quantizes with [[action:quantize_notes]],
 adds tracks and clips with [[action:insert_midi_track]] and [[action:add_midi_clip]], plays a
 note with [[action:preview_note]], and moves MIDI files with [[action:import_midi_file]],
 [[action:export_midi_clip]] and [[action:export_midi_track]]. The `write_midi_part` prompt

@@ -68,6 +68,19 @@
 //!   a double-click on empty grid as a mouse makes it (the second press once the line is
 //!   drawn under the pointer) draws a note there, the playhead at the click (the shot); a
 //!   click on a key of the keyboard and on the velocity lane leave the playhead where it was.
+//! - `--show piano-roll-paste`: the owner's bug (Ctrl+C / Ctrl+V in the piano roll copied the
+//!   MIDI clip and pasted a copy of it): the piano roll open on Keys' clip with three notes
+//!   selected (two of a chord and one half a bar later), Keys' clip itself on the clip
+//!   clipboard (so a paste that went to the clips would add a clip), the playhead inside the
+//!   clip between ticks. With the pointer over the piano roll, `Event::Copy` copies the three
+//!   notes (the clip clipboard untouched, "3 notes copied in Oxide" on the clipboard) and
+//!   `Event::Paste` pastes them at the playhead's nearest tick with their distances, pitches
+//!   and the rest kept, selected, one "Paste 3 notes" step, no clip or track added (the shot);
+//!   `Event::Cut` removes them in one "Cut 3 notes" step. Then a click in the grid moves the
+//!   playhead and the pointer goes to the menu bar (over no pane): Ctrl+V still pastes notes
+//!   there, the piano roll being the pane last clicked (the clip lengthened to hold them if
+//!   they reach past its end). Then, the pointer over the Multitrack, Ctrl+V pastes the clip,
+//!   not notes.
 //! - `--show help-manual` (27.3): Help clicked, its menu open with Manual (the shot
 //!   `ui-help-menu`); Manual clicked asks for the manual's first page; the piano roll opened on
 //!   Keys' clip and F1 pressed over it asks for its page; Options > Settings… on Audio and F1
@@ -135,6 +148,9 @@ pub enum Kind {
     /// Help > Manual clicked, F1 over the piano roll and in Settings > Audio: the pages asked
     /// for, and no browser started (27.3).
     HelpManual,
+    /// Notes copied, pasted at the playhead and cut in the piano roll with the clipboard's
+    /// events; the clips' paste where the piano roll doesn't have the keys.
+    PianoRollPaste,
 }
 
 /// A check failed before it could start (the app exits 1).
@@ -248,6 +264,11 @@ pub struct Check {
     /// and drag.
     notes_then: Vec<Note>,
     piano_note: Option<NoteId>,
+    /// The paste check: the notes selected to copy (in time order, then pitch), the playhead
+    /// the layout put inside the clip, and the tracks there were.
+    copied: Vec<Note>,
+    paste_at: u64,
+    tracks_before: usize,
     /// A `Wait`'s last failure, reported if it times out.
     waiting: Option<String>,
     failures: Vec<String>,
@@ -286,6 +307,7 @@ pub fn start(app: &mut DawApp, kind: Kind, shot: bool) -> Option<Check> {
         Kind::PlayheadDrag => playhead_drag_steps(),
         Kind::PianoRollClick => piano_click_steps(),
         Kind::HelpManual => help_steps(),
+        Kind::PianoRollPaste => piano_paste_steps(),
     };
     if kind == Kind::ClipCopyPaste {
         // Nothing selected: the clip's click must select it and its track.
@@ -300,6 +322,7 @@ pub fn start(app: &mut DawApp, kind: Kind, shot: bool) -> Option<Check> {
             .project
             .track(target?)
             .map_or(0, |t| t.clips.len()),
+        Kind::PianoRollPaste => midi_clip_count(app),
         _ => armed(app).map_or(0, |t| t.clips.len()),
     };
     let clip = app
@@ -323,7 +346,12 @@ pub fn start(app: &mut DawApp, kind: Kind, shot: bool) -> Option<Check> {
             Some((keys, midi))
         }
         Kind::PianoRollClick => Some(piano_click_layout(app, keys?)?),
+        Kind::PianoRollPaste => Some(piano_paste_layout(app, keys?)?),
         _ => None,
+    };
+    let (copied, paste_at) = match (kind, midi) {
+        (Kind::PianoRollPaste, Some((_, id))) => piano_paste_notes(app, id)?,
+        _ => (Vec::new(), 0),
     };
     if kind == Kind::TrackZoom {
         track_zoom_layout(app);
@@ -372,6 +400,9 @@ pub fn start(app: &mut DawApp, kind: Kind, shot: bool) -> Option<Check> {
         noted_view: 0.0,
         notes_then: Vec::new(),
         piano_note: None,
+        copied,
+        paste_at,
+        tracks_before: app.session.project.tracks.len(),
         waiting: None,
         failures: Vec::new(),
         reported: false,
@@ -1635,6 +1666,255 @@ fn velocity_lane(app: &DawApp, _: &Check) -> Option<egui::Pos2> {
 /// Clicks in the piano roll's note grid place the playhead (Snap on and off, empty grid and a
 /// note); a double-click still draws a note; a note's drag, a key and the velocity lane leave
 /// the playhead where it was (26.4).
+/// MIDI clips in the project.
+fn midi_clip_count(app: &DawApp) -> usize {
+    let tracks = &app.session.project.tracks;
+    tracks.iter().map(|t| t.midi_clips.len()).sum()
+}
+
+/// The paste check's layout: the piano roll open on Keys' clip (as it opens) with three notes
+/// selected (the first chord's two lowest, and the second chord's lowest, half a bar later),
+/// Keys' clip on the clip clipboard (a paste that went to the clips would add a clip), nothing
+/// selected in the Multitrack, the playhead inside the clip: 7 samples past 3 quarter notes and
+/// 100 ticks into it (between ticks; its nearest tick is the one the notes must start on).
+fn piano_paste_layout(app: &mut DawApp, keys: TrackId) -> Option<(TrackId, ClipId)> {
+    let clip = app.session.project.track(keys)?.midi_clips.first()?.clone();
+    crate::piano_roll::open(app, clip.id).ok()?;
+    let mut picked = std::collections::BTreeSet::new();
+    for i in [0, 1, 3] {
+        picked.insert(clip.notes.get(i)?.id);
+    }
+    app.piano_roll.as_mut()?.selected = picked;
+    app.session.copy_clips(&[clip.id]).ok()?;
+    app.selection = None;
+    app.selected_clip = None;
+    app.selected_clips.clear();
+    let tick = clip.start + 3 * 960 + 100;
+    let at = app.session.tempo_map().sample_at_tick(tick as f64).round() as u64 + 7;
+    let located = app.session.locate(at);
+    app.report(located);
+    Some((keys, clip.id))
+}
+
+/// The paste check's copied notes (the selection, in time order then pitch) and the playhead
+/// its layout set.
+fn piano_paste_notes(app: &DawApp, clip: ClipId) -> Option<(Vec<Note>, u64)> {
+    let selected = &app.piano_roll.as_ref()?.selected;
+    let mut copied: Vec<Note> = app
+        .session
+        .project
+        .find_midi_clip(clip)?
+        .1
+        .notes
+        .iter()
+        .filter(|n| selected.contains(&n.id))
+        .copied()
+        .collect();
+    copied.sort_by_key(|n| (n.tick, n.pitch));
+    let tick = app.session.project.find_midi_clip(clip)?.1.start + 3 * 960 + 100;
+    let at = app.session.tempo_map().sample_at_tick(tick as f64).round() as u64 + 7;
+    Some((copied, at))
+}
+
+/// The copied notes pasted into Keys' clip: as many new notes as were copied, the earliest on
+/// the tick nearest the playhead (worked out here through the tempo map) and each other at its
+/// distance from it with its pitch, length, velocity and channel; inside the clip (it grows to
+/// hold them); the notes that were there untouched; the new ones selected; no clip or track
+/// added; `undo` steps since the start, the last "Paste 3 notes".
+fn notes_pasted_at_playhead(app: &DawApp, c: &Check, undo: usize) -> Result<(), String> {
+    let clip = keys_clip(app, c).ok_or("no clip")?;
+    if let Some(gone) = c.notes_then.iter().find(|t| !clip.notes.contains(t)) {
+        return Err(format!("note {} changed or went", gone.id));
+    }
+    let mut new: Vec<Note> = clip
+        .notes
+        .iter()
+        .filter(|n| !c.notes_then.iter().any(|t| t.id == n.id))
+        .copied()
+        .collect();
+    new.sort_by_key(|n| (n.tick, n.pitch));
+    if new.len() != c.copied.len() {
+        return Err(format!(
+            "{} new notes, {} copied",
+            new.len(),
+            c.copied.len()
+        ));
+    }
+    let playhead = app.session.position();
+    let song = app
+        .session
+        .tempo_map()
+        .tick_at(playhead as f64)
+        .round()
+        .max(0.0) as u64;
+    let at = song
+        .checked_sub(clip.start)
+        .ok_or_else(|| format!("the playhead ({playhead}) is before the clip"))?;
+    let earliest = c.copied.first().ok_or("nothing copied")?.tick;
+    for (n, o) in new.iter().zip(&c.copied) {
+        let want = Note {
+            id: n.id,
+            tick: at + o.tick - earliest,
+            ..*o
+        };
+        if *n != want {
+            return Err(format!(
+                "pasted {n:?}, wanted {want:?} (the playhead at {playhead}, tick {at} in the clip)"
+            ));
+        }
+        if n.tick + n.length > clip.length {
+            return Err(format!(
+                "note {} ends at tick {}, past the clip's end ({}): silent",
+                n.id,
+                n.tick + n.length,
+                clip.length
+            ));
+        }
+    }
+    let ids: Vec<NoteId> = new.iter().map(|n| n.id).collect();
+    let mut selected = piano_selected(app);
+    selected.sort_unstable();
+    let mut want = ids.clone();
+    want.sort_unstable();
+    if selected != want {
+        return Err(format!("selected {selected:?}, pasted {want:?}"));
+    }
+    if midi_clip_count(app) != c.clips_before || app.session.project.tracks.len() != c.tracks_before
+    {
+        return Err(format!(
+            "{} MIDI clips and {} tracks, {} and {} before",
+            midi_clip_count(app),
+            app.session.project.tracks.len(),
+            c.clips_before,
+            c.tracks_before
+        ));
+    }
+    if all_clips(app) != c.clips_then {
+        return Err("an audio clip changed".into());
+    }
+    undo_steps(app, c, undo, "Paste 3 notes")
+}
+
+/// What egui-winit sends for Ctrl+V while the clipboard holds the last copy's line.
+fn paste_event(app: &DawApp) -> Vec<Event> {
+    let line = app.clipboard_line.clone();
+    vec![Event::Paste(line.unwrap_or_else(|| "text".into()))]
+}
+
+/// Ctrl+C, Ctrl+V and Ctrl+X on the piano roll's notes, over it and from the menu bar after a
+/// click in it; Ctrl+V over the Multitrack still pastes clips (see the module docs).
+fn piano_paste_steps() -> Vec<Step> {
+    vec![
+        Step::Wait(
+            "the piano roll drawn on Keys' clip, three notes selected, the playhead in the clip",
+            |app, _, c| {
+                let (_, midi) = c.midi.ok_or("no MIDI clip")?;
+                let open = app.piano_roll.as_ref().map(|p| p.clip);
+                if open != Some(midi) {
+                    return Err(format!("the piano roll is open on {open:?}"));
+                }
+                piano_drawn(app).ok_or("not drawn yet")?;
+                if piano_selected(app).len() != 3 || c.copied.len() != 3 {
+                    return Err(format!("notes selected: {:?}", piano_selected(app)));
+                }
+                match app.session.position() {
+                    at if at == c.paste_at => Ok(()),
+                    at => Err(format!("the playhead at {at}, not {}", c.paste_at)),
+                }
+            },
+        ),
+        Step::PointerTo("empty grid in the piano roll", |app, c| {
+            empty_grid(app, c, 0.35)
+        }),
+        Step::Wait("a moment with the pointer there", |_, _, c| settled(c)),
+        Step::Do("Keys' notes noted", note_notes),
+        Step::Send("Ctrl+C", |_| vec![Event::Copy]),
+        Step::Expect(
+            "Ctrl+C over the piano roll copied the three notes, not the clip",
+            |app, _, c| {
+                if app.session.note_clipboard_len() != 3 {
+                    return Err(format!(
+                        "the note clipboard holds {}",
+                        app.session.note_clipboard_len()
+                    ));
+                }
+                if app.session.clipboard_len() != 1 {
+                    return Err(format!(
+                        "the clip clipboard holds {} clips, not Keys' one",
+                        app.session.clipboard_len()
+                    ));
+                }
+                same(
+                    app.clipboard_line.as_deref(),
+                    Some("3 notes copied in Oxide"),
+                )?;
+                notes_unchanged(app, c)?;
+                no_new_undo_steps(app, c).map_err(|e| format!("copying is no edit: {e}"))
+            },
+        ),
+        Step::Send("Ctrl+V", paste_event),
+        Step::Expect(
+            "Ctrl+V over the piano roll pasted the notes at the playhead, offsets kept, \
+             selected; no clip or track added",
+            |app, _, c| notes_pasted_at_playhead(app, c, 1),
+        ),
+        Step::Shot,
+        Step::Send("Ctrl+X", |_| vec![Event::Cut]),
+        Step::Expect(
+            "Ctrl+X cut the pasted notes in one step, the note clipboard kept",
+            |app, _, c| {
+                notes_unchanged(app, c)?;
+                if !piano_selected(app).is_empty() {
+                    return Err(format!("notes selected: {:?}", piano_selected(app)));
+                }
+                if app.session.note_clipboard_len() != 3 {
+                    return Err(format!(
+                        "the note clipboard holds {}",
+                        app.session.note_clipboard_len()
+                    ));
+                }
+                undo_steps(app, c, 2, "Cut 3 notes")
+            },
+        ),
+        Step::ClickAt("empty grid further along", |app, c| empty_grid(app, c, 0.6)),
+        Step::Wait("the click put the playhead there", |app, _, c| {
+            piano_playhead_on_click(app, c)
+        }),
+        Step::PointerTo("the menu bar, over no pane", |app, _| {
+            let grid = piano_drawn(app)?.grid;
+            Some(egui::pos2(grid.center().x, 10.0))
+        }),
+        Step::Wait("a moment with the pointer there", |_, _, c| settled(c)),
+        Step::Do("Keys' notes noted", note_notes),
+        Step::Send("Ctrl+V", paste_event),
+        Step::Expect(
+            "Ctrl+V with the pointer on no pane went to the piano roll (clicked last): the \
+             notes at the new playhead",
+            |app, _, c| notes_pasted_at_playhead(app, c, 3),
+        ),
+        Step::PointerTo("the Multitrack's ruler", |app, _| {
+            app.ruler_rect.map(|r| r.center())
+        }),
+        Step::Wait("a moment with the pointer there", |_, _, c| settled(c)),
+        Step::Do("Keys' notes noted", note_notes),
+        Step::Send("Ctrl+V", paste_event),
+        Step::Expect(
+            "Ctrl+V over the Multitrack pasted Keys' clip, not notes",
+            |app, _, c| {
+                notes_unchanged(app, c)?;
+                if midi_clip_count(app) != c.clips_before + 1 {
+                    return Err(format!(
+                        "{} MIDI clips, {} before",
+                        midi_clip_count(app),
+                        c.clips_before
+                    ));
+                }
+                undo_steps(app, c, 4, "Paste clips")
+            },
+        ),
+    ]
+}
+
 /// The pages a check run asked the manual for, as `page#anchor`.
 fn asked(app: &DawApp) -> Vec<String> {
     app.manual_requests
@@ -2929,6 +3209,7 @@ pub fn frame_ends(app: &mut DawApp, ctx: &egui::Context) {
             Kind::PlayheadDrag => "playhead drag",
             Kind::PianoRollClick => "piano roll click",
             Kind::HelpManual => "Help > Manual and F1",
+            Kind::PianoRollPaste => "piano roll copy and paste",
         };
         if c.failures.is_empty() {
             println!("the {what} check: {} steps", c.steps.len());

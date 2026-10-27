@@ -228,16 +228,32 @@ pub fn menu_bar(app: &mut DawApp, ui: &mut egui::Ui) {
             }
             ui.separator();
             let selected = !app.selected_clip_ids().is_empty();
-            let pastable = app.session.clipboard_len() > 0;
+            // Cut, Copy and Paste act where Ctrl+X / C / V would (`clipboard::Target`): the
+            // piano roll's notes while it has the keys (it was the pane last clicked: the
+            // pointer is on this menu), else the clips.
+            let notes = crate::piano_roll::has_keys(app, ui.ctx());
+            let (cuttable, pastable) = if notes {
+                (
+                    app.piano_roll
+                        .as_ref()
+                        .is_some_and(|p| !p.selected.is_empty()),
+                    app.session.note_clipboard_len() > 0,
+                )
+            } else {
+                (selected, app.session.clipboard_len() > 0)
+            };
             for (label, keys, enabled, what) in [
-                ("Cut", "Ctrl+X", selected, 0),
-                ("Copy", "Ctrl+C", selected, 1),
+                ("Cut", "Ctrl+X", cuttable, 0),
+                ("Copy", "Ctrl+C", cuttable, 1),
                 ("Paste at playhead", "Ctrl+V", pastable, 2),
                 ("Duplicate", "Ctrl+D", selected, 3),
             ] {
                 let button = egui::Button::new(label).shortcut_text(keys);
                 if ui.add_enabled(enabled, button).clicked() {
                     match what {
+                        0 if notes => crate::piano_roll::copy(app, true),
+                        1 if notes => crate::piano_roll::copy(app, false),
+                        2 if notes => crate::piano_roll::paste(app),
                         0 => app.copy_selection(true),
                         1 => app.copy_selection(false),
                         2 => app.paste(),

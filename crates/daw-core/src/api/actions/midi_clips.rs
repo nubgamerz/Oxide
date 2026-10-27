@@ -147,6 +147,34 @@ pub(super) fn register(r: &mut Registry) {
         },
     );
     r.add(
+        "copy_notes",
+        "Copy notes of a MIDI clip (`clip`, `notes` as note ids) to the note clipboard, as          Ctrl+C in the piano roll does, replacing what it held: their distances from the          earliest one (in ticks, 960 per quarter note), pitch, length, velocity and channel.          The note clipboard is the session's, apart from the clip clipboard (copy_clips): it          isn't saved and isn't part of undo. All or nothing. Returns how many.",
+        Safety::Edit,
+        |host, input: RemoveNotes| {
+            let s = host.session();
+            check_midi_clip(s, input.clip)?;
+            let notes = s.copy_notes(input.clip, &input.notes)?;
+            Ok(NoteCount { notes })
+        },
+    );
+    r.add(
+        "cut_notes",
+        "Copy notes of a MIDI clip (`clip`, `notes` as note ids) to the note clipboard, as          copy_notes does, and delete them from the clip, as Ctrl+X in the piano roll does.          All or nothing. Returns how many.",
+        Safety::Destructive,
+        |host, input: RemoveNotes| {
+            let s = host.session();
+            check_midi_clip(s, input.clip)?;
+            let notes = s.cut_notes(input.clip, &input.notes)?;
+            Ok(NoteCount { notes })
+        },
+    );
+    r.add(
+        "paste_notes",
+        "Paste the note clipboard (copy_notes, cut_notes, or Ctrl+C in the piano roll) into          MIDI clip `clip`, as Ctrl+V in the piano roll does: the earliest copied note starts at          `position` (samples, at the tick nearest it; default: the playhead) or `at` (song          position \"bar:beat:tick\", bars and beats from 1), not snapped, and every other          note at its same distance from it and its same pitch, length, velocity and channel.          Refused when that point is before the clip's start. Notes reaching past the clip's          end lengthen it to the bar line after them. Copied notes may be pasted into any MIDI          clip. Returns the new notes' ids, in time order.",
+        Safety::Edit,
+        paste_notes,
+    );
+    r.add(
         "add_controller_events",
         "Add controller events to a MIDI clip. Each: `tick` (from the clip start), `channel` \
          0-15 (default 0) and `kind`: {\"type\":\"cc\",\"number\":1,\"value\":64} (control \
@@ -1075,6 +1103,42 @@ fn resize_notes(host: &mut dyn Host, input: ResizeNotes) -> ApiResult<ChangedNot
 struct RemoveNotes {
     clip: ClipId,
     notes: Vec<NoteId>,
+}
+
+#[derive(Serialize, JsonSchema)]
+struct NoteCount {
+    /// How many notes were copied (or cut).
+    notes: usize,
+}
+
+#[derive(Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+struct PasteNotes {
+    clip: ClipId,
+    /// Where the earliest copied note starts: a song position in samples (the tick nearest
+    /// it). Default: the playhead.
+    #[serde(default)]
+    position: Option<u64>,
+    /// Or the song position "bar:beat:tick" (from 1; describe_midi_clip's form), instead of
+    /// `position`.
+    #[serde(default)]
+    at: Option<String>,
+}
+
+fn paste_notes(host: &mut dyn Host, input: PasteNotes) -> ApiResult<NoteIds> {
+    let s = host.session();
+    check_midi_clip(s, input.clip)?;
+    let tick = match (input.position, input.at.as_deref()) {
+        (Some(_), Some(_)) => {
+            return Err(error(
+                "give `position` (samples) or `at` (\"bar:beat:tick\"), not both",
+            ))
+        }
+        (_, Some(at)) => midi_analysis::parse_position(&s.tempo_map(), at).map_err(error)?,
+        (position, None) => s.tick_at_sample(position.unwrap_or_else(|| s.position())),
+    };
+    let notes = s.paste_notes_at_tick(input.clip, tick)?;
+    Ok(NoteIds { notes })
 }
 
 #[derive(Deserialize, JsonSchema)]

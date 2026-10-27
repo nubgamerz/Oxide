@@ -58,7 +58,8 @@ pub struct PianoRoll {
     preview: NotePreview,
     /// Counts gestures, so each drag merges into one undo step of its own.
     gesture: u64,
-    /// The pointer was over the editor last frame: its keys (Delete, Ctrl+A, Q) win.
+    /// The pointer is over the editor (this frame, once drawn): the wheel scrolls it. Its keys
+    /// follow [`has_keys`] instead.
     pub hovered: bool,
     /// The pitch to centre the view on once the grid's height is known (the first frame).
     centre: Option<f32>,
@@ -1696,12 +1697,107 @@ fn velocity_lane(
     }
 }
 
-/// The editor's keys, while the pointer is over it: Delete erases the selected notes, Ctrl+A
-/// selects every note, Q quantizes, Escape clears the selection. Returns whether it took the
-/// keys (so the arrangement's Delete doesn't remove the clip).
+/// Whether the piano roll has the keyboard: its keys ([`shortcuts`]) and Ctrl+C / Ctrl+X /
+/// Ctrl+V (`clipboard::take`) act on its notes rather than the view's clips or audio.
+///
+/// The rule is F1's ([`crate::help::Here::place`]), so one rule says where every key goes: the
+/// pane under the pointer has them; with the pointer on no pane (the menu bar and its menus,
+/// the transport, the status bar, outside the window) and no window open, the pane last
+/// clicked has them. So a click on a note and a trip to the Edit menu (or the pointer resting
+/// on the transport) keeps them here, while the pointer over the Multitrack, the mixer or the
+/// inspector gives them to that pane even right after a click in the piano roll. The piano
+/// roll must also have been drawn last frame (open, its tab showing), so a hidden one never
+/// takes them.
+pub fn has_keys(app: &DawApp, ctx: &egui::Context) -> bool {
+    use crate::help::Place;
+    app.piano_roll.is_some()
+        && app.help.rect_of(Place::PianoRoll).is_some()
+        && app.help.place(ctx, Place::Multitrack) == Place::PianoRoll
+}
+
+/// "1 note", "3 notes".
+pub fn notes_text(count: usize) -> String {
+    format!("{count} note{}", if count == 1 { "" } else { "s" })
+}
+
+/// Ctrl+C / Ctrl+X while the piano roll has the keys ([`has_keys`]), and the Edit menu's Copy
+/// and Cut then: the selected notes onto the session's note clipboard
+/// (`Session::copy_notes`, their distances from the earliest one kept), a cut removing them in
+/// the frame's one undo step ("Cut 3 notes"). With no note selected nothing happens: the clip
+/// is never copied instead.
+pub fn copy(app: &mut DawApp, cut: bool) {
+    let Some(state) = app.piano_roll.as_ref() else {
+        return;
+    };
+    let clip = state.clip;
+    let notes: Vec<NoteId> = state.selected.iter().copied().collect();
+    if notes.is_empty() {
+        return;
+    }
+    let done = if cut {
+        app.session
+            .label_edit(&format!("Cut {}", notes_text(notes.len())), None);
+        app.session.cut_notes(clip, &notes)
+    } else {
+        app.session.copy_notes(clip, &notes)
+    };
+    match done {
+        Ok(n) => {
+            if cut {
+                if let Some(state) = app.piano_roll.as_mut() {
+                    state.selected.clear();
+                }
+            }
+            crate::clipboard::announce(app, crate::clipboard::notes_line(n));
+            app.toast(format!(
+                "{} {}",
+                if cut { "Cut" } else { "Copied" },
+                notes_text(n)
+            ));
+        }
+        Err(e) => app.toast(format!("{e:#}")),
+    }
+}
+
+/// Ctrl+V while the piano roll has the keys, and the Edit menu's Paste then: the note
+/// clipboard into the clip open here, its earliest note at the playhead (the tick nearest it
+/// through the tempo map, not snapped) and the rest at their distances from it
+/// (`Session::paste_notes`: past the clip's end the clip grows to the bar line after them, as
+/// drawing a note there does; before its start it is refused, said in a toast as a clip
+/// paste's errors are). The pasted notes become the selection, in one undo step ("Paste 3
+/// notes"). An empty note clipboard pastes nothing: never a clip.
+pub fn paste(app: &mut DawApp) {
+    let Some(clip) = app.piano_roll.as_ref().map(|p| p.clip) else {
+        return;
+    };
+    let count = app.session.note_clipboard_len();
+    if count == 0 {
+        return;
+    }
+    let at = app.session.position();
+    app.session
+        .label_edit(&format!("Paste {}", notes_text(count)), None);
+    match app.session.paste_notes(clip, at) {
+        Ok(ids) => {
+            if let Some(state) = app.piano_roll.as_mut() {
+                state.selected = ids.into_iter().collect();
+            }
+        }
+        Err(e) => app.toast(format!("{e:#}")),
+    }
+}
+
+/// The editor's keys while it has the keyboard ([`has_keys`]): Delete erases the selected
+/// notes, Ctrl+A selects every note, Q quantizes, Escape clears the selection. Returns whether
+/// it took the keys (so the arrangement's Delete doesn't remove the clip). Ctrl+C / X / V
+/// arrive as clipboard events, never keys: `clipboard::take` sends them to [`copy`] and
+/// [`paste`] by the same rule.
 pub fn shortcuts(app: &mut DawApp, ctx: &egui::Context) -> bool {
     use egui::{Key, Modifiers};
-    let Some(state) = app.piano_roll.as_ref().filter(|s| s.hovered) else {
+    if !has_keys(app, ctx) {
+        return false;
+    }
+    let Some(state) = app.piano_roll.as_ref() else {
         return false;
     };
     let clip = state.clip;

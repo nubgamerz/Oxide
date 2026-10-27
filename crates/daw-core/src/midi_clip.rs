@@ -297,6 +297,41 @@ pub fn resize_notes(
         .collect()
 }
 
+/// The notes `ids` names, as the note clipboard keeps them (`Session::copy_notes`): in time
+/// order, each `tick` counted from the earliest one's start, so a paste can put that one
+/// anywhere and the rest keep their places around it. Everything else a note carries (length,
+/// pitch, velocity, channel, id) comes along. All or nothing: `Err` names the first id
+/// `notes` lacks.
+pub fn copied_notes(notes: &[Note], ids: &[NoteId]) -> Result<Vec<Note>, NoteId> {
+    if let Some(missing) = ids.iter().find(|id| !notes.iter().any(|n| n.id == **id)) {
+        return Err(*missing);
+    }
+    let mut copied: Vec<Note> = notes
+        .iter()
+        .filter(|n| ids.contains(&n.id))
+        .copied()
+        .collect();
+    copied.sort_by_key(|n| (n.tick, n.pitch, n.id));
+    let earliest = copied.first().map_or(0, |n| n.tick);
+    for n in &mut copied {
+        n.tick -= earliest;
+    }
+    Ok(copied)
+}
+
+/// The clipboard's notes (from [`copied_notes`]) placed so the earliest starts at `at` ticks
+/// from the clip's start, the rest at their same distances from it. Ids are left as they were
+/// (`Project::add_notes` gives new ones).
+pub fn placed_notes(clipboard: &[Note], at: u64) -> Vec<Note> {
+    clipboard
+        .iter()
+        .map(|n| Note {
+            tick: at + n.tick,
+            ..*n
+        })
+        .collect()
+}
+
 fn check_channel(channel: u8) -> Result<(), String> {
     if channel > 15 {
         return Err(format!("MIDI channel {channel} is outside 0..15"));
@@ -350,6 +385,35 @@ mod tests {
             velocity: 100,
             channel: 0,
         }
+    }
+
+    /// The note clipboard: the copied notes keep their distances from the earliest one (which
+    /// counts from 0), in time order, with everything else they carry; a paste puts the
+    /// earliest at the tick asked for and the rest around it.
+    #[test]
+    fn copied_notes_keep_their_offsets_from_the_earliest() {
+        let mut held = note(4, 1200, 55);
+        held.length = 960;
+        held.velocity = 33;
+        held.channel = 9;
+        let notes = vec![note(1, 480, 60), note(2, 960, 64), note(3, 0, 67), held];
+        // Asked for out of order; note 3 (tick 0) isn't copied.
+        let copied = copied_notes(&notes, &[4, 1, 2]).unwrap();
+        let shape: Vec<(NoteId, u64, u8)> =
+            copied.iter().map(|n| (n.id, n.tick, n.pitch)).collect();
+        assert_eq!(shape, [(1, 0, 60), (2, 480, 64), (4, 720, 55)]);
+        assert_eq!(
+            copied[2],
+            Note { tick: 720, ..held },
+            "length, velocity and channel come along"
+        );
+        let placed = placed_notes(&copied, 3000);
+        let ticks: Vec<u64> = placed.iter().map(|n| n.tick).collect();
+        assert_eq!(ticks, [3000, 3480, 3720]);
+        assert_eq!(placed_notes(&copied, 0), copied);
+        // A note the clip doesn't have: nothing copied, the id named.
+        assert_eq!(copied_notes(&notes, &[1, 99]), Err(99));
+        assert_eq!(copied_notes(&notes, &[]), Ok(Vec::new()));
     }
 
     #[test]

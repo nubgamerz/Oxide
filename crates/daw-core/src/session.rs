@@ -618,6 +618,10 @@ pub struct Session {
     stretches: stretch::Cache,
     /// Clips copied or cut, with the tracks they came from (not saved, not undone).
     clipboard: Vec<(TrackId, AnyClip)>,
+    /// Notes copied or cut in a MIDI clip (`copy_notes`), each tick counted from the earliest
+    /// one's start (`midi_clip::copied_notes`); apart from the clip clipboard, so copying notes
+    /// never replaces copied clips. Not saved, not undone.
+    note_clipboard: Vec<Note>,
     /// The tempo map clips that follow the tempo were last laid out under.
     laid_out: Option<TempoMap>,
     host: Vst3Host,
@@ -803,6 +807,7 @@ impl Session {
             media: MediaPool::default(),
             stretches: stretch::Cache::default(),
             clipboard: Vec::new(),
+            note_clipboard: Vec::new(),
             laid_out: None,
             host,
             sample_rate,
@@ -3826,6 +3831,75 @@ impl Session {
                 .max(end);
             self.graph_dirty = true;
         }
+    }
+
+    /// Copy notes of a MIDI clip to the note clipboard, replacing what it held: their
+    /// distances from the earliest one, pitch, length, velocity and channel. All or nothing.
+    /// Returns how many.
+    pub fn copy_notes(&mut self, clip: ClipId, ids: &[NoteId]) -> Result<usize> {
+        if ids.is_empty() {
+            bail!("no notes given");
+        }
+        let (_, c) = self
+            .project
+            .find_midi_clip(clip)
+            .ok_or_else(|| anyhow!("no MIDI clip with id {clip}"))?;
+        let copied = crate::midi_clip::copied_notes(&c.notes, ids)
+            .map_err(|missing| anyhow!("MIDI clip {clip} has no note with id {missing}"))?;
+        self.note_clipboard = copied;
+        Ok(self.note_clipboard.len())
+    }
+
+    /// Copy notes to the note clipboard and remove them from their clip. All or nothing.
+    pub fn cut_notes(&mut self, clip: ClipId, ids: &[NoteId]) -> Result<usize> {
+        let count = self.copy_notes(clip, ids)?;
+        self.project
+            .remove_notes(clip, ids)
+            .map_err(|e| anyhow!(e))?;
+        self.graph_dirty = true;
+        Ok(count)
+    }
+
+    /// How many notes the note clipboard holds.
+    pub fn note_clipboard_len(&self) -> usize {
+        self.note_clipboard.len()
+    }
+
+    /// Paste the note clipboard into MIDI clip `clip` so its earliest note starts at
+    /// `position` (samples; the tick nearest it through the tempo map, not snapped), the
+    /// others at their same distances and pitches. Refused when that is before the clip's
+    /// start. Notes reaching past the clip's end lengthen it to the bar line after them
+    /// ([`Self::fit_midi_clip`], as drawing or dragging a note there does). Returns the new
+    /// notes' ids, in time order.
+    pub fn paste_notes(&mut self, clip: ClipId, position: u64) -> Result<Vec<NoteId>> {
+        self.paste_notes_at_tick(clip, self.tick_at_sample(position))
+    }
+
+    /// [`Self::paste_notes`] at song tick `tick` (from the start of the song).
+    pub fn paste_notes_at_tick(&mut self, clip: ClipId, tick: u64) -> Result<Vec<NoteId>> {
+        if self.note_clipboard.is_empty() {
+            bail!("the note clipboard is empty: copy notes first");
+        }
+        let (_, c) = self
+            .project
+            .find_midi_clip(clip)
+            .ok_or_else(|| anyhow!("no MIDI clip with id {clip}"))?;
+        let map = self.tempo_map();
+        let Some(at) = tick.checked_sub(c.start) else {
+            bail!(
+                "can't paste notes at {}: MIDI clip {clip} starts later, at {}",
+                crate::midi_analysis::format_position(&map, tick),
+                crate::midi_analysis::format_position(&map, c.start)
+            );
+        };
+        let notes = crate::midi_clip::placed_notes(&self.note_clipboard, at);
+        let ids = self
+            .project
+            .add_notes(clip, &notes)
+            .map_err(|e| anyhow!(e))?;
+        self.fit_midi_clip(clip);
+        self.graph_dirty = true;
+        Ok(ids)
     }
 
     /// Release a previewed note.

@@ -1,4 +1,4 @@
-//! Ctrl+C, Ctrl+X and Ctrl+V on clips and audio (dev plan 24.1).
+//! Ctrl+C, Ctrl+X and Ctrl+V on clips, audio and the piano roll's notes (dev plan 24.1).
 //!
 //! egui-winit 0.37 (`State::on_keyboard_input`, with `clipboard_shortcuts` on, as eframe
 //! leaves it) turns Ctrl+C / Ctrl+X / Ctrl+V, and Ctrl+Insert, Shift+Delete and Shift+Insert,
@@ -16,10 +16,38 @@
 //! the Waveform view's audio). A copy made in another app afterwards still pastes Oxide's
 //! clips here; one that leaves no text on the clipboard (files copied in Explorer) silences
 //! Ctrl+V until the next copy in Oxide (TD174; Edit > Paste still works).
+//!
+//! Where they go ([`Target::of`]): the piano roll's notes while it has the keyboard
+//! (`piano_roll::has_keys`: the pane under the pointer, else the one last clicked, as F1 and
+//! its Delete and Ctrl+A follow), else the view shown: the Multitrack's clips or the Waveform
+//! view's audio. Notes have a clipboard of their own in the session (`Session::copy_notes`),
+//! so copying notes never replaces copied clips, and an empty one pastes nothing.
 
 use crate::app::DawApp;
 use daw_core::api::ViewMode;
 use egui::Event;
+
+/// What has the clipboard's keys this frame.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Target {
+    Multitrack,
+    Waveform,
+    /// The piano roll's notes (`piano_roll::has_keys`).
+    PianoRoll,
+}
+
+impl Target {
+    /// The piano roll when it has the keyboard, else the view shown.
+    pub fn of(app: &DawApp, ctx: &egui::Context) -> Self {
+        if crate::piano_roll::has_keys(app, ctx) {
+            return Self::PianoRoll;
+        }
+        match app.view_mode {
+            ViewMode::Multitrack => Self::Multitrack,
+            ViewMode::Waveform => Self::Waveform,
+        }
+    }
+}
 
 /// What a clipboard event asks of the view it lands in.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -36,26 +64,33 @@ pub enum Command {
     CutAudio,
     /// `waveform::paste`.
     PasteAudio,
+    /// The piano roll's selected notes (`piano_roll::copy(false)`).
+    CopyNotes,
+    /// `piano_roll::copy(true)`.
+    CutNotes,
+    /// Oxide's notes at the playhead in the clip open in the piano roll (`piano_roll::paste`).
+    PasteNotes,
 }
 
 /// The clipboard events egui-winit sent this frame, taken out of `events` (so no widget acts
-/// on them too) and turned into the commands for `view`, in order. While a text field has
+/// on them too) and turned into the commands for `target`, in order. While a text field has
 /// the keyboard (`typing`) nothing is taken: the field copies and pastes its own text.
-pub fn take(events: &mut Vec<Event>, view: ViewMode, typing: bool) -> Vec<Command> {
+pub fn take(events: &mut Vec<Event>, target: Target, typing: bool) -> Vec<Command> {
     if typing {
         return Vec::new();
     }
-    let multitrack = view == ViewMode::Multitrack;
+    let (copy, cut, paste) = match target {
+        Target::Multitrack => (Command::CopyClips, Command::CutClips, Command::PasteClips),
+        Target::Waveform => (Command::CopyAudio, Command::CutAudio, Command::PasteAudio),
+        Target::PianoRoll => (Command::CopyNotes, Command::CutNotes, Command::PasteNotes),
+    };
     let mut commands = Vec::new();
     events.retain(|event| {
         let command = match event {
-            Event::Copy if multitrack => Command::CopyClips,
-            Event::Copy => Command::CopyAudio,
-            Event::Cut if multitrack => Command::CutClips,
-            Event::Cut => Command::CutAudio,
+            Event::Copy => copy,
+            Event::Cut => cut,
             // The text (or image) is someone else's: Oxide pastes its own clipboard.
-            Event::Paste(_) | Event::PasteImage(_) if multitrack => Command::PasteClips,
-            Event::Paste(_) | Event::PasteImage(_) => Command::PasteAudio,
+            Event::Paste(_) | Event::PasteImage(_) => paste,
             _ => return true,
         };
         commands.push(command);
@@ -74,6 +109,9 @@ pub fn run(app: &mut DawApp, commands: &[Command]) {
             Command::CopyAudio => crate::waveform::copy(app, false),
             Command::CutAudio => crate::waveform::copy(app, true),
             Command::PasteAudio => crate::waveform::paste(app),
+            Command::CopyNotes => crate::piano_roll::copy(app, false),
+            Command::CutNotes => crate::piano_roll::copy(app, true),
+            Command::PasteNotes => crate::piano_roll::paste(app),
         }
     }
 }
@@ -95,6 +133,11 @@ pub fn clips_line(count: usize) -> String {
         "{count} clip{} copied in Oxide",
         if count == 1 { "" } else { "s" }
     )
+}
+
+/// The line for `count` notes.
+pub fn notes_line(count: usize) -> String {
+    format!("{} copied in Oxide", crate::piano_roll::notes_text(count))
 }
 
 #[cfg(test)]
@@ -133,7 +176,7 @@ mod tests {
     #[test]
     fn the_multitrack_copies_cuts_and_pastes_clips() {
         let mut events = clipboard_events();
-        let commands = take(&mut events, ViewMode::Multitrack, false);
+        let commands = take(&mut events, Target::Multitrack, false);
         assert_eq!(
             commands,
             [
@@ -150,7 +193,7 @@ mod tests {
     #[test]
     fn the_waveform_view_copies_cuts_and_pastes_its_audio() {
         let mut events = clipboard_events();
-        let commands = take(&mut events, ViewMode::Waveform, false);
+        let commands = take(&mut events, Target::Waveform, false);
         assert_eq!(
             commands,
             [
@@ -163,12 +206,30 @@ mod tests {
         assert_eq!(events, [key(Key::Space), Event::Text("q".into())]);
     }
 
+    /// While the piano roll has the keys, Ctrl+C / X / V are its notes', never the clips (the
+    /// bug: they copied the open MIDI clip and pasted a copy of it at the playhead).
+    #[test]
+    fn the_piano_roll_copies_cuts_and_pastes_notes() {
+        let mut events = clipboard_events();
+        let commands = take(&mut events, Target::PianoRoll, false);
+        assert_eq!(
+            commands,
+            [
+                Command::CopyNotes,
+                Command::CutNotes,
+                Command::PasteNotes,
+                Command::PasteNotes
+            ]
+        );
+        assert_eq!(events, [key(Key::Space), Event::Text("q".into())]);
+    }
+
     #[test]
     fn a_focused_text_field_keeps_its_copy_and_paste() {
-        for view in [ViewMode::Multitrack, ViewMode::Waveform] {
+        for target in [Target::Multitrack, Target::Waveform, Target::PianoRoll] {
             let mut events = clipboard_events();
-            assert!(take(&mut events, view, true).is_empty());
-            assert_eq!(events, clipboard_events(), "nothing taken in {view:?}");
+            assert!(take(&mut events, target, true).is_empty());
+            assert_eq!(events, clipboard_events(), "nothing taken in {target:?}");
         }
     }
 
@@ -179,7 +240,9 @@ mod tests {
             key_with(Key::C, Modifiers::COMMAND),
             key_with(Key::V, Modifiers::COMMAND),
         ];
-        assert!(take(&mut events, ViewMode::Multitrack, false).is_empty());
+        for target in [Target::Multitrack, Target::PianoRoll] {
+            assert!(take(&mut events, target, false).is_empty());
+        }
         assert_eq!(events.len(), 2);
     }
 
@@ -187,5 +250,7 @@ mod tests {
     fn the_line_says_how_many_clips() {
         assert_eq!(clips_line(1), "1 clip copied in Oxide");
         assert_eq!(clips_line(3), "3 clips copied in Oxide");
+        assert_eq!(notes_line(1), "1 note copied in Oxide");
+        assert_eq!(notes_line(3), "3 notes copied in Oxide");
     }
 }

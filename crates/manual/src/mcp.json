@@ -9469,6 +9469,170 @@
     },
     {
       "area": "midi_clips",
+      "description": "Copy notes of a MIDI clip (`clip`, `notes` as note ids) to the note clipboard, as          Ctrl+C in the piano roll does, replacing what it held: their distances from the          earliest one (in ticks, 960 per quarter note), pitch, length, velocity and channel.          The note clipboard is the session's, apart from the clip clipboard (copy_clips): it          isn't saved and isn't part of undo. All or nothing. Returns how many.",
+      "input": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "clip": {
+            "format": "uint32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "notes": {
+            "items": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "clip",
+          "notes"
+        ],
+        "title": "RemoveNotes",
+        "type": "object"
+      },
+      "merges": false,
+      "name": "copy_notes",
+      "output": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "notes": {
+            "description": "How many notes were copied (or cut).",
+            "format": "uint",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "notes"
+        ],
+        "title": "NoteCount",
+        "type": "object"
+      },
+      "safety": "edit",
+      "undo": "never",
+      "while_opening": false,
+      "without_project": false
+    },
+    {
+      "area": "midi_clips",
+      "description": "Copy notes of a MIDI clip (`clip`, `notes` as note ids) to the note clipboard, as          copy_notes does, and delete them from the clip, as Ctrl+X in the piano roll does.          All or nothing. Returns how many.",
+      "input": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "clip": {
+            "format": "uint32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "notes": {
+            "items": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "clip",
+          "notes"
+        ],
+        "title": "RemoveNotes",
+        "type": "object"
+      },
+      "merges": false,
+      "name": "cut_notes",
+      "output": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "notes": {
+            "description": "How many notes were copied (or cut).",
+            "format": "uint",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "notes"
+        ],
+        "title": "NoteCount",
+        "type": "object"
+      },
+      "safety": "destructive",
+      "undo": "always",
+      "while_opening": false,
+      "without_project": false
+    },
+    {
+      "area": "midi_clips",
+      "description": "Paste the note clipboard (copy_notes, cut_notes, or Ctrl+C in the piano roll) into          MIDI clip `clip`, as Ctrl+V in the piano roll does: the earliest copied note starts at          `position` (samples, at the tick nearest it; default: the playhead) or `at` (song          position \"bar:beat:tick\", bars and beats from 1), not snapped, and every other          note at its same distance from it and its same pitch, length, velocity and channel.          Refused when that point is before the clip's start. Notes reaching past the clip's          end lengthen it to the bar line after them. Copied notes may be pasted into any MIDI          clip. Returns the new notes' ids, in time order.",
+      "input": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "at": {
+            "default": null,
+            "description": "Or the song position \"bar:beat:tick\" (from 1; describe_midi_clip's form), instead of\n`position`.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "clip": {
+            "format": "uint32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "position": {
+            "default": null,
+            "description": "Where the earliest copied note starts: a song position in samples (the tick nearest\nit). Default: the playhead.",
+            "format": "uint64",
+            "minimum": 0,
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "clip"
+        ],
+        "title": "PasteNotes",
+        "type": "object"
+      },
+      "merges": false,
+      "name": "paste_notes",
+      "output": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "notes": {
+            "items": {
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "notes"
+        ],
+        "title": "NoteIds",
+        "type": "object"
+      },
+      "safety": "edit",
+      "undo": "always",
+      "while_opening": false,
+      "without_project": false
+    },
+    {
+      "area": "midi_clips",
       "description": "Add controller events to a MIDI clip. Each: `tick` (from the clip start), `channel` 0-15 (default 0) and `kind`: {\"type\":\"cc\",\"number\":1,\"value\":64} (control change 0-127, e.g. 1 mod wheel, 64 sustain pedal), {\"type\":\"pitch_bend\",\"value\":0} (-8192..8191) or {\"type\":\"program_change\",\"program\":0}. All or nothing. Returns the new events' ids.",
       "input": {
         "$defs": {

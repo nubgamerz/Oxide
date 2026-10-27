@@ -275,6 +275,14 @@ F1 already opens) and the MCP manual.
       division.
     - The wheel works as in the arrangement, and a scroll bar under the notes (above the
       velocity lane) shows and drags the part of the clip and the song in view.
+    - Ctrl+C / Ctrl+X copy or cut the selected notes onto a note clipboard of the session's
+      own (copied clips stay on theirs); Ctrl+V pastes them into the clip open in the piano
+      roll, the earliest at the playhead's nearest tick (not snapped), the others at their
+      distances, selected, one undo step. Past the clip's end the clip grows to the bar line
+      after them; before its start the paste is refused. The piano roll has these keys, and
+      Delete, Ctrl+A, Q and Escape, while the pointer is over it, or, with the pointer over no
+      pane, when it was the pane last clicked (F1's rule); the Edit menu's Cut, Copy and Paste
+      follow it too. Agents use `copy_notes`, `cut_notes` and `paste_notes`.
   - MIDI clips can be selected, dragged and deleted in the arrangement.
 - **Drag and drop from Explorer:** audio files (WAV) and MIDI files (`.mid`) land on the
   track under the pointer and the ones after it, at the time under the pointer.

@@ -206,6 +206,9 @@ piece.
 Pasted clips keep their distances; with several tracks copied, the topmost goes on the selected
 track. [[Ctrl+Insert]], [[Shift+Delete]] and [[Shift+Insert]] also copy, cut and paste. If
 [[Ctrl+V]] ever does nothing (after copying files in Explorer), use Edit > Paste at playhead.
+With the pointer over the piano roll (or after clicking in it, with the pointer on the menu
+bar), these keys copy, cut and paste notes instead
+([[page:piano-roll#copying-and-pasting-notes]]).
 
 ### Slicing at transients and quantizing audio
 

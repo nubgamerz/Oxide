@@ -1171,7 +1171,7 @@ impl DawApp {
             Some(
                 show @ ("rename" | "volume-edit" | "record-menu" | "count-in" | "clip-copy-paste"
                 | "clip-edges" | "clip-playhead" | "track-zoom" | "playhead-drag"
-                | "piano-roll-click" | "help-manual"),
+                | "piano-roll-click" | "piano-roll-paste" | "help-manual"),
             ) => {
                 // Guitar L renamed by typing in its header and the inspector, or its volume
                 // and pan typed, as the user would (`edit_check`); the shot is the field open.
@@ -1190,6 +1190,9 @@ impl DawApp {
                 // `piano-roll-click` (26.4): clicks in the piano roll's grid placing the
                 // playhead, a double-click drawing a note, a note's drag, a key and the
                 // velocity lane leaving it (the shot: the note drawn, the playhead on it).
+                // `piano-roll-paste`: notes copied, pasted at the playhead and cut in the piano
+                // roll with the clipboard's events, from the menu bar after a click in it too,
+                // and the clip pasted over the Multitrack (the shot: the pasted notes).
                 // `help-manual` (27.3): Help > Manual, F1 over the piano roll and in Settings >
                 // Audio, the pages asked for noted, no browser (the shot: the Help menu).
                 let kind = match show {
@@ -1202,6 +1205,7 @@ impl DawApp {
                     "track-zoom" => crate::edit_check::Kind::TrackZoom,
                     "playhead-drag" => crate::edit_check::Kind::PlayheadDrag,
                     "piano-roll-click" => crate::edit_check::Kind::PianoRollClick,
+                    "piano-roll-paste" => crate::edit_check::Kind::PianoRollPaste,
                     "help-manual" => crate::edit_check::Kind::HelpManual,
                     _ => crate::edit_check::Kind::CountIn,
                 };
@@ -3758,8 +3762,9 @@ impl DawApp {
         if ctx.egui_wants_keyboard_input() || crate::busy::active(self) {
             return;
         }
-        // The piano roll's keys first, while the pointer is over it: Delete there erases
-        // notes, not the clip.
+        // The piano roll's keys first, while it has the keyboard (`piano_roll::has_keys`: the
+        // pane under the pointer, else the one last clicked): Delete there erases notes, not
+        // the clip.
         piano_roll::shortcuts(self, ctx);
         let pressed = |key: Key| ctx.input_mut(|i| i.consume_key(Modifiers::NONE, key));
         let command = |key: Key| ctx.input_mut(|i| i.consume_key(Modifiers::COMMAND, key));
@@ -3767,10 +3772,11 @@ impl DawApp {
         let shifted =
             |key: Key| ctx.input_mut(|i| i.consume_key(Modifiers::COMMAND | Modifiers::SHIFT, key));
         // Ctrl+C / X / V arrive as clipboard events, never as keys (`clipboard`): read them in
-        // either view, after the gate above so a focused text field keeps its own.
+        // either view, after the gate above so a focused text field keeps its own; the piano
+        // roll's notes by the same rule as its other keys, else the view's clips or audio.
         let typing = ctx.egui_wants_keyboard_input();
-        let clipboard =
-            ctx.input_mut(|i| crate::clipboard::take(&mut i.events, self.view_mode, typing));
+        let target = crate::clipboard::Target::of(self, ctx);
+        let clipboard = ctx.input_mut(|i| crate::clipboard::take(&mut i.events, target, typing));
         crate::clipboard::run(self, &clipboard);
         let waveform = self.view_mode == ViewMode::Waveform;
         if shifted(Key::Z) || command(Key::Y) {

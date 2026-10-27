@@ -4173,6 +4173,214 @@ fn every_midi_edit_rebuilds_the_graph() {
     assert!(!s.project.chase_notes);
 }
 
+/// The piano roll's Ctrl+C / Ctrl+X / Ctrl+V on notes, as actions: copied notes keep their
+/// distances from the earliest one, which a paste puts at the tick nearest the position (through
+/// the tempo map, across a tempo change, not snapped); past the clip's end the clip grows to the
+/// bar line after them; before its start a paste is refused; a cut is one undo step; notes paste
+/// into another clip; the clip clipboard is a separate one.
+#[test]
+fn notes_copy_cut_and_paste_at_a_position_keeping_their_offsets() {
+    let r = Registry::new();
+    let mut s = headless();
+    let keys = id(
+        &call(&r, &mut s, "add_track", json!({"kind": "instrument"})).unwrap(),
+        "track",
+    );
+    // Bars 2-3 (ticks 3840 to 11520) and bar 6 (19200, one bar).
+    let a = id(
+        &call(
+            &r,
+            &mut s,
+            "add_midi_clip",
+            json!({"track": keys, "bar": 2, "bars": 2}),
+        )
+        .unwrap(),
+        "clip",
+    );
+    let b = id(
+        &call(
+            &r,
+            &mut s,
+            "add_midi_clip",
+            json!({"track": keys, "bar": 6}),
+        )
+        .unwrap(),
+        "clip",
+    );
+    let added = call(
+        &r,
+        &mut s,
+        "add_notes",
+        json!({"clip": a, "notes": [
+            {"tick": 0, "length": 480, "pitch": 60, "velocity": 90, "channel": 2},
+            {"tick": 480, "length": 240, "pitch": 64},
+            {"tick": 1920, "length": 960, "pitch": 67, "velocity": 70},
+        ]}),
+    )
+    .unwrap();
+    let (c, g) = (
+        added["notes"][0].as_u64().unwrap(),
+        added["notes"][2].as_u64().unwrap(),
+    );
+    // From bar 3 (tick 7680, sample 192,000 at 120), 60 quarter notes a minute: 50 samples a
+    // tick there instead of 25.
+    call(&r, &mut s, "add_tempo_change", json!({"bar": 3, "bpm": 60})).unwrap();
+    let clip = |s: &Session, id: u64| s.project.find_midi_clip(id as u32).unwrap().1.clone();
+    let undo_len = |s: &mut Session| {
+        call(&r, s, "get_history", Value::Null).unwrap()["undo"]
+            .as_array()
+            .unwrap()
+            .len()
+    };
+    let refused = |s: &mut Session, action: &str, args: Value, says: &str| {
+        let err = call(&r, s, action, args).unwrap_err();
+        assert!(err.contains(says), "{action}: {err}");
+    };
+
+    refused(
+        &mut s,
+        "paste_notes",
+        json!({"clip": a}),
+        "the note clipboard is empty",
+    );
+    refused(
+        &mut s,
+        "copy_notes",
+        json!({"clip": a, "notes": [c, 9999]}),
+        "no note with id 9999",
+    );
+    // The clip clipboard is apart: copying notes leaves it alone.
+    call(&r, &mut s, "copy_clips", json!({"clips": [b]})).unwrap();
+    let steps = undo_len(&mut s);
+    let copied = call(
+        &r,
+        &mut s,
+        "copy_notes",
+        json!({"clip": a, "notes": [g, c]}),
+    )
+    .unwrap();
+    assert_eq!(copied, json!({"notes": 2}));
+    assert_eq!(undo_len(&mut s), steps, "copying is no undo step");
+    assert_eq!(s.clipboard_len(), 1, "the copied clip is still there");
+
+    // 25,007 samples into bar 3 at 50 a tick: tick 7680 + 500 (500.14, the nearest).
+    s.update();
+    let pasted = call(
+        &r,
+        &mut s,
+        "paste_notes",
+        json!({"clip": a, "position": 192_000 + 25_007}),
+    )
+    .unwrap();
+    assert!(s.graph_dirty(), "a paste rebuilds the graph");
+    let new: Vec<u32> = pasted["notes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| v.as_u64().unwrap() as u32)
+        .collect();
+    let shape = |s: &Session, id: u64, ids: &[u32]| -> Vec<(u64, u64, u8, u8, u8)> {
+        ids.iter()
+            .map(|n| {
+                let n = clip(s, id).notes.into_iter().find(|x| x.id == *n).unwrap();
+                (n.tick, n.length, n.pitch, n.velocity, n.channel)
+            })
+            .collect()
+    };
+    // The earliest copied (C, tick 0) at 8180 - 3840; G 1920 after it, as it was.
+    assert_eq!(
+        shape(&s, a, &new),
+        [(4340, 480, 60, 90, 2), (6260, 960, 67, 70, 0)]
+    );
+    assert_eq!(clip(&s, a).notes.len(), 5);
+    assert_eq!(clip(&s, a).length, 7680, "inside the clip: its length kept");
+    assert_eq!(undo_len(&mut s), steps + 1);
+    assert_eq!(
+        call(&r, &mut s, "get_history", Value::Null).unwrap()["undo"][0],
+        "Paste notes"
+    );
+
+    // Cut: copied again and removed, one undo step; undone, they're back.
+    s.update();
+    let ids: Vec<u64> = new.iter().map(|&n| u64::from(n)).collect();
+    let cut = call(&r, &mut s, "cut_notes", json!({"clip": a, "notes": ids})).unwrap();
+    assert_eq!(cut, json!({"notes": 2}));
+    assert!(s.graph_dirty(), "a cut rebuilds the graph");
+    assert_eq!(clip(&s, a).notes.len(), 3);
+    assert_eq!(undo_len(&mut s), steps + 2);
+    assert_eq!(
+        call(&r, &mut s, "get_history", Value::Null).unwrap()["undo"][0],
+        "Cut notes"
+    );
+    call(&r, &mut s, "undo", Value::Null).unwrap();
+    assert_eq!(
+        clip(&s, a).notes.len(),
+        5,
+        "one undo brings the cut notes back"
+    );
+    assert_eq!(s.note_clipboard_len(), 2);
+
+    // Past the end: from bar 3 beat 4 (tick 10560, 6720 into the clip), G ends at 9600 in it:
+    // the clip grows to the next bar line (bar 5, tick 15360).
+    let late = call(
+        &r,
+        &mut s,
+        "paste_notes",
+        json!({"clip": a, "at": "3:4:000"}),
+    )
+    .unwrap();
+    let late: Vec<u32> = late["notes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| v.as_u64().unwrap() as u32)
+        .collect();
+    assert_eq!(
+        shape(&s, a, &late),
+        [(6720, 480, 60, 90, 2), (8640, 960, 67, 70, 0)]
+    );
+    assert_eq!(clip(&s, a).length, 15360 - 3840);
+
+    // Before the clip's start: refused, nothing changes.
+    let before = clip(&s, a);
+    refused(
+        &mut s,
+        "paste_notes",
+        json!({"clip": a, "position": 0}),
+        "can't paste notes at 1:1:000: MIDI clip",
+    );
+    refused(
+        &mut s,
+        "paste_notes",
+        json!({"clip": a, "at": "1:4"}),
+        "starts later, at 2:1:000",
+    );
+    refused(
+        &mut s,
+        "paste_notes",
+        json!({"clip": a, "position": 1, "at": "2:1"}),
+        "not both",
+    );
+    assert_eq!(clip(&s, a), before);
+
+    // Into another clip, at its start.
+    let other = call(&r, &mut s, "paste_notes", json!({"clip": b, "at": "6:1"})).unwrap();
+    let other: Vec<u32> = other["notes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| v.as_u64().unwrap() as u32)
+        .collect();
+    assert_eq!(
+        shape(&s, b, &other),
+        [(0, 480, 60, 90, 2), (1920, 960, 67, 70, 0)]
+    );
+    assert_eq!(clip(&s, b).length, 3840);
+    // No clip or track was added by any of it.
+    assert_eq!(s.project.tracks.len(), 1);
+    assert_eq!(s.project.track(keys as u32).unwrap().midi_clips.len(), 2);
+}
+
 /// Recorded MIDI (stamped as the engine does, with heard positions) lands where it was heard:
 /// output latency off, the count-in dropped, channel filters respected, held notes ended at
 /// stop; merge, replace and quantize as set; loop passes fold and overdub.

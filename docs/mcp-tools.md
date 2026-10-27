@@ -90,6 +90,9 @@ The DAW serves these over MCP at `http://127.0.0.1:7878/mcp` while it runs. Conn
 | [`set_notes`](#set_notes) | edit | Change notes in a MIDI clip by id: `tick` (from the clip start, 960 per quarter note) or `at` (song position "bar:beat:tick"), `length` in ticks, `pitch` (0-127 or a name like "Bb3"), `velocity`, `channel` (only the fields given change) |
 | [`resize_notes`](#resize_notes) | edit | Resize notes in a MIDI clip by one edge, as dragging a note's edge in the piano roll does: `edge` "start" or "end" moves by `by` ticks (960 per quarter note; negative is earlier) and the other edge stays |
 | [`remove_notes`](#remove_notes) | destructive | Delete notes from a MIDI clip by id |
+| [`copy_notes`](#copy_notes) | edit | Copy notes of a MIDI clip (`clip`, `notes` as note ids) to the note clipboard, as          Ctrl+C in the piano roll does, replacing what it held: their distances from the          earliest one (in ticks, 960 per quarter note), pitch, length, velocity and channel |
+| [`cut_notes`](#cut_notes) | destructive | Copy notes of a MIDI clip (`clip`, `notes` as note ids) to the note clipboard, as          copy_notes does, and delete them from the clip, as Ctrl+X in the piano roll does |
+| [`paste_notes`](#paste_notes) | edit | Paste the note clipboard (copy_notes, cut_notes, or Ctrl+C in the piano roll) into          MIDI clip `clip`, as Ctrl+V in the piano roll does: the earliest copied note starts at          `position` (samples, at the tick nearest it; default: the playhead) or `at` (song          position "bar:beat:tick", bars and beats from 1), not snapped, and every other          note at its same distance from it and its same pitch, length, velocity and channel |
 | [`add_controller_events`](#add_controller_events) | edit | Add controller events to a MIDI clip |
 | [`read_midi_file`](#read_midi_file) | read | Look inside a Standard MIDI file (absolute `path`) without importing it: its tracks with notes (name, `import_as`: the name import_midi_file gives its track, note count, length in ticks at 960 per quarter note), and the tempo map it asks for (opening tempo and time signature, later changes in bars and beats from the file's start), so you can decide on import_midi_file's `set_tempo` |
 | [`import_midi_file`](#import_midi_file) | edit | Import a Standard MIDI file (absolute `path`, type 0 or 1) as MIDI clips, placed at `bar` (and `beat`, from 1) or `start` in ticks (960 per quarter note); bar 1 by default |
@@ -1080,6 +1083,42 @@ Kind: destructive.
 |---|---|---|---|
 | `clip` | integer | yes |  |
 | `notes` | array | yes |  |
+
+## copy_notes
+
+Copy notes of a MIDI clip (`clip`, `notes` as note ids) to the note clipboard, as          Ctrl+C in the piano roll does, replacing what it held: their distances from the          earliest one (in ticks, 960 per quarter note), pitch, length, velocity and channel.          The note clipboard is the session's, apart from the clip clipboard (copy_clips): it          isn't saved and isn't part of undo. All or nothing. Returns how many.
+
+Kind: edit.
+
+| argument | type | required | description |
+|---|---|---|---|
+| `clip` | integer | yes |  |
+| `notes` | array | yes |  |
+
+## cut_notes
+
+Copy notes of a MIDI clip (`clip`, `notes` as note ids) to the note clipboard, as          copy_notes does, and delete them from the clip, as Ctrl+X in the piano roll does.          All or nothing. Returns how many.
+
+Kind: destructive.
+
+| argument | type | required | description |
+|---|---|---|---|
+| `clip` | integer | yes |  |
+| `notes` | array | yes |  |
+
+## paste_notes
+
+Paste the note clipboard (copy_notes, cut_notes, or Ctrl+C in the piano roll) into          MIDI clip `clip`, as Ctrl+V in the piano roll does: the earliest copied note starts at          `position` (samples, at the tick nearest it; default: the playhead) or `at` (song          position "bar:beat:tick", bars and beats from 1), not snapped, and every other          note at its same distance from it and its same pitch, length, velocity and channel.          Refused when that point is before the clip's start. Notes reaching past the clip's          end lengthen it to the bar line after them. Copied notes may be pasted into any MIDI          clip. Returns the new notes' ids, in time order.
+
+Kind: edit.
+
+| argument | type | required | description |
+|---|---|---|---|
+| `at` | string |  | Or the song position "bar:beat:tick" (from 1; describe_midi_clip's form), instead of
+`position`. |
+| `clip` | integer | yes |  |
+| `position` | integer |  | Where the earliest copied note starts: a song position in samples (the tick nearest
+it). Default: the playhead. |
 
 ## add_controller_events
 
