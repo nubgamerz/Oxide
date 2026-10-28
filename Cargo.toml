@@ -7,7 +7,7 @@ exclude = ["vendor"]
 
 [workspace.package]
 # The app's version (Help > About, the installer's name and its upgrade check): bump it per release.
-version = "0.3.1"
+version = "0.3.2"
 edition = "2021"
 publish = false
 # Oxide is GPLv3 (LICENSE; NOTICE adds the section 7(e) term on the name and logo).
