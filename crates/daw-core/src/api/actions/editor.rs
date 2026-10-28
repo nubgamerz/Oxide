@@ -20,7 +20,11 @@ pub(super) fn register(r: &mut Registry) {
          gives its existing document. Opened from a clip, the document remembers the clip and \
          its track (`source`), and the effects rack can then sync with that track \
          (set_rack_sync). Returns the document (see get_audio_editor). To show it, set_view \
-         `view_mode` \"waveform\" with `document`.",
+         `view_mode` \"waveform\" with `document`. The project remembers its open files: \
+         saving it (and its backups) writes the list, which file shows and whether the Waveform \
+         view is in front, and opening the project reopens them (a file that is gone is \
+         skipped with a notice); opening another project, or a new one, closes them. Opening \
+         or closing a file is neither an undo step nor a change to save on its own.",
         Safety::Edit,
         open_audio_editor,
     );
@@ -37,7 +41,8 @@ pub(super) fn register(r: &mut Registry) {
          format (`null` for FLAC, MP3 or AIFF: those save only with save_audio_as), `dirty` \
          (unsaved edits), its own history (step names, the showing step, the saved one), the \
          clips that use the file (a save changes what they play) and `source` (the clip it was \
-         opened from and that clip's track, or null).",
+         opened from and that clip's track, or null). The open files are saved with the \
+         project and reopen with it.",
         Safety::Read,
         |host, _: super::NoArgs| Ok(editor_state(host.session())),
     );

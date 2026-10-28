@@ -398,7 +398,8 @@ impl Session {
         let stem = crate::folder::stamped(&self.project.name);
         let keep = self.keep_backups.max(1);
         let baseline = self.backup_baseline.clone();
-        let project = self.project.clone();
+        // With the Waveform view's open files, as a save writes them.
+        let project = self.project_for_file(self.project_dir().as_deref());
         let handle = std::thread::Builder::new()
             .name("autosave".into())
             .spawn(move || {

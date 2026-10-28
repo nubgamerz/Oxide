@@ -40,7 +40,8 @@ pub enum Safety {
 /// plug-in states and paths without editing it; undo and redo move through the history;
 /// opening or starting a project, and changing the audio settings (which can convert every
 /// position to a new sample rate), start the history afresh; the Waveform view's open files
-/// and its effects rack (and the rack's presets) aren't part of the project; showing the
+/// (saved with the project, but never undone with it) and its effects rack (and the rack's
+/// presets) aren't part of the project's history; showing the
 /// manual changes nothing in it.
 const NOT_UNDO_STEPS: &[&str] = &[
     "save_project",

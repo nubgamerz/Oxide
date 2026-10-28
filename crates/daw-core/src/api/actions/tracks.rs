@@ -173,11 +173,13 @@ pub(super) fn register(r: &mut Registry) {
     r.add(
         "render_track",
         "Render a track as it sounds (its clips, or its MIDI through its instrument; its \
-         plug-ins, fader, pan and automation; a folder's tracks; not its sends) from its first \
-         clip to its last plus `tail_seconds` (default 2, for reverb and note releases) into \
-         the project's Rendered folder as a 32-bit float WAV, through the same engine and \
-         plug-in pre-roll as an export, so it sounds exactly like playback. When it finishes, \
-         the file goes on a new audio track right under it, routed where it goes, with its \
+         plug-ins, fader, pan and automation; a folder's tracks; not its sends) from the \
+         song's start (sample 0) to the end of its last clip plus `tail_seconds` (default 2, \
+         for reverb and note releases) into the project's Rendered folder as a 32-bit float \
+         WAV, through the same engine and plug-in pre-roll as an export, so it sounds exactly \
+         like playback; the file is silent up to the track's first sound, so it lines up with \
+         the song wherever it is loaded. When it finishes, the file goes on a new audio track \
+         right under it at sample 0, routed where it goes, with its \
          sends, at 0 dB and centre; with `disable` (default true) the original is switched off \
          (set_track_enabled) in the same undo step, to save its CPU. Stops playback and runs in \
          the background on export's thread, as export_mixdown does: it answers at once with the \

@@ -2901,7 +2901,23 @@ impl DawApp {
             self.recent_probe.forget();
         }
         crate::opening::hold(self);
+        // The Waveform view's file and whether it is in front, which the project file
+        // remembers with the open files: told before `update`, where a save is written.
+        self.session
+            .set_document_view(self.editor.current, self.view_mode == ViewMode::Waveform);
         self.session.update();
+        // An open's Waveform view files are back: shown as the project file remembered them.
+        if let Some(view) = self.session.take_reopened_view() {
+            self.editor.current = view.shown;
+            if let Some(id) = view.shown {
+                self.editor.view(id);
+            }
+            self.view_mode = if view.in_front {
+                ViewMode::Waveform
+            } else {
+                ViewMode::Multitrack
+            };
+        }
         // Agents waiting for an open: answered once it is in (or cancelled).
         if self.agent_opens.tick(&mut self.session) {
             self.project_opened();

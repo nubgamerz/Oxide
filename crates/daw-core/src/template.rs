@@ -41,6 +41,9 @@ pub fn of(project: &Project, name: &str) -> Project {
     }
     t.loop_region = Default::default();
     t.punch = Default::default();
+    // The song's files open in the Waveform view aren't the setup (and in memory there are
+    // none: the session keeps them out of the project, `Project::open_files`).
+    t.open_files = Default::default();
     t
 }
 

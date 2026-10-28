@@ -452,6 +452,16 @@ F1 already opens) and the MCP manual.
   outputs (silent while the master is muted), and never in an export; playing the project
   stops it. Agents use `open_audio_editor`, `get_audio_editor`, `play_audio_editor`,
   `close_audio_editor` and `set_view` (`view_mode`, `document`, `editor_selection`, …).
+  - **Open files reopen with the project:** a save (and a backup or autosave) writes the open
+    files in the project file's `open_files` (project-relative inside its folder, else
+    absolute; the clip a file was opened from; the one showing; whether the view was in front).
+    In memory the field is always empty (the session fills it as it writes a file and takes it
+    out as it opens one), so it is never an undo step, never in a template and never an
+    unsaved change on its own. An open reads them on its workers after the clips' files, at
+    their own rate, and makes them documents once everything is in (a file that won't read is
+    skipped, said once); the app then shows the remembered one (`Session::take_reopened_view`).
+    Opening another project, or a new one, closes the last one's files. A mixdown to a new file
+    (`Rendered/`) is one of them once it opens.
   - **Spectral display:** the toolbar's display menu shows the waveform, a spectrogram, or
     both (waveform above): a log frequency scale from 20 Hz with its labels on
     the right, coloured from black to pale yellow over an adjustable range (100 dB below full
@@ -1124,7 +1134,10 @@ F1 already opens) and the MCP manual.
 - **Rendering a track:** right-click a track (or Track menu) > "Render track…" renders it as
   you hear it (its clips or MIDI through its instrument, plug-ins, fader, pan and automation,
   a folder's tracks; not its sends) through the same engine as an export into `Rendered/`, and
-  puts it on a new audio track right under it, with copies of its sends. By default the
+  puts it on a new audio track right under it, with copies of its sends. The render runs from
+  the song's start (sample 0, rendered, not padded: plug-ins hear the silence before the first
+  clip as playback from the start gives it) to the last clip's end plus the tail, and its clip
+  sits at 0, so renders line up with the song wherever they are loaded. By default the
   original is then switched off. A muted track has to be unmuted first; a solo elsewhere
   doesn't matter. It renders on a thread of its own with a progress bar and Cancel (the
   window keeps painting; the file is read back on that thread too), and the new track appears

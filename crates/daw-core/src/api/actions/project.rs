@@ -59,7 +59,9 @@ pub(super) fn register(r: &mut Registry) {
     r.add_deferred(
         "open_project",
         "Open a project file (.oxide, or an older .dawproj; absolute `path`), replacing the \
-         open project (unsaved changes are lost). Plug-ins reload with their saved state, which \
+         open project (unsaved changes are lost; the Waveform view's files close, unsaved edits \
+         in them lost too, and the files the project had open there reopen). Plug-ins reload \
+         with their saved state, which \
          can take a few seconds: the call answers once the project is in (the app shows its \
          loading bar meanwhile; get_busy reports the progress, and if the open is cancelled \
          (cancel_open, or Cancel on the bar) or replaced by another, this call answers with \

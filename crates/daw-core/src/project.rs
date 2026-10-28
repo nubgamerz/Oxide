@@ -63,7 +63,44 @@ pub struct Project {
     /// as 1/8.
     #[serde(default)]
     pub grid: crate::grid::Grid,
+    /// The files open in the Waveform view when the project was written, reopened with it.
+    /// Only in the file: the session fills it as it writes one (a save, a backup) and takes it
+    /// out as it opens one, so in memory it is always empty, and it is never part of an undo
+    /// step, a template or the unsaved-changes check (view state, like track heights, but not
+    /// a change of the project).
+    #[serde(default, skip_serializing_if = "OpenFiles::is_empty")]
+    pub open_files: OpenFiles,
     next_id: u32,
+}
+
+/// The Waveform view's open files as a project file remembers them ([`Project::open_files`]).
+#[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct OpenFiles {
+    /// In the order they were opened (their tabs').
+    pub files: Vec<OpenFile>,
+    /// The one showing in the Waveform view, an index into `files`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub shown: Option<usize>,
+    /// The Waveform view was the view in front.
+    pub in_front: bool,
+}
+
+impl OpenFiles {
+    pub fn is_empty(&self) -> bool {
+        self.files.is_empty()
+    }
+}
+
+/// One file open in the Waveform view.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct OpenFile {
+    /// Relative to the project's folder when inside it (as clips' files are), else absolute.
+    pub path: PathBuf,
+    /// The clip it was opened from (a double-click), so the effects rack can sync with its
+    /// track again; dropped on reopening if the clip is gone.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub clip: Option<ClipId>,
 }
 
 fn chase_by_default() -> bool {
@@ -111,6 +148,7 @@ impl Default for Project {
             loudness_target: streaming_loudness(),
             midi_record: MidiRecordSettings::default(),
             grid: crate::grid::Grid::default(),
+            open_files: OpenFiles::default(),
             next_id: 1,
         }
     }

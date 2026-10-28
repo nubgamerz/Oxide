@@ -243,6 +243,7 @@ impl Session {
             backup: false,
             previous: self.path.clone(),
             copies: HashMap::new(),
+            reopen: None,
         });
         loading.copies.insert(slot.id, from);
         loading.queue.push_back((slot, label));

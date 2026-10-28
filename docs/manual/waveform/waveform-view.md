@@ -42,6 +42,15 @@ toolbar switches between them. **✕** beside the list closes the file; with uns
 asks first (**Close without saving** or **Cancel**). The file shows at its own sample rate,
 each channel in a lane of its own.
 
+The project remembers its open files. Save it, and the next time you open it the same files
+open again, in the same order, on the one you were looking at (and in the Waveform view, if
+that was in front). A mixdown to a new file is one of them once it opens. A file that has
+been moved or deleted since is left out, with a note. Opening or closing a file isn't a change
+to the project, so on its own it doesn't make Oxide ask to save, but every save (and backup)
+writes the files open at the time. A file's edits are saved with the file's own **Save**, not
+the project's. Opening another project, or starting a new one, closes the files (asking first
+about unsaved edits in them).
+
 ## Moving around and playing
 
 | to | do |

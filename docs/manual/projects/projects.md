@@ -14,7 +14,9 @@ where first, as Save as… does.
 The file holds everything about the song: its tracks, clips, routing, mixer, sends,
 automation, tempo and time signature, markers, grid, loudness target and every plug-in's
 settings (an amp simulator's, a mastering module's) inside it. The audio stays in the folder's
-`Recorded` and `Imported` files. The zoom and scroll of the view are not saved.
+`Recorded` and `Imported` files. It also remembers the files open in the Waveform view, which
+reopen with the project ([[page:waveform-view#opening-a-file]]). The zoom and scroll of the
+view are not saved.
 
 The right end of the menu bar shows the project's file; *(not saved)* after its name means it
 has none yet.
@@ -24,6 +26,8 @@ has none yet.
 **File > Save as…** saves the project under another name or in another folder. Saved into
 another folder, the project's files (its recordings, imported files, renders) are copied
 there with it, so the copy is a complete project of its own; the old one is left as it was.
+Files open in the Waveform view stay where they are: the copy reopens them from the old
+folder.
 
 ### Before closing
 

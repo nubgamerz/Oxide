@@ -117,8 +117,9 @@ pub fn dialog(app: &mut DawApp, ctx: &egui::Context) {
                 egui::Label::new(theme::hint(
                     "Renders the track as you hear it (its clips or MIDI through its \
                      instrument, its plug-ins, fader, pan and automation, and a folder's \
-                     tracks; not its sends, which go on the new track) into the project's \
-                     Rendered folder, and puts it on a new track right under it.",
+                     tracks; not its sends, which go on the new track) from the start of the \
+                     song, silent up to its first sound, into the project's Rendered folder, \
+                     and puts it on a new track right under it, lined up with the song.",
                 ))
                 .wrap(),
             );

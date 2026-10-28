@@ -25,6 +25,11 @@ plug-ins, fader, pan and automation, and for a folder its tracks; not its sends.
 into the project's `Rendered` folder, and a new audio track, *name* **(rendered)**, appears
 right under the original, with copies of its sends, so its reverb still reaches the bus.
 
+The file starts at the beginning of the song, silent up to the track's first sound, so its
+clip sits at the start of the new track, lined up with the original. Rendered files therefore
+line up with each other too: load them into another project at its start and they play in
+time.
+
 It renders in the background with a progress bar and **Cancel**; the window keeps working
 meanwhile. A muted track must be unmuted first (the dialog says so); a solo elsewhere doesn't
 matter.

@@ -2331,10 +2331,10 @@ fn a_tracks_midi_exports_as_one_file_with_its_tempo_map() {
 
 /// A track's render (13.3) is the track as it plays: the new track alone exports the same as
 /// the original alone, bit for bit (an effect, a fader and a pan on it, a folder over it with
-/// its own effect), and within rounding for an effect whose output depends on where its blocks
-/// fall (the Graphic EQ's FFT: a render starts at the track's first clip); the original is
-/// switched off (out of the graph) in the same undo step, which undo takes back; a disabled
-/// track is silent and a disabled folder silences its tracks.
+/// its own effect), an effect whose output depends on where its blocks fall too (the Graphic
+/// EQ's FFT: a render runs from the song's start, as the export it is compared with); the
+/// original is switched off (out of the graph) in the same undo step, which undo takes back; a
+/// disabled track is silent and a disabled folder silences its tracks.
 #[test]
 fn a_rendered_track_plays_exactly_like_the_track() {
     let r = Registry::new();
@@ -2412,7 +2412,11 @@ fn a_rendered_track_plays_exactly_like_the_track() {
     s.update();
     let new = s.take_rendered_track().expect("a new track");
     let file_len = wav::read(&path).unwrap().channels[0].len();
-    assert_eq!(file_len, 48_000 + 24_000, "the clip's span plus the tail");
+    assert_eq!(
+        file_len,
+        4_800 + 48_000 + 24_000,
+        "from the song's start to the clip's end, plus the tail"
+    );
     let project = call(&r, &mut s, "get_project", Value::Null).unwrap();
     let names: Vec<&str> = project["tracks"]
         .as_array()
@@ -2491,7 +2495,7 @@ fn a_rendered_track_plays_exactly_like_the_track() {
         .zip(&original)
         .map(|(a, b)| (a - b).abs())
         .fold(0.0f32, f32::max);
-    assert!(worst < 1e-12, "the Graphic EQ's render is {worst} off");
+    assert!(worst == 0.0, "the Graphic EQ's render is {worst} off");
     // Undo the switches and mutes above, then the render itself.
     while s.project.tracks.len() == tracks {
         call(&r, &mut s, "undo", Value::Null).unwrap();
@@ -2502,6 +2506,104 @@ fn a_rendered_track_plays_exactly_like_the_track() {
     let empty = add(&mut s, json!({"kind": "audio"}));
     let err = call(&r, &mut s, "render_track", json!({"track": empty})).unwrap_err();
     assert!(err.contains("no clips to render"), "{err}");
+}
+
+/// A track's render starts at the song's start: the file runs from sample 0 to the last
+/// clip's end plus the tail, exactly silent before the first clip (nothing upstream sounds
+/// there), its clip on the new track at 0, lined up with the original; from the first clip on
+/// it is what a render from there gave (an export of the track alone from the clip's start),
+/// and the whole of it what an export of the track alone from 0 gives.
+#[test]
+fn a_tracks_render_starts_at_the_songs_start() {
+    let r = Registry::new();
+    let mut s = headless();
+    let dir = temp_dir("render-start");
+    call(
+        &r,
+        &mut s,
+        "new_project",
+        json!({"name": "Start", "folder": dir}),
+    )
+    .unwrap();
+    let file = tone(&dir);
+    let add = |s: &mut Session, args: Value| id(&call(&r, s, "add_track", args).unwrap(), "track");
+    let guitar = add(&mut s, json!({"kind": "audio"}));
+    let other = add(&mut s, json!({"kind": "audio"}));
+    let clip_at = 30_000u64;
+    for (track, at) in [(guitar, clip_at), (other, 0)] {
+        let args = json!({"track": track, "path": file, "position": at});
+        call(&r, &mut s, "import_audio", args).unwrap();
+    }
+    for plugin in ["parametric equalizer", "hard limiter"] {
+        let args = json!({"track": guitar, "plugin": plugin});
+        call(&r, &mut s, "add_insert", args).unwrap();
+    }
+    let args = json!({"track": guitar, "gain_db": -2.0, "pan": -0.3});
+    call(&r, &mut s, "set_track_mixer", args).unwrap();
+
+    let rendered = call(
+        &r,
+        &mut s,
+        "render_track",
+        json!({"track": guitar, "tail_seconds": 0.5, "disable": false}),
+    )
+    .unwrap();
+    let path = PathBuf::from(rendered["path"].as_str().unwrap());
+    s.wait_for_export(Duration::from_secs(30)).unwrap();
+    s.update();
+    let new = s.take_rendered_track().expect("a new track");
+    let render = wav::read(&path).unwrap().channels;
+    let len = clip_at as usize + 48_000 + 24_000;
+    assert!(render.iter().all(|c| c.len() == len), "not {len} long");
+    let lead = clip_at as usize;
+    for (k, channel) in render.iter().enumerate() {
+        let loud = channel[..lead].iter().position(|x| *x != 0.0);
+        assert_eq!(loud, None, "channel {k} sounds before the clip");
+        assert!(channel[lead..].iter().any(|x| x.abs() > 0.01), "it plays");
+    }
+    let clips = &s.project.track(new).expect("the render's track").clips;
+    assert_eq!(clips.len(), 1);
+    assert_eq!(
+        clips[0].start, 0,
+        "the render's clip lines up with the song"
+    );
+
+    // The track alone (its render off, the other track muted), exported.
+    call(
+        &r,
+        &mut s,
+        "set_track_enabled",
+        json!({"track": new, "enabled": false}),
+    )
+    .unwrap();
+    call(
+        &r,
+        &mut s,
+        "set_track_mixer",
+        json!({"track": other, "mute": true}),
+    )
+    .unwrap();
+    let export = |s: &mut Session, start: u64, name: &str| -> Vec<Vec<f32>> {
+        let out = dir.join(name);
+        let end = clip_at + 48_000;
+        let args = json!({"path": out, "start": start, "end": end, "tail_seconds": 0.5});
+        call(&r, s, "export_mixdown", args).unwrap();
+        s.wait_for_export(Duration::from_secs(20)).unwrap();
+        wav::read(&out).unwrap().channels
+    };
+    // From the clip on: what the render from the first clip gave before.
+    let from_clip = export(&mut s, clip_at, "from-clip.wav");
+    for (k, (ours, theirs)) in render.iter().zip(&from_clip).enumerate() {
+        assert_eq!(theirs.len(), len - lead);
+        let first = ours[lead..].iter().zip(theirs).position(|(a, b)| a != b);
+        assert_eq!(first, None, "channel {k} differs from the clip on");
+    }
+    // The whole file: an export of the track from 0.
+    let from_start = export(&mut s, 0, "from-start.wav");
+    assert_eq!(
+        render, from_start,
+        "the render differs from an export from 0"
+    );
 }
 
 /// The CPU panel's numbers (12.5): every track and the master with their inserts, from the
@@ -11362,6 +11464,248 @@ fn opening_reads_files_on_workers_and_cancels_back() {
         o.insert_info(amp).is_some(),
         "the reopened project's plug-in"
     );
+}
+
+/// The Waveform view's files reopen with the project: a save writes the open files (inside the
+/// project's folder relative, the clip one was opened from, the one showing, the view in
+/// front), opening or closing a file is neither an undo step nor an unsaved change, an open
+/// reads them on the workers (none before it returns, none on the opening thread) and brings
+/// them back in order with the same one showing; a file gone is skipped with one notice; a
+/// mixdown (in `Rendered/`) comes back too; a Save As into another folder keeps them as
+/// absolute paths; a backup holds them, a template doesn't; a cancel goes back to the project
+/// before with its files; and a file without the list opens as before.
+#[test]
+fn waveform_view_files_reopen_with_the_project() {
+    let r = Registry::new();
+    let mut s = headless();
+    let dir = temp_dir("reopen-docs");
+    s.templates_dir = Some(dir.join("Templates"));
+    let made = call(
+        &r,
+        &mut s,
+        "new_project",
+        json!({"name": "Docs", "folder": dir}),
+    )
+    .unwrap();
+    let path = PathBuf::from(made["path"].as_str().unwrap());
+    let project_dir = path.parent().unwrap().to_path_buf();
+    let write = |file: &std::path::Path, rate: u32, scale: f32| {
+        let samples = (0..12_000)
+            .map(|i| scale * (i as f32 * 0.01).sin())
+            .collect();
+        let audio = wav::Audio {
+            sample_rate: rate,
+            channels: vec![samples],
+        };
+        std::fs::create_dir_all(file.parent().unwrap()).unwrap();
+        wav::write_f32(file, &audio).unwrap();
+    };
+    // One in the project's folder, one from outside it (opened as its copy in Imported), at
+    // its own rate, and one opened from a clip.
+    let inside = project_dir.join("Rendered").join("inside.wav");
+    write(&inside, 48_000, 0.2);
+    let outside = dir.join("outside.wav");
+    write(&outside, 44_100, 0.3);
+    let take = dir.join("take.wav");
+    write(&take, 48_000, 0.4);
+    let extra_file = dir.join("extra.wav");
+    write(&extra_file, 48_000, 0.5);
+    let track = id(
+        &call(&r, &mut s, "add_track", json!({"kind": "audio"})).unwrap(),
+        "track",
+    );
+    let import = json!({"track": track, "path": take, "position": 0});
+    let clip = id(&call(&r, &mut s, "import_audio", import).unwrap(), "clip");
+    call(&r, &mut s, "save_project", Value::Null).unwrap();
+    let undo_before = call(&r, &mut s, "get_history", Value::Null).unwrap();
+    let open = |s: &mut Session, args: Value| {
+        id(&call(&r, s, "open_audio_editor", args).unwrap(), "document") as u32
+    };
+    let a = open(&mut s, json!({"path": inside}));
+    let b = open(&mut s, json!({"path": outside}));
+    let c = open(&mut s, json!({"clip": clip}));
+    let extra = open(&mut s, json!({"path": extra_file}));
+    call(&r, &mut s, "close_audio_editor", json!({"document": extra})).unwrap();
+    // Opening and closing files: no undo step, nothing unsaved.
+    assert_eq!(
+        call(&r, &mut s, "get_history", Value::Null).unwrap(),
+        undo_before
+    );
+    assert!(
+        !s.has_unsaved_changes(),
+        "opening files is no change to save"
+    );
+    let ids: Vec<u32> = s.documents().iter().map(|d| d.id).collect();
+    assert_eq!(ids, [a, b, c]);
+    let paths: Vec<PathBuf> = s.documents().iter().map(|d| d.path.clone()).collect();
+    assert_eq!(paths[0], inside);
+    assert!(
+        paths[1].starts_with(project_dir.join("Imported")),
+        "{paths:?}"
+    );
+    // The app tells the session what the Waveform view shows (here the outside file's copy).
+    s.set_document_view(Some(b), true);
+    call(&r, &mut s, "save_project", Value::Null).unwrap();
+    let saved: Value = serde_json::from_str(&std::fs::read_to_string(&path).unwrap()).unwrap();
+    let files = &saved["open_files"];
+    let relative = |p: &std::path::Path| {
+        p.strip_prefix(&project_dir)
+            .unwrap()
+            .to_string_lossy()
+            .into_owned()
+    };
+    assert_eq!(files["files"][0]["path"], relative(&paths[0]));
+    assert_eq!(files["files"][1]["path"], relative(&paths[1]));
+    assert_eq!(files["files"][2]["path"], relative(&paths[2]));
+    assert_eq!(files["files"][2]["clip"], clip);
+    assert!(files["files"][0].get("clip").is_none());
+    assert_eq!(files["shown"], 1);
+    assert_eq!(files["in_front"], true);
+    assert!(
+        !s.has_unsaved_changes(),
+        "the save's list is no change either"
+    );
+    assert!(
+        s.project.open_files.is_empty(),
+        "the list stays out of the project"
+    );
+    // A backup holds the list too; a template doesn't.
+    let backup = call(&r, &mut s, "save_backup", Value::Null).unwrap();
+    let backup = PathBuf::from(backup["path"].as_str().unwrap());
+    let backed: Value = serde_json::from_str(&std::fs::read_to_string(&backup).unwrap()).unwrap();
+    assert_eq!(backed["open_files"], *files);
+    let template = call(&r, &mut s, "save_template", json!({"name": "Docs"})).unwrap();
+    let template = std::fs::read_to_string(template["path"].as_str().unwrap()).unwrap();
+    assert!(!template.contains("open_files"), "{template}");
+
+    // Reopened behind the bar: nothing read before `open` returns, the files on workers.
+    let here = std::thread::current().id();
+    let ours = || -> Vec<(std::thread::ThreadId, PathBuf)> {
+        crate::media::LOADS
+            .lock()
+            .unwrap()
+            .iter()
+            .filter(|(_, p)| paths.contains(p))
+            .cloned()
+            .collect()
+    };
+    let before = ours().len();
+    let mut o = headless();
+    o.stage_loads = true;
+    o.hold_file_reads(Some(0));
+    o.open(&path).unwrap();
+    let progress = o.loading().expect("opening");
+    assert_eq!(progress.stage, LoadStage::Reading);
+    assert_eq!(progress.stage_total, 1 + 3, "the take and the three files");
+    assert!(o.documents().is_empty(), "the files come back at the end");
+    assert_eq!(ours().len(), before, "a file was read before open returned");
+    o.hold_file_reads(None);
+    let started = Instant::now();
+    while o.loading().is_some() {
+        assert!(started.elapsed() < Duration::from_secs(30), "stuck");
+        o.update();
+    }
+    // The take once for its clip (at the engine's rate), and the three files.
+    let reads: Vec<_> = ours().into_iter().skip(before).collect();
+    assert_eq!(reads.len(), 1 + 3, "{reads:?}");
+    assert!(
+        reads.iter().all(|(thread, _)| *thread != here),
+        "a file was read on the opening thread: {reads:?}"
+    );
+    assert!(o.notices.is_empty(), "{:?}", o.notices);
+    let back: Vec<PathBuf> = o.documents().iter().map(|d| d.path.clone()).collect();
+    assert_eq!(back, paths, "in their order");
+    let docs = o.documents();
+    assert_eq!(docs[1].audio.sample_rate, 44_100, "at its own rate");
+    assert_eq!(docs[2].source, Some((track as u32, clip as u32)));
+    assert_eq!(docs[0].source, None);
+    let shown = docs[1].id;
+    let view = o.take_reopened_view().expect("the view, once");
+    assert_eq!(view.shown, Some(shown));
+    assert!(view.in_front);
+    assert!(o.take_reopened_view().is_none());
+    assert!(!o.has_unsaved_changes());
+
+    // A file gone: skipped, said once, the rest back; nothing unsaved.
+    std::fs::remove_file(&paths[1]).unwrap();
+    o.stage_loads = false;
+    o.open(&path).unwrap();
+    let said: Vec<_> = o
+        .notices
+        .iter()
+        .filter(|n| n.contains("wasn't reopened in the Waveform view"))
+        .collect();
+    assert_eq!(said.len(), 1, "{:?}", o.notices);
+    o.notices.clear();
+    let back: Vec<PathBuf> = o.documents().iter().map(|d| d.path.clone()).collect();
+    assert_eq!(back, [paths[0].clone(), paths[2].clone()]);
+    let view = o.take_reopened_view().expect("the view");
+    assert_eq!(view.shown, Some(o.documents()[0].id), "the first instead");
+    assert!(!o.has_unsaved_changes());
+
+    // A mixdown: in Rendered, open, saved with the project and back with it.
+    let mixed = call(
+        &r,
+        &mut o,
+        "mixdown_to_new_file",
+        json!({"tail_seconds": 0}),
+    )
+    .unwrap();
+    let mixed = PathBuf::from(mixed["path"].as_str().unwrap());
+    assert!(mixed.starts_with(project_dir.join("Rendered")), "{mixed:?}");
+    o.wait_for_export(Duration::from_secs(30)).unwrap();
+    o.update();
+    assert!(o.documents().iter().any(|d| d.path == mixed));
+    call(&r, &mut o, "save_project", Value::Null).unwrap();
+    o.open(&path).unwrap();
+    let back: Vec<PathBuf> = o.documents().iter().map(|d| d.path.clone()).collect();
+    assert_eq!(back, [paths[0].clone(), paths[2].clone(), mixed.clone()]);
+
+    // Another project closes them; a cancel back reopens the project before with its files.
+    let other_dir = dir.join("Other");
+    std::fs::create_dir_all(&other_dir).unwrap();
+    // A copy of the project: its files missing there, held unread so the open waits.
+    let other = other_dir.join("Other.oxide");
+    std::fs::copy(&path, &other).unwrap();
+    o.stage_loads = true;
+    o.hold_file_reads(Some(0));
+    o.open(&other).unwrap();
+    assert!(o.documents().is_empty(), "the last project's files close");
+    assert_eq!(o.cancel_loading().unwrap().as_deref(), Some(path.as_path()));
+    o.finish_loading();
+    let back: Vec<PathBuf> = o.documents().iter().map(|d| d.path.clone()).collect();
+    assert_eq!(back, [paths[0].clone(), paths[2].clone(), mixed.clone()]);
+    o.stage_loads = false;
+    o.open(&other).unwrap();
+    assert!(o.documents().is_empty(), "none of its files are there");
+    assert_eq!(o.take_reopened_view().map(|v| v.in_front), Some(false));
+    o.notices.clear();
+    o.open(&path).unwrap();
+
+    // Saved as into another folder: the files stay where they are, as absolute paths.
+    let moved = dir.join("Moved").join("Docs.oxide");
+    std::fs::create_dir_all(moved.parent().unwrap()).unwrap();
+    call(&r, &mut o, "save_project", json!({"path": moved})).unwrap();
+    let saved: Value = serde_json::from_str(&std::fs::read_to_string(&moved).unwrap()).unwrap();
+    assert_eq!(
+        saved["open_files"]["files"][0]["path"]
+            .as_str()
+            .map(PathBuf::from),
+        Some(paths[0].clone())
+    );
+    let mut m = headless();
+    m.open(&moved).unwrap();
+    assert_eq!(m.documents().len(), 3);
+    assert_eq!(m.documents()[0].path, paths[0]);
+
+    // A project file from before the list opens as before, with no files.
+    let mut old: Value = serde_json::from_str(&std::fs::read_to_string(&path).unwrap()).unwrap();
+    old.as_object_mut().unwrap().remove("open_files");
+    let old_path = project_dir.join("Old.oxide");
+    std::fs::write(&old_path, serde_json::to_string_pretty(&old).unwrap()).unwrap();
+    m.open(&old_path).unwrap();
+    assert!(m.documents().is_empty());
+    assert_eq!(m.project.tracks.len(), 1);
 }
 
 #[test]

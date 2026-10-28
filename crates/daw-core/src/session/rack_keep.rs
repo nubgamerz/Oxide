@@ -217,6 +217,7 @@ impl Session {
                 backup: false,
                 previous: self.path.clone(),
                 copies: copying,
+                reopen: None,
             });
             if !self.stage_loads {
                 self.finish_loading();
